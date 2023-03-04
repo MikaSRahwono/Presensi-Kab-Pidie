@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:presensi_mobileapp/widgets/_widgets.dart';
@@ -20,15 +21,16 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: true,
         title: Text(
           'Profile',
           style: GoogleFonts.poppins(
-              color: Colors.white, fontWeight: FontWeight.w500),
+              color: Colors.black, fontWeight: FontWeight.w700),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined),
-          color: Colors.white,
+          color: Color.fromRGBO(130, 83, 240, 1),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -76,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 24.0, right: 24, top: 4),
                       child: Container(
-                        height: 56,
+                        height: 44,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Color.fromRGBO(240, 238, 252, 1),
@@ -85,10 +87,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 12),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Icons.account_balance),
                               SizedBox(width: 24,),
-                              HelperBigText(text: "Nama Instansi", size: 14,)
+                              Expanded(
+                                  child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text("Nama Instansi dsadasdadasdadasdasdasdasdasdadas", style: TextStyle(fontSize: 14),)
+                                  )
+                              )
                             ],
                           ),
                         ),
@@ -102,19 +111,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                         padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 56,
+                          height: 44,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 24),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Icon(Icons.account_balance),
                                 SizedBox(width: 24,),
-                                HelperBigText(text: "jabatan", size: 14,)
+                                Expanded(
+                                    child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Text("Jabatan dsadasdadasdadasdasdasdasdasdadas", style: TextStyle(fontSize: 14),)
+                                    )
+                                )
                               ],
                             ),
                           ),
@@ -128,19 +144,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                         padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 56,
+                          height: 44,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 24),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Icon(Icons.account_balance),
                                 SizedBox(width: 24,),
-                                HelperBigText(text: "Tanggal lahir", size: 14,)
+                                Expanded(
+                                    child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Text("Tanggal lahir sdwdadsadawdasdadwa", style: TextStyle(fontSize: 14),)
+                                    )
+                                )
                               ],
                             ),
                           ),
@@ -154,26 +177,36 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                         padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 56,
+                          height: 44,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 24),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(Icons.account_balance),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+                                  child: Icon(Icons.account_balance),
+                                ),
                                 SizedBox(width: 24,),
-                                HelperBigText(text: "Email", size: 14,)
+                                Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                        child: Text("Emaildsadasdadasdadasdasdasdasdasdadas", style: TextStyle(fontSize: 14),)
+                                    )
+                                )
                               ],
                             ),
                           ),
                         )
                     ),
 
-                    SizedBox(height: 52,)
+                    SizedBox(height: 104,)
                   ],
                 ),
               ),
@@ -181,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Padding(
               padding:
-              const EdgeInsets.only(top: 24.0, right: 60.0, left: 60.0),
+              const EdgeInsets.only(top: 28.0, right: 60.0, left: 60.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(130, 83, 240, 1),
@@ -189,12 +222,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
+                        horizontal: 20, vertical: 10),
                     textStyle: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                         fontFamily: "Poppins")),
-                child: Center(child: const Text('Ubah Password')),
+                child: Center(
+                    child: AutoSizeText("Ubah Password", maxLines: 1, style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Poppins") ),
+                ),
                 onPressed: () async {
                   // if (!_formKey.currentState!.validate()) {
                   //   return;
@@ -220,13 +258,16 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Padding(
               padding:
-              const EdgeInsets.only(top: 16.0, right: 60.0, left: 60.0),
+              const EdgeInsets.only(top: 12.0, right: 60.0, left: 60.0),
               child: Container(
                 width: 400,
-                height: 52,
+                height: 48,
                 child: ElevatedButton.icon(
                   icon: Icon(Icons.logout),
-                  label: Text("Logout"), //label text
+                  label: AutoSizeText("Logout", maxLines: 1, style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Poppins") ), //label text
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(168, 0, 0, 1),
                       shape: RoundedRectangleBorder(
@@ -235,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 60, vertical: 12),
                       textStyle: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w500,
                           fontFamily: "Poppins")),
                   onPressed: () async {
