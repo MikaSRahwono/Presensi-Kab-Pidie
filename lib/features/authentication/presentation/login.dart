@@ -17,7 +17,6 @@ class _LoginPageState extends State<LoginPage> {
         child: Image.asset('resources/images/png/logo.png'),
       ),
     );
-
     final nip = Container(
       decoration: const BoxDecoration(
         boxShadow: [
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
           child: TextFormField(
             keyboardType: TextInputType.emailAddress,
             autofocus: false,
@@ -44,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-
     final password = Container(
       decoration: const BoxDecoration(
           boxShadow: [
@@ -57,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
           child: TextFormField(
             autofocus: false,
             initialValue: '',
@@ -71,13 +69,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-
     final loginButton = Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF8253F0),
-          minimumSize: const Size.fromHeight(60),
+          minimumSize: const Size.fromHeight(50),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -86,7 +83,6 @@ class _LoginPageState extends State<LoginPage> {
           onPressed: () {},
       ),
     );
-
     final forgotLabel = TextButton(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -97,14 +93,13 @@ class _LoginPageState extends State<LoginPage> {
       ),
       onPressed: () {},
     );
-
     const heading = Padding(
       padding: EdgeInsets.only(left: 40, right: 40),
       child: Text(
         'Sistem Informasi Presensi Kepegawaian Kab. Pidie',
         style: TextStyle(
           color: Colors.black,
-          fontSize: 25,
+          fontSize: 23,
         ),
           textAlign: TextAlign.center
       ),
