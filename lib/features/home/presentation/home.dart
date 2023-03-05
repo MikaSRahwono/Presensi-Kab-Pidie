@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../profile/presentation/profile.dart';
+import '../../authentication/presentation/first_pass_reset.dart';
 import '../../authentication/presentation/login.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FirstPassResetPage()));
         },
         label: Text("Profile"), icon: Icon(Icons.person
       ),

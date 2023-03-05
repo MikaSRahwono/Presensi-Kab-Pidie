@@ -19,9 +19,9 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final nip = Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         boxShadow: [
-          new BoxShadow(
+          BoxShadow(
             color: Colors.black12,
             blurRadius: 10
           )
@@ -35,9 +35,9 @@ class _LoginPageState extends State<LoginPage> {
             keyboardType: TextInputType.emailAddress,
             autofocus: false,
             initialValue: '',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'NIP',
-              contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
               border: InputBorder.none,
             ),
           ),
@@ -46,9 +46,9 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final password = Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           boxShadow: [
-            new BoxShadow(
+            BoxShadow(
                 color: Colors.black12,
                 blurRadius: 10
             )
@@ -62,9 +62,9 @@ class _LoginPageState extends State<LoginPage> {
             autofocus: false,
             initialValue: '',
             obscureText: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Password',
-              contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
               border: InputBorder.none,
             ),
           ),
