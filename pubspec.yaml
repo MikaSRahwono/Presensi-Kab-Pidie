@@ -40,6 +40,7 @@ dependencies:
   auto_size_text: ^3.0.0
   cool_alert: ^2.0.1
   tmdb_api:
+  http: ^0.13.5
 
 
 dev_dependencies:

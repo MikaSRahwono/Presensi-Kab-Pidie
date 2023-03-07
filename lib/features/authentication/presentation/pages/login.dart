@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of '_pages.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -7,6 +7,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final nipController = TextEditingController();
+  final passController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    nipController.dispose();
+    passController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     final logo = Hero(
@@ -31,9 +42,9 @@ class _LoginPageState extends State<LoginPage> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
           child: TextFormField(
+            controller: nipController,
             keyboardType: TextInputType.emailAddress,
             autofocus: false,
-            initialValue: '',
             decoration: const InputDecoration(
               hintText: 'NIP',
               contentPadding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
@@ -57,8 +68,8 @@ class _LoginPageState extends State<LoginPage> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
           child: TextFormField(
+            controller: passController,
             autofocus: false,
-            initialValue: '',
             obscureText: true,
             decoration: const InputDecoration(
               hintText: 'Password',
@@ -80,7 +91,20 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: const Text('Login', style: TextStyle(fontSize: 15,),),
-          onPressed: () {},
+          onPressed: () async {
+          var response = await fetchToken(nipController.text, passController.text);
+          Map resMap = json.decode(response);
+
+          // TODO: Session flutter buat tokennya
+          var token = resMap['tokens']['access'];
+          var isFirst = resMap['first_login'];
+          if (isFirst) {
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FirstPassResetPage()));
+          }
+          else{
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+          }
+          },
       ),
     );
     final forgotLabel = TextButton(
@@ -127,4 +151,23 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+Future<String> fetchToken(nip, pass) async {
+  var request = http.MultipartRequest('POST', Uri.parse('http://localhost:8000/account/login'));
+  request.fields.addAll({
+    'nip': nip,
+    'password': pass
+  });
+
+
+  http.StreamedResponse response = await request.send();
+
+  if (response.statusCode == 200) {
+    return (await response.stream.bytesToString());
+  }
+  else {
+    return ("Error");
+  }
+
 }

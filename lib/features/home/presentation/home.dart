@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../profile/presentation/profile.dart';
-import '../../authentication/presentation/first_pass_reset.dart';
-import '../../authentication/presentation/login.dart';
+import '../../authentication/presentation/pages/_pages.dart';
 
 
 class HomePage extends StatefulWidget {

@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+part of '_pages.dart';
 
 class FirstPassResetPage extends StatefulWidget {
   const FirstPassResetPage({Key? key}) : super(key: key);
@@ -93,7 +92,9 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
           ),
         ),
         child: const Text('Simpan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+        },
       ),
     );
 
