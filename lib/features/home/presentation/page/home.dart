@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+part of '_pages.dart';
 
-import '../../profile/presentation/profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
