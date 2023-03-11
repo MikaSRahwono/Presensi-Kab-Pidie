@@ -41,6 +41,8 @@ dependencies:
   cool_alert: ^2.0.1
   tmdb_api:
   http: ^0.13.5
+  provider: ^6.0.4
+  flutter_secure_storage: ^6.0.0
 
 
 dev_dependencies:

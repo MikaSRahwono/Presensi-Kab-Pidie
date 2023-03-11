@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:presensi_mobileapp/main_page.dart';
+import 'package:provider/provider.dart';
+import 'features/authentication/presentation/provider/user_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

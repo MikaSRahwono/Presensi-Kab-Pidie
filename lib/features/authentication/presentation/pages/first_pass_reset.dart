@@ -10,6 +10,10 @@ class FirstPassResetPage extends StatefulWidget {
 class _FirstPassResetPageState extends State<FirstPassResetPage> {
   @override
   Widget build(BuildContext context) {
+    // Step 1: panggil data user
+    // final dataUser = Provider.of<UserProvider>(context);
+    // Step 2: Jangan membuat widgets menjadi const
+    // Step 3: dataUser.getFirstLogin()!.toString() ?? ''
     final password = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -159,7 +163,13 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                                 child: Text("Untuk melanjutkan pemakaian aplikasi presensi, lakukan ubah password terlebih dahulu!",
                                   textAlign: TextAlign.center,
                                 ),
-                              )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
+                                child: Text("Untuk melanjutkan pemakaian aplikasi presensi, lakukan ubah password terlebih dahulu!",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
                             ],
                           ),
                           SizedBox(height: 30),
