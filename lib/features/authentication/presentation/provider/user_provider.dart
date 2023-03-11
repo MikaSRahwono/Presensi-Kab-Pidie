@@ -15,14 +15,27 @@ class UserProvider with ChangeNotifier {
 
   bool isLoading = false;
   final String _tokenKey = 'token';
+  final String _refreshTokenKey = 'refresh_token';
+  final String _flagFirstLoginKey = 'flag_first_login';
   String? jwtToken;
   String? refreshToken;
   bool firstLogin = true;
 
-  Future<String?> setToken(String? token) async {
+  Future<String?> setAccessToken(String? token) async {
     await _storage.write(key: _tokenKey, value: token);
     return token;
   }
+
+  Future<String?> setRefreshToken(String? refreshToken) async {
+    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    return refreshToken;
+  }
+  Future<bool?> setFirstLogin(bool? flag) async {
+    await _storage.write(key: _flagFirstLoginKey, value: flag.toString());
+
+    return flag;
+  }
+
 
   String? getAccessToken() {
     return jwtToken;
@@ -31,6 +44,7 @@ class UserProvider with ChangeNotifier {
   String? getRefreshToken(){
     return refreshToken;
   }
+
 
   bool? getFirstLogin(){
     return firstLogin;
@@ -75,7 +89,9 @@ class UserProvider with ChangeNotifier {
       jwtToken = resMap['tokens']['access'];
       refreshToken =  resMap['tokens']['refresh'];
       firstLogin = resMap['first_login'];
-      await setToken(resMap['tokens']['access']);
+      await setAccessToken(resMap['tokens']['access']);
+      await setRefreshToken(resMap['tokens']['refresh']);
+      await setFirstLogin(resMap['first_login']);
       // refreshToken = response.tokens.refresh;
       notifyListeners();
 

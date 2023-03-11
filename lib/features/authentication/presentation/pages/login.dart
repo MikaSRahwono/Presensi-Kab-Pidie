@@ -116,7 +116,9 @@ class _LoginPageState extends State<LoginPage> {
           Icon(Icons.chevron_right, color: Colors.black)
         ]
       ),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ComingSoon()));
+      },
     );
     const heading = Padding(
       padding: EdgeInsets.only(left: 40, right: 40),
