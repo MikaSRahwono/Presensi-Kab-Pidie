@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+part of '_pages.dart';
 
-import '../../profile/presentation/profile.dart';
 // import '../../authentication/presentation/pages/_pages.dart';
 
 
