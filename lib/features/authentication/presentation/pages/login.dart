@@ -123,10 +123,10 @@ class _LoginPageState extends State<LoginPage> {
       ),
       onPressed: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) => ComingSoon()));
+            MaterialPageRoute(builder: (BuildContext context) => ForgetPassPage()));
       },
     );
-    final alertDialogFailed = AlertDialog(
+    final alertDialogFailed = CupertinoAlertDialog(
       title: const Text('NIP atau Password Salah'),
       content: SingleChildScrollView(
         child: ListBody(
