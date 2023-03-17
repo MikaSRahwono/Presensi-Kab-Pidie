@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^4.0.3
   carousel_slider: ^4.0.0
+  flutter_screenutil: ^5.7.0
   auto_size_text: ^3.0.0
   cool_alert: ^2.0.1
   tmdb_api:

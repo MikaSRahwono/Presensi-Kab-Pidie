@@ -1,10 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:provider/provider.dart';
-
-import '../provider/user_provider.dart';
-
+part of '_pages.dart';
 class ComingSoon extends StatefulWidget {
   const ComingSoon({Key? key}) : super(key: key);
 

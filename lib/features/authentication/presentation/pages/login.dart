@@ -19,134 +19,200 @@ class _LoginPageState extends State<LoginPage> {
     passController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    // Step 1: panggil data user
-    final dataUser = Provider.of<UserProvider>(context);
-    final logo = Hero(
-      tag: 'hero',
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 48.0,
-        child: Image.asset('resources/images/png/logo.png'),
-      ),
-    );
-    final nip = Container(
-      decoration: const BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10
-          )
-        ]
-      ),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
-          child: TextFormField(
-            controller: nipController,
-            keyboardType: TextInputType.emailAddress,
-            autofocus: false,
-            decoration: const InputDecoration(
-              hintText: 'NIP',
-              contentPadding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-              border: InputBorder.none,
+    Widget NIPField(int height, int fontSize) {
+      return Container(
+        height: height.h,
+        decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  blurRadius: 10
+              )
+            ]
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
+              child: TextFormField(
+                controller: nipController,
+                decoration: const InputDecoration(
+                  hintText: 'NIP',
+                  contentPadding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                  border: InputBorder.none,
+                ),
+                style: TextStyle(fontSize: fontSize.h),
+              ),
             ),
           ),
         ),
-      ),
-    );
-    final password = Container(
-      decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10
+      );
+    }
+    Widget PasswordField(int height, int fontSize) {
+      return Container(
+        height: height.h,
+        decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  blurRadius: 10
+              )
+            ]
+        ),
+        child: Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
+                child: TextFormField(
+                  controller: passController,
+                  autofocus: false,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Password',
+                    contentPadding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                    border: InputBorder.none,
+                  ),
+                  style: TextStyle(fontSize: fontSize.h),
+                ),
+              ),
             )
-          ]
-      ),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
-          child: TextFormField(
-            controller: passController,
-            autofocus: false,
-            obscureText: true,
-            decoration: const InputDecoration(
-              hintText: 'Password',
-              contentPadding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-              border: InputBorder.none,
-            ),
+        ),
+      );
+    }
+    final dataUser = Provider.of<UserProvider>(context);
+    final logo = FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 22.0, right: 22.0),
+        child: Hero(
+          tag: 'hero',
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            child: Image.asset('resources/images/png/logo.png'),
           ),
         ),
       ),
     );
-    final loginButton = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF8253F0),
-          minimumSize: const Size.fromHeight(50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    const heading = Padding(
+      padding: EdgeInsets.only(left: 32, right: 32),
+      child: AutoSizeText(
+          'Sistem Informasi Presensi Kepegawaian Kab. Pidie',
+          maxLines: 3,
+          minFontSize: 16,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: 23,
           ),
-        ),
-        child: const Text('Login', style: TextStyle(fontSize: 15,),),
-          onPressed: () async {
-          var response = await dataUser.fetchToken(nipController.text, passController.text);
-          // Map resMap = json.decode(response);
-          // TODO: Session flutter buat tokennya
-          if (dataUser.firstLogin) {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FirstPassResetPage()));
-          }
-          else{
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
-          }
-          },
+          textAlign: TextAlign.center
       ),
     );
     final forgotLabel = TextButton(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text("Lupa Password", style: TextStyle(color: Colors.black, fontSize: 15)),
-          Icon(Icons.chevron_right, color: Colors.black)
-        ]
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text("Lupa Password",
+                style: TextStyle(color: Colors.black, fontSize: 13)),
+            Icon(Icons.chevron_right, color: Colors.black)
+          ]
       ),
       onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ComingSoon()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) => ComingSoon()));
       },
     );
-    const heading = Padding(
-      padding: EdgeInsets.only(left: 40, right: 40),
-      child: Text(
-        'Sistem Informasi Presensi Kepegawaian Kab. Pidie',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 23,
+    final alertDialogFailed = AlertDialog(
+      title: const Text('NIP atau Password Salah'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('Lakukan login kembali'),
+          ],
         ),
-          textAlign: TextAlign.center
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('oke'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+    final loginButton = Padding(
+      padding: EdgeInsets.symmetric(vertical: 5.h),
+      child: SizedBox(
+        height: 60.h,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF8253F0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.sp),
+            ),
+          ),
+          child: const AutoSizeText('Login', maxFontSize: 18,),
+          onPressed: () async {
+            var response = await dataUser.fetchToken(
+                nipController.text, passController.text);
+            print(response);
+            if (response == 'Error'){
+              showDialog<void> (
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+              return alertDialogFailed;
+            } ); }
+            else {
+              if (dataUser.firstLogin) {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (BuildContext context) => FirstPassResetPage()));
+              }
+              else {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (BuildContext context) => HomePage()));
+              }
+            }
+          },
+        ),
       ),
     );
+
 
     return Scaffold(
       backgroundColor: Color(0xFFF6F2FF),
       body: Center(
         child: ListView(
           shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+          padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 24.0),
           children: <Widget>[
             logo,
-            const SizedBox(height: 40.0),
             heading,
-            const SizedBox(height: 48.0),
-            nip,
-            const SizedBox(height: 8.0),
-            password,
-            const SizedBox(height: 24.0),
+            SizedBox(height: 48.0.h),
+            if (MediaQuery
+                .of(context)
+                .size
+                .width <= 380)...[
+              NIPField(82, 20)
+            ] else
+              ...[
+                NIPField(70, 16)
+              ],
+            SizedBox(height: 8.0.h),
+            if (MediaQuery
+                .of(context)
+                .size
+                .width <= 380)...[
+              PasswordField(82, 20)
+            ] else
+              ...[
+                PasswordField(70, 16)
+              ],
+            SizedBox(height: 20.0.h),
             loginButton,
             forgotLabel
           ],
@@ -155,4 +221,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
