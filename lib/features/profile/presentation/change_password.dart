@@ -1,29 +1,31 @@
-part of '../_pages.dart';
+part of '_pages.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({Key? key, required this.email}) : super(key: key);
-
-  final String email;
+  const ChangePasswordPage({Key? key}) : super(key: key);
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  bool _prevpasswordVisible = true;
   bool _passwordVisible1 = true;
   bool _passwordVisible2 = true;
 
+  final prevpassController = TextEditingController();
   final passController1 = TextEditingController();
   final passController2 = TextEditingController();
 
   @override
   void initState() {
+    _prevpasswordVisible = false;
     _passwordVisible1 = false;
     _passwordVisible2 = false;
   }
 
   @override
   void dispose() {
+    prevpassController.dispose();
     passController1.dispose();
     passController2.dispose();
     super.dispose();
@@ -36,6 +38,60 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     // final dataUser = Provider.of<UserProvider>(context);
     // Step 2: Jangan membuat widgets menjadi const
     // Step 3: dataUser.getFirstLogin()!.toString() ?? ''
+    Widget PreviousPasswordField(int height, int fontSize) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoSizeText("Password Sebelumnya", maxFontSize: 14,),
+          SizedBox(height: 6,),
+          Container(
+            height: height.h,
+            decoration: BoxDecoration(
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.black12
+                ),
+                BoxShadow(
+                    color: Color(0xFFF6F2FF),
+                    blurRadius: 10,
+                    spreadRadius: -5
+                ),
+              ],
+              borderRadius: BorderRadius.circular(10.sp),
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(15.0, 0, 5.0 ,0),
+                child: TextFormField(
+                  autofocus: false,
+                  controller: prevpassController,
+                  obscureText: !_prevpasswordVisible,
+                  decoration: InputDecoration(
+                      hintText: 'Password',
+                      border: InputBorder.none,
+                      suffixIcon: SizedBox(
+                        height: 10.h,
+                        child: IconButton(
+                          icon: Icon(
+                              _prevpasswordVisible ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.black
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _prevpasswordVisible = !_prevpasswordVisible;
+                            });
+                          },
+                        ),
+                      )
+                  ),
+                  style: TextStyle(fontSize: fontSize.sp),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     Widget PasswordField(int height, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +270,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
         child: const Text('Simpan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
         onPressed: () async {
-          var response = await changeForgetPassword(widget.email, passController1.text, passController2.text);
+          var response = await dataUser.changePassword(prevpassController.text, passController1.text, passController2.text);
           print(response);
           if (response == 'Password tidak sama'){
             showDialog<void> (
@@ -287,10 +343,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               .of(context)
                               .size
                               .width <= 360)...[
+                            PreviousPasswordField(90, 20)
+                          ] else
+                            ...[
+                              PreviousPasswordField(55, 16)
+                            ],
+                          SizedBox(height: 20.h),
+                          if (MediaQuery
+                              .of(context)
+                              .size
+                              .width <= 360)...[
                             PasswordField(90, 20)
                           ] else
                             ...[
-                              PasswordField(60, 16)
+                              PasswordField(55, 16)
                             ],
                           SizedBox(height: 20.h),
                           if (MediaQuery
@@ -300,7 +366,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             RepeatPasswordField(85, 20)
                           ] else
                             ...[
-                              RepeatPasswordField(60, 16)
+                              RepeatPasswordField(55, 16)
                             ],
                           SizedBox(height: 20.h,)
                         ],

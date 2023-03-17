@@ -1,17 +1,31 @@
 part of '../_pages.dart';
 
-class ForgetPassPage extends StatefulWidget {
-  const ForgetPassPage({Key? key}) : super(key: key);
+class ChangePasswordForgotPage extends StatefulWidget {
+  const ChangePasswordForgotPage({Key? key, required this.email}) : super(key: key);
+
+  final String email;
 
   @override
-  State<ForgetPassPage> createState() => _ForgetPassPageState();
+  State<ChangePasswordForgotPage> createState() => _ChangePasswordForgotPageState();
 }
 
-class _ForgetPassPageState extends State<ForgetPassPage> {
-  final emailController = TextEditingController();
+class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
+  bool _passwordVisible1 = true;
+  bool _passwordVisible2 = true;
+
+  final passController1 = TextEditingController();
+  final passController2 = TextEditingController();
+
+  @override
+  void initState() {
+    _passwordVisible1 = false;
+    _passwordVisible2 = false;
+  }
+
   @override
   void dispose() {
-    emailController.dispose();
+    passController1.dispose();
+    passController2.dispose();
     super.dispose();
   }
 
@@ -22,11 +36,11 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
     // final dataUser = Provider.of<UserProvider>(context);
     // Step 2: Jangan membuat widgets menjadi const
     // Step 3: dataUser.getFirstLogin()!.toString() ?? ''
-    Widget EmailField(int height, int fontSize) {
+    Widget PasswordField(int height, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoSizeText("Email", maxFontSize: 14,),
+          AutoSizeText("Password Baru", maxFontSize: 14,),
           SizedBox(height: 6,),
           Container(
             height: height.h,
@@ -48,15 +62,85 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
                 padding: const EdgeInsets.fromLTRB(15.0, 0, 5.0 ,0),
                 child: TextFormField(
                   autofocus: false,
-                  controller: emailController,
+                  controller: passController1,
+                  obscureText: !_passwordVisible1,
                   decoration: InputDecoration(
-                      hintText: 'Email',
+                      hintText: 'Password',
                       border: InputBorder.none,
+                      suffixIcon: SizedBox(
+                        height: 10.h,
+                        child: IconButton(
+                          icon: Icon(
+                              _passwordVisible1 ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.black
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible1 = !_passwordVisible1;
+                            });
+                          },
                         ),
-                  style: TextStyle(fontSize: fontSize.sp),),
+                      )
+                  ),
+                  style: TextStyle(fontSize: fontSize.sp),
                 ),
               ),
             ),
+          ),
+        ],
+      );
+    }
+    Widget RepeatPasswordField(int height, int fontSize) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoSizeText("Ulangi Password Baru", maxFontSize: 14,),
+          SizedBox(height: 6,),
+          Container(
+            height: height.h,
+            decoration: BoxDecoration(
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.black12
+                ),
+                BoxShadow(
+                    color: Color(0xFFF6F2FF),
+                    blurRadius: 10,
+                    spreadRadius: -5
+                ),
+              ],
+              borderRadius: BorderRadius.circular(10.sp),
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(15.0, 0, 5.0 ,0),
+                child: TextFormField(
+                  autofocus: false,
+                  controller: passController2,
+                  obscureText: !_passwordVisible2,
+                  decoration: InputDecoration(
+                      hintText: 'Ulangi Password',
+                      border: InputBorder.none,
+                      suffixIcon: SizedBox(
+                        height: 10.h,
+                        child: IconButton(
+                          icon: Icon(
+                            _passwordVisible2 ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible2 = !_passwordVisible2;
+                            });
+                          },
+                        ),
+                      )
+                  ),
+                  style: TextStyle(fontSize: fontSize.sp),
+                ),
+              ),
+            ),
+          ),
         ],
       );
     }
@@ -80,11 +164,12 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
       ],
     );
     final alertDialogFailed = CupertinoAlertDialog(
-      title: const Text('Gagal Mengirimkan Kode'),
+      title: const Text('Password tidak sama'),
       content: SingleChildScrollView(
         child: ListBody(
           children: const <Widget>[
-            Text('silahkan masukkan ulang email anda'),
+            Text('password anda tidak sama'),
+            Text('masukkan password baru anda kembali'),
           ],
         ),
       ),
@@ -116,9 +201,9 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
         ),
       ],
     );
-    final sendButton = Container(
+    final saveButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      margin: EdgeInsets.fromLTRB(0.w, 0, 0.w, 0),
+      margin: EdgeInsets.fromLTRB(40.w, 0, 40.w, 0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF8253F0),
@@ -127,19 +212,31 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text('Kirimkan Kode', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+        child: const Text('Simpan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
         onPressed: () async {
-          var response = await forgetPass(emailController.text);
+          var response = await changeForgetPassword(widget.email, passController1.text, passController2.text);
           print(response);
-          if (response == 'Error'){
+          if (response == 'Password tidak sama'){
             showDialog<void> (
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
                   return alertDialogFailed;
                 } );
+          } else if (response == "Authentication credentials were not provided."){
+            showDialog<void> (
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return alertDialogNoAuth;
+                } );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => OTPCheckPage(email: emailController.text)));
+            showDialog<void> (
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return alertDialogSuccess;
+                } );
           }
         },
       ),
@@ -151,7 +248,7 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
         automaticallyImplyLeading: true,
         centerTitle: false,
         title: Text(
-            'Lupa Password',
+            'Ubah Password',
             style: GoogleFonts.poppins(
               color: Colors.white,
               fontWeight: FontWeight.w500,)
@@ -183,51 +280,36 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
                   child: Card(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
                     child: Padding(
-                      padding: EdgeInsets.only(left: 30.0.w, top: 0.0, right: 30.0.w),
+                      padding: EdgeInsets.all(30.w),
                       child: Column(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 40.h),
-                              const AutoSizeText("Reset Password",
-                                maxFontSize: 35,
-                                minFontSize: 25,
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 0.h),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(0.0, 0, 25.0, 0),
-                                child: AutoSizeText("Masukkan email yang terdaftar pada akun anda untuk melakukan reset password anda",
-                                  textAlign: TextAlign.left,
-                                  maxLines: 3,
-                                  maxFontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 25.h),
                           if (MediaQuery
                               .of(context)
                               .size
                               .width <= 360)...[
-                            EmailField(90, 20)
+                            PasswordField(90, 20)
                           ] else
                             ...[
-                              EmailField(60, 16)
+                              PasswordField(60, 16)
                             ],
-                          SizedBox(height: 30.h),
-                          sendButton,
-                          SizedBox(height: 20.h)
+                          SizedBox(height: 20.h),
+                          if (MediaQuery
+                              .of(context)
+                              .size
+                              .width <= 360)...[
+                            RepeatPasswordField(85, 20)
+                          ] else
+                            ...[
+                              RepeatPasswordField(60, 16)
+                            ],
+                          SizedBox(height: 20.h,)
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
+              saveButton
             ],
           ),
         ),
@@ -235,5 +317,3 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
     );
   }
 }
-
-

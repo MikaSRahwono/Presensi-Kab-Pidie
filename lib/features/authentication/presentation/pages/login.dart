@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           child: const AutoSizeText('Login', maxFontSize: 18,),
           onPressed: () async {
-            var response = await dataUser.fetchToken(
+            var response = await dataUser.attemptLogIn(
                 nipController.text, passController.text);
             print(response);
             if (response == 'Error'){

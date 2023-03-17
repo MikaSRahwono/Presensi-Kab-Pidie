@@ -281,17 +281,15 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                       padding: const EdgeInsets.only(left: 20.0, top: 0.0, right: 20.0),
                       child: Column(
                         children: [
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 5.h),
-                                child: Image.asset('resources/images/png/ResetPassword.png'),
-                              )),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 14.h),
+                            child: Image.asset('resources/images/png/ResetPassword.png'),
+                          ),
                           Column(
                             children: [
                               const AutoSizeText("Ubah Password",
                                 maxFontSize: 30,
-                                minFontSize: 20,
+                                minFontSize: 22,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -315,7 +313,7 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                             PasswordField(90, 20)
                           ] else
                             ...[
-                              PasswordField(60, 16)
+                              PasswordField(55, 16)
                             ],
                           SizedBox(height: 20.h),
                           if (MediaQuery
@@ -325,7 +323,7 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                             RepeatPasswordField(85, 20)
                           ] else
                             ...[
-                              RepeatPasswordField(60, 16)
+                              RepeatPasswordField(55, 16)
                             ],
                           SizedBox(height: 30.h)
                         ],

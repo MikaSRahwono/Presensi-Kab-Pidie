@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presensi_mobileapp/features/profile/presentation/_pages.dart';
 
 import '../../profile/presentation/profile.dart';
 import '../../authentication/presentation/pages/_pages.dart';
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChangePasswordPage()));
         },
         label: Text("Profile"), icon: Icon(Icons.person
       ),

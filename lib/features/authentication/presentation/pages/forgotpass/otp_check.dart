@@ -154,7 +154,7 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
                   return alertDialogFailed;
                 } );
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChangePasswordPage(email: widget.email)));
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChangePasswordForgotPage(email: widget.email)));
           }
         },
       ),
