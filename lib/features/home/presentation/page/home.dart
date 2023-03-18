@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () => {
                 print('masuk'),
                 displayDialog(
-                context, "Top Up Saldo", "Top up saldo berhasil!")
+                context)
 
                 },
                 child: Container(
@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void displayDialog(context, title, text) => showDialog(
+  void displayDialog(context) => showDialog(
     context: context,
     builder: (context) => Dialog(
       child: Container(
