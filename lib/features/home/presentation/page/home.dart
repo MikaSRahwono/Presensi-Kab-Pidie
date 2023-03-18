@@ -12,15 +12,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // TimeOfDay now = TimeOfDay.now();
-    // String formattedTime = DateFormat.Hm().format(DateTime.now());
-    Stream<DateTime> _clockStream;
-
-    @override
-    void initState() {
-      super.initState();
-      _clockStream = Stream.periodic(Duration(seconds: 1), (_) => DateTime.now());
-    }
 
     final icon = "icon-absensi-1";
     return Scaffold(
@@ -122,17 +113,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-            // StreamBuilder<DateTime>(
-            //   stream: _clockStream,
-            //   builder: (context, snapshot) {
-            //     final timeString = DateFormat('HH:mm:ss').format(snapshot.data ?? DateTime.now());
-            //     return Text(
-            //       timeString,
-            //       style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            //     );
-            //   },
-            // ),
-
 
             Padding(
               padding: EdgeInsets.only(top: 16.0.h, left: 32.w, right: 32.w),
@@ -167,12 +147,6 @@ class _HomePageState extends State<HomePage> {
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
                     ),),
-                    StreamBuilder(
-                      stream: Stream.periodic(const Duration(seconds: 1)),
-                      builder: (context, snapshot) {
-                        return Text(DateFormat('MM/dd/yyyy hh:mm:ss').format(DateTime.now()));
-                      },
-                    ),
                     SizedBox(height: 12.h,),
                     Text("- - : - -", style: TextStyle(
                       fontSize: 28.sp,
@@ -259,12 +233,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 48.h,),
-            AutoSizeText("08.06",
-              maxFontSize: 75,
-                style: TextStyle(
-                    fontSize: 75.sp,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Poppins")
+            StreamBuilder(
+              stream: Stream.periodic(const Duration(seconds: 1)),
+              builder: (context, snapshot) {
+                return AutoSizeText(
+                    DateFormat('hh:mm').format(DateTime.now()),
+                    maxFontSize: 75,
+                    style: TextStyle(
+                        fontSize: 75.sp,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Poppins")
+                );
+              },
             ),
             Padding(
               padding: EdgeInsets.only(top: 24.0.h, left: 32.w, right: 32.w),
@@ -324,13 +304,6 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.w400,
                                   fontFamily: "Poppins")
                           ),
-                          // HelperBigText(
-                          //   text: "Tidak Sekarang",
-                          //   color: Colors.white,
-                          //   maxLines: 1,
-                          //   size: 18.sp,
-                          //   fontWeight: FontWeight.w700,
-                          // ),
                         ),
                       ),
                     ),
@@ -362,13 +335,6 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.w400,
                                   fontFamily: "Poppins")
                           ),
-                          // HelperBigText(
-                          //   text: "Masuk",
-                          //   color: Colors.white,
-                          //   maxLines: 1,
-                          //   size: 18.sp,
-                          //   fontWeight: FontWeight.w700,
-                          // ),
                         ),
                       ),
                     ),
