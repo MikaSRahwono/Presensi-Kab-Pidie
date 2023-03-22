@@ -49,7 +49,7 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-  Future<http.Response> getRequestWithJWT(String url,Map<String, String> encodeBody) async {
+  Future<http.Response> getRequestWithJWT(String url) async {
     var res = await http.get(
       Uri.parse(url),
       headers: <String, String>{

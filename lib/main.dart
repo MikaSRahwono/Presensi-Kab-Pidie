@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:presensi_mobileapp/main_page.dart';
 import 'package:provider/provider.dart';
+import 'features/authentication/presentation/pages/_pages.dart';
 import 'features/authentication/presentation/provider/user_provider.dart';
 
 void main() {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MainPage(startIndex: 0),
+      home: LoginPage(),
     );
   }
 }

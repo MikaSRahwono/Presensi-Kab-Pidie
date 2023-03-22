@@ -15,6 +15,7 @@ class _ProfilePageState extends State<ProfilePage> {
       extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: true,
+
         title: Text(
           'Profile',
           style: GoogleFonts.poppins(
