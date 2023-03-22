@@ -36,6 +36,43 @@ class UserProvider with ChangeNotifier {
     return firstLogin;
   }
 
+  Future<http.Response> postRequestWithJWT(String url,Map<String, String> encodeBody) async {
+    var res = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json",
+        "Authorization": "Bearer $jwtToken",
+      },
+      body: jsonEncode(encodeBody),
+    );
+    return res;
+  }
+
+  Future<http.Response> getRequestWithJWT(String url,Map<String, String> encodeBody) async {
+    var res = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json",
+        "Authorization": "Bearer $jwtToken",
+      },
+    );
+    return res;
+  }
+
+  Future<http.Response> deleteRequestWithJWT(String url,Map<String, String> encodeBody) async {
+    var res = await http.delete(
+      Uri.parse(url),
+      headers: <String, String>{
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json",
+        "Authorization": "Bearer $jwtToken",
+      },
+    );
+    return res;
+  }
+
 
   // Future<http.Response> attemptLogIn(String nip, String password) async {
   //   var res = await http.post(
