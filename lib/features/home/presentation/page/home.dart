@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:presensi_mobileapp/features/profile/presentation/_pages.dart';
-
-import '../../profile/presentation/profile.dart';
-import '../../authentication/presentation/pages/_pages.dart';
-
+part of '_pages.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -30,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChangePasswordPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
         },
         label: Text("Profile"), icon: Icon(Icons.person
       ),

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'features/home/presentation/home.dart';
+import 'features/home/presentation/page/_pages.dart';
 import 'features/profile/presentation/profile.dart';
 
 
