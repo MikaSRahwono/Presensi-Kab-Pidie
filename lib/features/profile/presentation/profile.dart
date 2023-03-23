@@ -23,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: true,
+
         title: Text(
           'Profile',
           style: GoogleFonts.poppins(

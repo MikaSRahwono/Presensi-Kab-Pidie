@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:presensi_mobileapp/main_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:presensi_mobileapp/features/authentication/presentation/provider/_provider.dart';
+
+import 'features/authentication/presentation/provider/_provider.dart';
+
 
 void main() {
   runApp(MultiProvider(
