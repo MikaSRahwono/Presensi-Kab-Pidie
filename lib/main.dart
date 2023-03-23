@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:presensi_mobileapp/main_page.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:provider/provider.dart';
+import 'package:presensi_mobileapp/features/authentication/presentation/provider/_provider.dart';
 
+void main() {
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +26,7 @@ class MyApp extends StatelessWidget {
         title: 'Presensi',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          fontFamily: 'poppins'
         ),
         home: const MainPage(startIndex: 0),
       ),

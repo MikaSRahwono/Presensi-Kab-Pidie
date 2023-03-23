@@ -32,7 +32,6 @@ class _MainPageState extends State<MainPage> {
     _currentIndex = widget.startIndex;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +42,6 @@ class _MainPageState extends State<MainPage> {
 
     );
   }
-
-
-
 
   void onTabTapped(int index) {
     if (mounted) setState(() {
