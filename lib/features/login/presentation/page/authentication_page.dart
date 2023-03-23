@@ -1,6 +1,5 @@
 part of '_pages.dart';
 
-
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key? key}) : super(key: key);
 

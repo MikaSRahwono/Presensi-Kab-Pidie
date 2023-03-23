@@ -1,10 +1,7 @@
-// To parse this JSON data, do
-//
-//     final jwtResponse = jwtResponseFromJson(jsonString);
-
 part of '_model.dart';
 
-JwtResponse jwtResponseFromJson(String str) => JwtResponse.fromJson(json.decode(str));
+JwtResponse jwtResponseFromJson(String str) =>
+    JwtResponse.fromJson(json.decode(str));
 
 String jwtResponseToJson(JwtResponse data) => json.encode(data.toJson());
 
@@ -20,16 +17,16 @@ class JwtResponse {
   bool firstLogin;
 
   factory JwtResponse.fromJson(Map<String, dynamic> json) => JwtResponse(
-    message: json["message"],
-    tokens: Tokens.fromJson(json["tokens"]),
-    firstLogin: json["first_login"],
-  );
+        message: json["message"],
+        tokens: Tokens.fromJson(json["tokens"]),
+        firstLogin: json["first_login"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "message": message,
-    "tokens": tokens.toJson(),
-    "first_login": firstLogin,
-  };
+        "message": message,
+        "tokens": tokens.toJson(),
+        "first_login": firstLogin,
+      };
 }
 
 class Tokens {
@@ -42,12 +39,12 @@ class Tokens {
   String refresh;
 
   factory Tokens.fromJson(Map<String, dynamic> json) => Tokens(
-    access: json["access"],
-    refresh: json["refresh"],
-  );
+        access: json["access"],
+        refresh: json["refresh"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "access": access,
-    "refresh": refresh,
-  };
+        "access": access,
+        "refresh": refresh,
+      };
 }

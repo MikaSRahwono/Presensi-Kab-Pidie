@@ -8,12 +8,15 @@ class HelperBigText extends StatelessWidget {
   FontWeight fontWeight;
   TextOverflow overFlow;
 
-  HelperBigText({Key? key, this.color = const Color(0xFF332d2b),
-    required this.text,
-    this.maxLines = 1,
-    this.size = 12,
-    this.fontWeight = FontWeight.w400,
-    this.overFlow=TextOverflow.ellipsis }) : super(key: key);
+  HelperBigText(
+      {Key? key,
+      this.color = const Color(0xFF332d2b),
+      required this.text,
+      this.maxLines = 1,
+      this.size = 12,
+      this.fontWeight = FontWeight.w400,
+      this.overFlow = TextOverflow.ellipsis})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +28,7 @@ class HelperBigText extends StatelessWidget {
           fontFamily: 'Poppins',
           color: color,
           fontSize: size,
-          fontWeight: fontWeight
-      ),
+          fontWeight: fontWeight),
     );
   }
 }

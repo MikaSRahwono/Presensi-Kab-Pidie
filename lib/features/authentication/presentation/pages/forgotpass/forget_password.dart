@@ -26,40 +26,42 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoSizeText("Email", maxFontSize: 14,),
-          SizedBox(height: 6,),
+          AutoSizeText(
+            "Email",
+            maxFontSize: 14,
+          ),
+          SizedBox(
+            height: 6,
+          ),
           Container(
             height: height.h,
             decoration: BoxDecoration(
               boxShadow: const [
+                BoxShadow(color: Colors.black12),
                 BoxShadow(
-                    color: Colors.black12
-                ),
-                BoxShadow(
-                    color: Color(0xFFF6F2FF),
-                    blurRadius: 10,
-                    spreadRadius: -5
-                ),
+                    color: Color(0xFFF6F2FF), blurRadius: 10, spreadRadius: -5),
               ],
               borderRadius: BorderRadius.circular(10.sp),
             ),
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(15.0, 0, 5.0 ,0),
+                padding: const EdgeInsets.fromLTRB(15.0, 0, 5.0, 0),
                 child: TextFormField(
                   autofocus: false,
                   controller: emailController,
                   decoration: InputDecoration(
-                      hintText: 'Email',
-                      border: InputBorder.none,
-                        ),
-                  style: TextStyle(fontSize: fontSize.sp),),
+                    hintText: 'Email',
+                    border: InputBorder.none,
+                  ),
+                  style: TextStyle(fontSize: fontSize.sp),
                 ),
               ),
             ),
+          ),
         ],
       );
     }
+
     final alertDialogSuccess = CupertinoAlertDialog(
       title: const Text('Login Ulang'),
       content: SingleChildScrollView(
@@ -74,7 +76,10 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
         TextButton(
           child: const Text('oke'),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => LoginPage()));
           },
         ),
       ],
@@ -111,7 +116,10 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
         TextButton(
           child: const Text('oke'),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => LoginPage()));
           },
         ),
       ],
@@ -127,19 +135,26 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text('Kirimkan Kode', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+        child: const Text(
+          'Kirimkan Kode',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
         onPressed: () async {
           var response = await forgetPass(emailController.text);
           print(response);
-          if (response == 'Error'){
-            showDialog<void> (
+          if (response == 'Error') {
+            showDialog<void>(
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
                   return alertDialogFailed;
-                } );
+                });
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => OTPCheckPage(email: emailController.text)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        OTPCheckPage(email: emailController.text)));
           }
         },
       ),
@@ -150,12 +165,11 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         centerTitle: false,
-        title: Text(
-            'Lupa Password',
+        title: Text('Lupa Password',
             style: GoogleFonts.poppins(
               color: Colors.white,
-              fontWeight: FontWeight.w500,)
-        ),
+              fontWeight: FontWeight.w500,
+            )),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined),
           color: Colors.white,
@@ -172,25 +186,23 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
             children: [
               Center(
                 child: Container(
-                  decoration: const BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10
-                        )
-                      ]
-                  ),
+                  decoration: const BoxDecoration(boxShadow: [
+                    BoxShadow(color: Colors.black12, blurRadius: 10)
+                  ]),
                   child: Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.sp)),
                     child: Padding(
-                      padding: EdgeInsets.only(left: 30.0.w, top: 0.0, right: 30.0.w),
+                      padding: EdgeInsets.only(
+                          left: 30.0.w, top: 0.0, right: 30.0.w),
                       child: Column(
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 40.h),
-                              const AutoSizeText("Reset Password",
+                              const AutoSizeText(
+                                "Reset Password",
                                 maxFontSize: 35,
                                 minFontSize: 25,
                                 textAlign: TextAlign.start,
@@ -201,7 +213,8 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
                               SizedBox(height: 0.h),
                               const Padding(
                                 padding: EdgeInsets.fromLTRB(0.0, 0, 25.0, 0),
-                                child: AutoSizeText("Masukkan email yang terdaftar pada akun anda untuk melakukan reset password anda",
+                                child: AutoSizeText(
+                                  "Masukkan email yang terdaftar pada akun anda untuk melakukan reset password anda",
                                   textAlign: TextAlign.left,
                                   maxLines: 3,
                                   maxFontSize: 14,
@@ -210,15 +223,11 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
                             ],
                           ),
                           SizedBox(height: 25.h),
-                          if (MediaQuery
-                              .of(context)
-                              .size
-                              .width <= 360)...[
+                          if (MediaQuery.of(context).size.width <= 360) ...[
                             EmailField(90, 20)
-                          ] else
-                            ...[
-                              EmailField(55, 16)
-                            ],
+                          ] else ...[
+                            EmailField(55, 16)
+                          ],
                           SizedBox(height: 30.h),
                           sendButton,
                           SizedBox(height: 20.h)
@@ -235,5 +244,3 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
     );
   }
 }
-
-

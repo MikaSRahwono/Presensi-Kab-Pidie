@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import 'features/authentication/presentation/provider/_provider.dart';
 
-
 void main() {
   runApp(MultiProvider(
     providers: [
@@ -22,17 +21,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      builder:(context, child) => MaterialApp(
+      builder: (context, child) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Presensi',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          fontFamily: 'poppins'
-        ),
+        theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'poppins'),
         home: const MainPage(startIndex: 0),
       ),
       designSize: const Size(390, 844),
     );
   }
 }
-

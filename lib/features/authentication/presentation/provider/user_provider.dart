@@ -28,7 +28,6 @@ class UserProvider with ChangeNotifier {
     return flag;
   }
 
-
   String? getAccessToken() {
     return jwtToken;
   }
@@ -37,12 +36,12 @@ class UserProvider with ChangeNotifier {
     return refreshToken;
   }
 
-
   bool? getFirstLogin() {
     return firstLogin;
   }
 
-  Future<http.Response> postRequestWithJWT(String url,Map<String, String> encodeBody) async {
+  Future<http.Response> postRequestWithJWT(
+      String url, Map<String, String> encodeBody) async {
     var res = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -67,7 +66,8 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-  Future<http.Response> deleteRequestWithJWT(String url,Map<String, String> encodeBody) async {
+  Future<http.Response> deleteRequestWithJWT(
+      String url, Map<String, String> encodeBody) async {
     var res = await http.delete(
       Uri.parse(url),
       headers: <String, String>{
@@ -79,7 +79,6 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
@@ -88,8 +87,7 @@ class UserProvider with ChangeNotifier {
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
       },
-      body: jsonEncode(
-          <String, String>{'nip': nip, 'password': password}),
+      body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
     );
     JwtResponse response = jwtResponseFromJson(res.body);
     jwtToken = response.tokens.access;
@@ -105,17 +103,14 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-  Future<String> forceChangePass (pass, confPass) async {
+  Future<String> forceChangePass(pass, confPass) async {
     var token = getAccessToken() ?? "";
-    var headers = {
-      'Authorization': 'Bearer ' + token
-    };
+    var headers = {'Authorization': 'Bearer ' + token};
     var request = http.MultipartRequest(
-        'POST', Uri.parse('https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
-    request.fields.addAll({
-      'password': pass,
-      'confirm_password': confPass
-    });
+        'POST',
+        Uri.parse(
+            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+    request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
 
@@ -126,27 +121,24 @@ class UserProvider with ChangeNotifier {
     print(response.statusCode);
 
     if (resMap['status'] == "Success") {
-      return(await stringResponse);
-    }
-    else if (resMap['detail'] == "Authentication credentials were not provided."){
-      return("Authentication credentials were not provided.");
+      return (await stringResponse);
+    } else if (resMap['detail'] ==
+        "Authentication credentials were not provided.") {
+      return ("Authentication credentials were not provided.");
     } else {
-      return("Password tidak sama");
+      return ("Password tidak sama");
     }
   }
 
-  Future<String> changePassword (prevPass, pass, confPass) async {
+  Future<String> changePassword(prevPass, pass, confPass) async {
     // TODO: Implement Change Password
     var token = getAccessToken() ?? "";
-    var headers = {
-      'Authorization': 'Bearer ' + token
-    };
+    var headers = {'Authorization': 'Bearer ' + token};
     var request = http.MultipartRequest(
-        'POST', Uri.parse('https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
-    request.fields.addAll({
-      'password': pass,
-      'confirm_password': confPass
-    });
+        'POST',
+        Uri.parse(
+            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+    request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
 
@@ -157,13 +149,12 @@ class UserProvider with ChangeNotifier {
     print(response.statusCode);
 
     if (resMap['status'] == "Success") {
-      return(await stringResponse);
-    }
-    else if (resMap['detail'] == "Authentication credentials were not provided."){
-      return("Authentication credentials were not provided.");
+      return (await stringResponse);
+    } else if (resMap['detail'] ==
+        "Authentication credentials were not provided.") {
+      return ("Authentication credentials were not provided.");
     } else {
-      return("Password tidak sama");
+      return ("Password tidak sama");
     }
   }
-
 }
