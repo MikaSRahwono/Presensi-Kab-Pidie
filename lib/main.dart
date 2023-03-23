@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:presensi_mobileapp/main_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:presensi_mobileapp/features/authentication/presentation/provider/_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,13 +19,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Presensi',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ScreenUtilInit(
+      builder:(context, child) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Presensi',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: 'poppins'
+        ),
+        home: const MainPage(startIndex: 0),
       ),
-      home: const MainPage(startIndex: 0),
+      designSize: const Size(390, 844),
     );
   }
 }

@@ -18,8 +18,6 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-
-
 class _MainPageState extends State<MainPage> {
   final _children = <Widget>[
     const HomePage(),
@@ -34,7 +32,6 @@ class _MainPageState extends State<MainPage> {
     _currentIndex = widget.startIndex;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,9 +42,6 @@ class _MainPageState extends State<MainPage> {
 
     );
   }
-
-
-
 
   void onTabTapped(int index) {
     if (mounted) setState(() {

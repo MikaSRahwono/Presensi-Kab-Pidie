@@ -15,7 +15,13 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'dart:async';
 
 
-import '../../authentication/presentation/pages/_pages.dart';
-import './../../authentication/presentation/provider/_provider.dart';
+import '../../../home/presentation/page/_pages.dart';
+import './../provider/_provider.dart';
 
-part 'change_password.dart';
+part 'login.dart';
+part 'first_pass_reset.dart';
+part 'comingsoon.dart';
+part 'forgotpass/forget_password.dart';
+part 'forgotpass/otp_check.dart';
+part 'forgotpass/change_password.dart';
+part 'forgotpass/methods.dart';
