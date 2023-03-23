@@ -1,27 +1,31 @@
 part of '_pages.dart';
 
-class FirstPassResetPage extends StatefulWidget {
-  const FirstPassResetPage({Key? key}) : super(key: key);
+class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<FirstPassResetPage> createState() => _FirstPassResetPageState();
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
-class _FirstPassResetPageState extends State<FirstPassResetPage> {
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  bool _prevpasswordVisible = true;
   bool _passwordVisible1 = true;
   bool _passwordVisible2 = true;
 
+  final prevpassController = TextEditingController();
   final passController1 = TextEditingController();
   final passController2 = TextEditingController();
 
   @override
   void initState() {
+    _prevpasswordVisible = false;
     _passwordVisible1 = false;
     _passwordVisible2 = false;
   }
 
   @override
   void dispose() {
+    prevpassController.dispose();
     passController1.dispose();
     passController2.dispose();
     super.dispose();
@@ -34,6 +38,60 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
     // final dataUser = Provider.of<UserProvider>(context);
     // Step 2: Jangan membuat widgets menjadi const
     // Step 3: dataUser.getFirstLogin()!.toString() ?? ''
+    Widget PreviousPasswordField(int height, int fontSize) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoSizeText("Password Sebelumnya", maxFontSize: 14,),
+          SizedBox(height: 6,),
+          Container(
+            height: height.h,
+            decoration: BoxDecoration(
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.black12
+                ),
+                BoxShadow(
+                    color: Color(0xFFF6F2FF),
+                    blurRadius: 10,
+                    spreadRadius: -5
+                ),
+              ],
+              borderRadius: BorderRadius.circular(10.sp),
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(15.0, 0, 5.0 ,0),
+                child: TextFormField(
+                  autofocus: false,
+                  controller: prevpassController,
+                  obscureText: !_prevpasswordVisible,
+                  decoration: InputDecoration(
+                      hintText: 'Password',
+                      border: InputBorder.none,
+                      suffixIcon: SizedBox(
+                        height: 10.h,
+                        child: IconButton(
+                          icon: Icon(
+                              _prevpasswordVisible ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.black
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _prevpasswordVisible = !_prevpasswordVisible;
+                            });
+                          },
+                        ),
+                      )
+                  ),
+                  style: TextStyle(fontSize: fontSize.sp),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     Widget PasswordField(int height, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,19 +202,19 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
     }
     final alertDialogSuccess = CupertinoAlertDialog(
       title: const Text('Login Ulang'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: const <Widget>[
-              Text('lakukan login ulang'),
-              Text('dengan password baru anda'),
-            ],
-            ),
-          ),
-          actions: <Widget>[
-          TextButton(
-            child: const Text('oke'),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('lakukan login ulang'),
+            Text('dengan password baru anda'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('oke'),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
           },
         ),
       ],
@@ -212,15 +270,15 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
         ),
         child: const Text('Simpan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
         onPressed: () async {
-          var response = await dataUser.forceChangePass(passController1.text, passController2.text);
+          var response = await dataUser.changePassword(prevpassController.text, passController1.text, passController2.text);
           print(response);
           if (response == 'Password tidak sama'){
             showDialog<void> (
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
-              return alertDialogFailed;
-            } );
+                  return alertDialogFailed;
+                } );
           } else if (response == "Authentication credentials were not provided."){
             showDialog<void> (
                 context: context,
@@ -246,8 +304,8 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
         automaticallyImplyLeading: true,
         centerTitle: false,
         title: Text(
-          'Ubah Password',
-          style: GoogleFonts.poppins(
+            'Ubah Password',
+            style: GoogleFonts.poppins(
               color: Colors.white,
               fontWeight: FontWeight.w500,)
         ),
@@ -278,34 +336,19 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                   child: Card(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0, top: 0.0, right: 20.0),
+                      padding: EdgeInsets.all(30.w),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 14.h),
-                            child: Image.asset('resources/images/png/ResetPassword.png'),
-                          ),
-                          Column(
-                            children: [
-                              const AutoSizeText("Ubah Password",
-                                maxFontSize: 30,
-                                minFontSize: 22,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10.h),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
-                                child: AutoSizeText("Untuk melanjutkan pemakaian aplikasi presensi, lakukan ubah password terlebih dahulu!",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 3,
-                                  maxFontSize: 14,
-                                ),
-                              ),
+                          if (MediaQuery
+                              .of(context)
+                              .size
+                              .width <= 360)...[
+                            PreviousPasswordField(90, 20)
+                          ] else
+                            ...[
+                              PreviousPasswordField(55, 16)
                             ],
-                          ),
-                          SizedBox(height: 25.h),
+                          SizedBox(height: 20.h),
                           if (MediaQuery
                               .of(context)
                               .size
@@ -325,7 +368,7 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                             ...[
                               RepeatPasswordField(55, 16)
                             ],
-                          SizedBox(height: 30.h)
+                          SizedBox(height: 20.h,)
                         ],
                       ),
                     ),

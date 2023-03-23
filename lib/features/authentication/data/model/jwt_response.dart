@@ -2,7 +2,7 @@
 //
 //     final jwtResponse = jwtResponseFromJson(jsonString);
 
-import 'dart:convert';
+part of '_model.dart';
 
 JwtResponse jwtResponseFromJson(String str) => JwtResponse.fromJson(json.decode(str));
 

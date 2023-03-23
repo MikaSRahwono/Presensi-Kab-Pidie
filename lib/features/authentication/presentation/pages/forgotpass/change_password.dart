@@ -1,13 +1,15 @@
-part of '_pages.dart';
+part of '../_pages.dart';
 
-class FirstPassResetPage extends StatefulWidget {
-  const FirstPassResetPage({Key? key}) : super(key: key);
+class ChangePasswordForgotPage extends StatefulWidget {
+  const ChangePasswordForgotPage({Key? key, required this.email}) : super(key: key);
+
+  final String email;
 
   @override
-  State<FirstPassResetPage> createState() => _FirstPassResetPageState();
+  State<ChangePasswordForgotPage> createState() => _ChangePasswordForgotPageState();
 }
 
-class _FirstPassResetPageState extends State<FirstPassResetPage> {
+class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
   bool _passwordVisible1 = true;
   bool _passwordVisible2 = true;
 
@@ -144,19 +146,19 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
     }
     final alertDialogSuccess = CupertinoAlertDialog(
       title: const Text('Login Ulang'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: const <Widget>[
-              Text('lakukan login ulang'),
-              Text('dengan password baru anda'),
-            ],
-            ),
-          ),
-          actions: <Widget>[
-          TextButton(
-            child: const Text('oke'),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('lakukan login ulang'),
+            Text('dengan password baru anda'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('oke'),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
           },
         ),
       ],
@@ -212,15 +214,15 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
         ),
         child: const Text('Simpan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
         onPressed: () async {
-          var response = await dataUser.forceChangePass(passController1.text, passController2.text);
+          var response = await changeForgetPassword(widget.email, passController1.text, passController2.text);
           print(response);
           if (response == 'Password tidak sama'){
             showDialog<void> (
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
-              return alertDialogFailed;
-            } );
+                  return alertDialogFailed;
+                } );
           } else if (response == "Authentication credentials were not provided."){
             showDialog<void> (
                 context: context,
@@ -246,8 +248,8 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
         automaticallyImplyLeading: true,
         centerTitle: false,
         title: Text(
-          'Ubah Password',
-          style: GoogleFonts.poppins(
+            'Ubah Password',
+            style: GoogleFonts.poppins(
               color: Colors.white,
               fontWeight: FontWeight.w500,)
         ),
@@ -278,34 +280,9 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                   child: Card(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0, top: 0.0, right: 20.0),
+                      padding: EdgeInsets.all(30.w),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 14.h),
-                            child: Image.asset('resources/images/png/ResetPassword.png'),
-                          ),
-                          Column(
-                            children: [
-                              const AutoSizeText("Ubah Password",
-                                maxFontSize: 30,
-                                minFontSize: 22,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10.h),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
-                                child: AutoSizeText("Untuk melanjutkan pemakaian aplikasi presensi, lakukan ubah password terlebih dahulu!",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 3,
-                                  maxFontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 25.h),
                           if (MediaQuery
                               .of(context)
                               .size
@@ -313,7 +290,7 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                             PasswordField(90, 20)
                           ] else
                             ...[
-                              PasswordField(55, 16)
+                              PasswordField(60, 16)
                             ],
                           SizedBox(height: 20.h),
                           if (MediaQuery
@@ -323,9 +300,9 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
                             RepeatPasswordField(85, 20)
                           ] else
                             ...[
-                              RepeatPasswordField(55, 16)
+                              RepeatPasswordField(60, 16)
                             ],
-                          SizedBox(height: 30.h)
+                          SizedBox(height: 20.h,)
                         ],
                       ),
                     ),

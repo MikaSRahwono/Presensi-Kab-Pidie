@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../authentication/presentation/provider/user_provider.dart';
-import '../../profile/presentation/profile.dart';
-import '../../authentication/presentation/pages/_pages.dart';
-
+part of '_pages.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,11 +10,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Provider.of<UserProvider>(context).getRequestWithJWT("https://randomfox.ca/floof/");
-  // }
   @override
   Widget build(BuildContext context) {
     // Step 1: panggil data user
@@ -63,34 +53,6 @@ class _HomePageState extends State<HomePage> {
                 // }
               },
             ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(
-            //       vertical: 20.0, horizontal: 40.0),
-            //   child: SingleChildScrollView(
-            //     child: FutureBuilder(
-            //         future: dataUser.getRequestWithJWT("https://randomfox.ca/floof/"),
-            //         builder: (context, AsyncSnapshot snapshot) {
-            //           if (snapshot.data == null) {
-            //             return Container(
-            //               child: Center(
-            //                   child: Text(
-            //                     "Loading...",
-            //                   )),
-            //             );
-            //           } else {
-            //             return Column(
-            //                 children: users.map((data) {
-            //                   return Column(
-            //                     children: [
-            //                       Text(data.link),
-            //                       Text(data.image),
-            //                     ],
-            //                   );
-            //                 }).toList());
-            //           }
-            //         }),
-            //   ),
-            // ),
           ],
         ),
       ),
