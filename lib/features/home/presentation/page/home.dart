@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
         },
         label: Text("Profile"), icon: Icon(Icons.person
       ),
