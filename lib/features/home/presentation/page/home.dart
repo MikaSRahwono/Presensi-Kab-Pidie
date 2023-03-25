@@ -15,10 +15,13 @@ class _HomePageState extends State<HomePage> {
   late Future<http.Response?> respData;
   bool _dinas = false;
   late String status = '';
+  late String clockin = '';
+  late String clokcOut = '';
   String lat = '';
   String longi = '';
   String _flag = '';
-  Map<String, String> encodeBody = {};
+  late Map<String, String> encodeBody = {};
+
 
   // @override
   // void initState() {
@@ -41,6 +44,12 @@ class _HomePageState extends State<HomePage> {
     }
     );
   }
+  @override
+  void dispose() {
+    // dispose any resources
+    super.dispose();
+  }
+
 
   @override
   void didChangeDependencies() {
@@ -202,21 +211,18 @@ class _HomePageState extends State<HomePage> {
                       // TODO:  Navigator to homepage using push replacement
 
 
-
-                      status = dataUser.getPresensi()?.status.toString() ?? '',
-
                       if (status == ""){
-                        onTapStatusAbsensi(context, "masuk"),
-                        print("masuk di display dialog awal"),
+
+
                         respData = dataUser.postRequestWithJWT("http://10.0.2.2:8000/presensi/", _encodeBody),
                         respData.then((response_) {
                           print(response_?.statusCode);
                           if (response_?.statusCode == 200){
+                            onTapStatusAbsensi(context, "masuk");
+                            dataUser.getData("http://10.0.2.2:8000/presensi/");
+                            Navigator.of(context,rootNavigator: true).pop();
                             dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
                             onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
-
-                            print("ini adalah flag absensi di dalam if: " + dataUser.flagAbsensi.toString());
-                            Navigator.pop(context);
                           }
                           else {
                             // Error response
@@ -224,15 +230,18 @@ class _HomePageState extends State<HomePage> {
                           }
                         }
 
-                        )},
-                      if (status == "masuk"){
-                        onTapStatusAbsensi(context, "keluar"),
+                        )
+                      }
+                      else if (status == "masuk"){
                       respData = dataUser.putRequestWithJWT("http://10.0.2.2:8000/presensi/", _encodeBody),
                         respData.then((response_) {
                           if (response_?.statusCode == 200){
+                            onTapStatusAbsensi(context, "keluar");
+                            dataUser.getData("http://10.0.2.2:8000/presensi/");
+                            Navigator.of(context,rootNavigator: true).pop();
                             dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
-                            onTapClockOut(context, DateFormat('hh:mm').format(DateTime.now()));
-                            Navigator.pop(context);
+                            onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+
                           }
 
                           else {
@@ -241,9 +250,11 @@ class _HomePageState extends State<HomePage> {
                           }
                         }
 
-                        )
-                      },
+                        ),
 
+
+                      },
+                      // Navigator.pop(context),
                     },
                     child: Container(
                       width: 128.w,
@@ -282,13 +293,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAbsensiContent(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
-    String _clockIn = dataUser.getClockIn().toString() ?? '- - : - -';
-    String _clockOut = dataUser.getClockOut().toString() ?? '- - : - -';
-    // print(_flag);
-    // print(_clockIn);
-    // print(_clockOut);
-    // print("flag status" + _flag!);
-    print("ini flag absensi " + status);
+    String _clockIn = dataUser.getPresensi()?.data.jamAbsensiMasuk ?? '- - : - -';
+    String _clockOut = dataUser.getPresensi()?.data.jamAbsensiKeluar ?? '- - : - -';
     switch (status) {
       case "masuk":
         return
@@ -369,7 +375,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(top:4.0.h,),
-                            child: Text("09.00", style: TextStyle(
+                            child: Text("17.00", style: TextStyle(
                               fontSize: 20.sp,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w700,
@@ -418,7 +424,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 12.h,),
-                      Text(_clockIn,
+                      Text(_clockIn.substring(0,5) ?? '',
                         style: TextStyle(
                           fontSize: 28.sp,
                           fontFamily: 'Poppins',
@@ -458,7 +464,43 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 32.h,),
+              SizedBox(height: 16.h,),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText("Sedang perjalanan dinas",
+                        maxFontSize: 16,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Color.fromRGBO(40, 34, 86, 1),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Poppins")
+                    ),
+                    Switch(
+                      value: _dinas,
+                      activeColor: Colors.redAccent,
+                      onChanged: (value) {
+                        setState(() {
+                          _dinas = value;
+                          if (_dinas) {
+                            _dinas = true;
+                            dataUser.setFlagDinas("Perjalanan Dinas");
+                            print(dataUser.getFlagDinas().toString());
+                          } else {
+                            _dinas = false;
+                            dataUser.setFlagDinas("");
+                            print(dataUser.getFlagDinas().toString());
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.h,),
               Center(
                 child: InkWell(
                   onTap: () => {
@@ -471,7 +513,7 @@ class _HomePageState extends State<HomePage> {
                     encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
                     encodeBody['latitude'] = lat,
                     encodeBody['longitude'] = longi,
-                    encodeBody['status'] = '',
+                    encodeBody['status'] = dataUser.flagDinas!,
                     displayDialog(
                         context, "Anda yakin ingin absen keluar?", "iya, keluar!", dataUser,  encodeBody)
 
@@ -590,7 +632,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(top:4.0.h,),
-                            child: Text("09.00",
+                            child: Text("17.00",
                               style: TextStyle(
                                 fontSize: 20.sp,
                                 fontFamily: 'Poppins',
@@ -642,7 +684,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 12.h,),
-                      Text(_clockIn,
+                      Text(_clockIn.substring(0,5) ?? '',
                         style: TextStyle(
                           fontSize: 28.sp,
                           fontFamily: 'Poppins',
@@ -667,7 +709,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 12.h,),
                       Padding(
                         padding: EdgeInsets.only(top:4.0.h,),
-                        child: Text(_clockOut,
+                        child: Text(_clockOut.substring(0,5) ?? '',
                           style: TextStyle(
                             fontSize: 28.sp,
                             fontFamily: 'Poppins',
@@ -690,7 +732,43 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 32.h,),
+              SizedBox(height: 16.h,),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText("Sedang perjalanan dinas",
+                        maxFontSize: 16,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Color.fromRGBO(40, 34, 86, 1),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Poppins")
+                    ),
+                    Switch(
+                      activeColor: Colors.redAccent,
+                      value: _dinas,
+                      onChanged: (value) {
+                        setState(() {
+                          _dinas = value;
+                          if (_dinas) {
+                            _dinas = true;
+                            dataUser.setFlagDinas("Perjalanan Dinas");
+                            print(dataUser.getFlagDinas().toString());
+                          } else {
+                            _dinas = false;
+                            dataUser.setFlagDinas("");
+                            print(dataUser.getFlagDinas().toString());
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.h,),
               Center(
                 child: InkWell(
                   onTap: null,
@@ -806,7 +884,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top:4.0.h,),
-                          child: Text("09.00", style: TextStyle(
+                          child: Text("17.00", style: TextStyle(
                             fontSize: 20.sp,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w700,
@@ -864,24 +942,43 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 32.h,),
-            // Switch(
-            //   value: _dinas,
-            //   onChanged: (value) {
-            //     setState(() {
-            //       _dinas = value;
-            //       if (_dinas) {
-            //         _dinas = true;
-            //         dataUser.setFlagDinas("Perjalanan Dinas");
-            //       } else {
-            //         _dinas = false;
-            //         dataUser.setFlagDinas("");
-            //       }
-            //     });
-            //   },
-            // ),
-            // Text(_dinas ? "Perjalanan Dinas" : ""),
-            // Text(dataUser.getFlagDinas().toString()),
+            SizedBox(height: 16.h,),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AutoSizeText("Sedang perjalanan dinas",
+                      maxFontSize: 16,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Color.fromRGBO(40, 34, 86, 1),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Poppins")
+                  ),
+                  Switch(
+                    activeColor: Colors.redAccent,
+                    value: _dinas,
+                    onChanged: (value) {
+                      setState(() {
+                        _dinas = value;
+                        if (_dinas) {
+                          _dinas = true;
+                          dataUser.setFlagDinas("Perjalanan Dinas");
+                          print(dataUser.getFlagDinas().toString());
+                        } else {
+                          _dinas = false;
+                          dataUser.setFlagDinas("");
+                          print(dataUser.getFlagDinas().toString());
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16.h,),
             Center(
               child: InkWell(
                 onTap: () => {
@@ -899,7 +996,7 @@ class _HomePageState extends State<HomePage> {
                   encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
                   encodeBody['latitude'] = lat,
                   encodeBody['longitude'] = longi,
-                  encodeBody['status'] = '',
+                  encodeBody['status'] = dataUser.flagDinas!,
                   displayDialog(
                       context, "Anda yakin ingin absen masuk?", "iya, masuk!", dataUser,  encodeBody)
 
@@ -940,11 +1037,11 @@ class _HomePageState extends State<HomePage> {
         );
     }
   }
-  void onTapStatusAbsensi(BuildContext context, _flag) {
+  void onTapStatusAbsensi(BuildContext context, flagg) {
     final dataUser = Provider.of<UserProvider>(context, listen: false);
     if (mounted) {
       setState(() {
-        dataUser.presensiModel?.status = _flag;
+        status = flagg;
       });
     }
     }

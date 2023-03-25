@@ -206,6 +206,27 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
+  Future<Presensi?> getData(url) async {
+  var res = await http.get(
+    Uri.parse(url),
+    headers: <String, String>{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Accept": "application/json",
+    "Authorization": "Bearer $jwtToken",
+    },
+  );
+  if (res.statusCode == 200) {
+    presensiModel = Presensi.fromJson(jsonDecode(res.body));
+
+    notifyListeners();
+    return presensiModel;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to get user detail');
+  }
+}
+
   Future<String> forceChangePass(pass, confPass) async {
     var token = getAccessToken() ?? "";
     var headers = {'Authorization': 'Bearer ' + token};
