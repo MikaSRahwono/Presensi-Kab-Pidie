@@ -1,7 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:presensi_mobileapp/widgets/_widgets.dart';
+import 'package:provider/provider.dart';
+
+import '../../authentication/data/model/user_model.dart';
+import '../../authentication/presentation/provider/_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,13 +16,35 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  late Future<User?> dataFutureUser;
+
   // // diganti ga pake text nanti
   // TextEditingController instansiController = TextEditingController(text: "nama instansi");
   //
   // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+  }
+  // @override
+  // void dispose() {
+  //   // dispose any resources
+  //   super.dispose();
+  // }
+
+
+  @override
+  void didChangeDependencies() {
+    final dataUser = Provider.of<UserProvider>(context);
+    super.didChangeDependencies();
+    dataUser.getDataUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final dataUser = Provider.of<UserProvider>(context);
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -44,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.only(top: 40.0, left: 24, right: 24),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                   color: Colors.white,
                   border: Border.all(color: Colors.black12),
                   boxShadow: [
@@ -69,32 +96,32 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.only(top: 32.0),
                       child: Center(
                           child: HelperBigText(
-                        text: "Nama Pegawai",
-                        size: 18,
+                        text: dataUser.getUser()?.nama ?? "Nama Pegawai",
+                        size: 18.sp,
                         fontWeight: FontWeight.w700,
                       )),
                     ),
                     Center(
                         child: HelperBigText(
-                      text: "Nip",
-                      size: 18,
+                      text: dataUser.getUser()?.nip ?? "NIP",
+                      size: 18.sp,
                       fontWeight: FontWeight.w700,
                     )),
-                    SizedBox(height: 48),
+                    SizedBox(height: 48.h),
                     Padding(
                       padding: const EdgeInsets.only(left: 28.0),
                       child: HelperBigText(
                         text: "Instansi",
-                        size: 14,
+                        size: 14.sp,
                       ),
                     ),
                     Padding(
                         padding: const EdgeInsets.only(
                             left: 24.0, right: 24, top: 4),
                         child: Container(
-                          height: 44,
+                          height: 44.h,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
@@ -106,14 +133,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Icon(Icons.account_balance),
                                 SizedBox(
-                                  width: 24,
+                                  width: 24.w,
                                 ),
                                 Expanded(
                                     child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
-                                          "Nama Instansi dsadasdadasdadasdasdasdasdasdadas",
-                                          style: TextStyle(fontSize: 14),
+                                          dataUser.getUser()?.idInstansi ?? "Instansi",
+                                          style: TextStyle(fontSize: 14.sp),
                                         )))
                               ],
                             ),
@@ -132,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Container(
                           height: 44,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
@@ -144,14 +171,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Icon(Icons.account_balance),
                                 SizedBox(
-                                  width: 24,
+                                  width: 24.w,
                                 ),
                                 Expanded(
                                     child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
-                                          "Jabatan dsadasdadasdadasdasdasdasdasdadas",
-                                          style: TextStyle(fontSize: 14),
+                                          dataUser.getUser()?.idJabatan ?? "Jabatan",
+                                          style: TextStyle(fontSize: 14.sp),
                                         )))
                               ],
                             ),
@@ -161,16 +188,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.only(left: 28.0, top: 18),
                       child: HelperBigText(
                         text: "Tanggal Lahir",
-                        size: 14,
+                        size: 14.sp,
                       ),
                     ),
                     Padding(
                         padding: const EdgeInsets.only(
                             left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 44,
+                          height: 44.h,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
@@ -182,14 +209,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Icon(Icons.account_balance),
                                 SizedBox(
-                                  width: 24,
+                                  width: 24.w,
                                 ),
                                 Expanded(
                                     child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
-                                          "Tanggal lahir sdwdadsadawdasdadwa",
-                                          style: TextStyle(fontSize: 14),
+                                          "22/04/1979",
+                                          style: TextStyle(fontSize: 14.sp),
                                         )))
                               ],
                             ),
@@ -199,16 +226,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.only(left: 28.0, top: 18),
                       child: HelperBigText(
                         text: "Email",
-                        size: 14,
+                        size: 14.sp,
                       ),
                     ),
                     Padding(
                         padding: const EdgeInsets.only(
                             left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 44,
+                          height: 44.h,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
                             border: Border.all(color: Colors.black12),
                           ),
@@ -224,21 +251,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: Icon(Icons.account_balance),
                                 ),
                                 SizedBox(
-                                  width: 24,
+                                  width: 24.w,
                                 ),
                                 Expanded(
                                     child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
-                                          "Emaildsadasdadasdadasdasdasdasdasdadas",
-                                          style: TextStyle(fontSize: 14),
+                                          dataUser.getUser()?.email ?? "Email",
+                                          style: TextStyle(fontSize: 14.sp),
                                         )))
                               ],
                             ),
                           ),
                         )),
                     SizedBox(
-                      height: 104,
+                      height: 104.h,
                     )
                   ],
                 ),
@@ -251,7 +278,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(130, 83, 240, 1),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                      borderRadius: BorderRadius.circular(12.r), // <-- Radius
                     ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 10),
@@ -263,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: AutoSizeText("Ubah Password",
                       maxLines: 1,
                       style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                           fontFamily: "Poppins")),
                 ),
@@ -294,20 +321,20 @@ class _ProfilePageState extends State<ProfilePage> {
               padding:
                   const EdgeInsets.only(top: 12.0, right: 60.0, left: 60.0),
               child: Container(
-                width: 400,
-                height: 48,
+                width: 400.w,
+                height: 48.h,
                 child: ElevatedButton.icon(
                   icon: Icon(Icons.logout),
                   label: AutoSizeText("Logout",
                       maxLines: 1,
                       style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                           fontFamily: "Poppins")), //label text
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(168, 0, 0, 1),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12), // <-- Radius
+                        borderRadius: BorderRadius.circular(12.r), // <-- Radius
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 60, vertical: 12),
@@ -340,7 +367,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             SizedBox(
-              height: 40,
+              height: 40.h,
             )
           ],
         ),

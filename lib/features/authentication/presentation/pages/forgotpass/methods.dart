@@ -5,7 +5,7 @@ Future<String> forgetPass(email) async {
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'https://presensi-service-data-production.up.railway.app/account/req-change-pass'));
+          'http://10.0.2.2:8000/account/req-change-pass'));
   request.fields.addAll({'email': email});
   http.StreamedResponse response = await request.send();
   print(response);
@@ -20,7 +20,7 @@ Future<String> otpCheck(String email, String kode) async {
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'https://presensi-service-data-production.up.railway.app/account/check-otp'));
+          'http://10.0.2.2:8000/account/check-otp'));
   request.fields.addAll({'email': email, 'unique_code': kode});
   print(kode);
   print(email);
@@ -39,7 +39,7 @@ Future<String> changeForgetPassword(
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'https://presensi-service-data-production.up.railway.app/account/change-forget-pass'));
+          'http://10.0.2.2:8000/account/change-forget-pass'));
   request.fields
       .addAll({'email': email, 'password': pass, 'confirm_password': confPass});
 

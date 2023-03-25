@@ -7,4 +7,6 @@ import 'package:http/http.dart' as http;
 import '../../data/model/_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../data/model/user_model.dart';
+
 part 'user_provider.dart';

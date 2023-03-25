@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presensi_mobileapp/features/authentication/presentation/pages/_pages.dart';
 import 'package:presensi_mobileapp/main_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Presensi',
         theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'poppins'),
-        home: const MainPage(startIndex: 0),
+        home: LoginPage(),
       ),
       designSize: const Size(390, 844),
     );

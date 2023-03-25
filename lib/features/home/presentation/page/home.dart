@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => LoginPage()));
+                  builder: (BuildContext context) => ProfilePage()));
         },
         label: Text("Profile"),
         icon: Icon(Icons.person),

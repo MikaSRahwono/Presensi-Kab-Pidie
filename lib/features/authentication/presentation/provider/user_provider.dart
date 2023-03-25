@@ -11,6 +11,7 @@ class UserProvider with ChangeNotifier {
   String? jwtToken;
   String? refreshToken;
   bool firstLogin = true;
+  User? pegawaiModel;
 
   Future<String?> setAccessToken(String? token) async {
     await _storage.write(key: _tokenKey, value: token);
@@ -40,6 +41,9 @@ class UserProvider with ChangeNotifier {
     return firstLogin;
   }
 
+  User? getUser(){
+    return pegawaiModel;
+  }
   Future<http.Response> postRequestWithJWT(
       String url, Map<String, String> encodeBody) async {
     var res = await http.post(
@@ -79,10 +83,33 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
+  Future<User?> getDataUser() async {
+    print(jwtToken);
+    var res = await http.get(
+        Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
+        headers: <String, String>{"Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        });
+    if (res.statusCode == 200) {
+      print("masuk");
+      pegawaiModel = User.fromJson(jsonDecode(res.body));
+
+      notifyListeners();
+      return pegawaiModel;
+    } else {
+      print("gamasik");
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to get user detail');
+    }
+  }
+
+
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
-          'https://presensi-service-data-production.up.railway.app/account/login'),
+          'http://10.0.2.2:8000/account/login'),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -109,7 +136,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+            'http://10.0.2.2:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
@@ -137,7 +164,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+            'http://10.0.2.2:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
