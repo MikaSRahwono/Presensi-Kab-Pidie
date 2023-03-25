@@ -82,25 +82,27 @@ class UserProvider with ChangeNotifier {
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
-          'https://presensi-service-data-production.up.railway.app/account/login'),
+          'http://127.0.0.1:8000/account/login'),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
       },
       body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
     );
-    JwtResponse response = jwtResponseFromJson(res.body);
-    jwtToken = response.tokens.access;
-    refreshToken = response.tokens.refresh;
-    firstLogin = response.firstLogin;
-    print(jwtToken);
-    print(refreshToken);
-    print(firstLogin);
-    await setAccessToken(jwtToken);
-    await setFirstLogin(firstLogin);
-    await setRefreshToken(refreshToken);
-    notifyListeners();
-    return res;
+    if (res.statusCode == 200){
+      JwtResponse response = jwtResponseFromJson(res.body);
+      jwtToken = response.tokens.access;
+      refreshToken = response.tokens.refresh;
+      firstLogin = response.firstLogin;
+      await setAccessToken(jwtToken);
+      await setFirstLogin(firstLogin);
+      await setRefreshToken(refreshToken);
+      notifyListeners();
+      return res;
+    }
+    else {
+      return res;
+    }
   }
 
   Future<String> forceChangePass(pass, confPass) async {
@@ -109,7 +111,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+            'http://127.0.0.1:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
@@ -117,8 +119,6 @@ class UserProvider with ChangeNotifier {
     http.StreamedResponse response = await request.send();
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
-
-    print(response.statusCode);
 
     if (resMap['status'] == "Success") {
       return (await stringResponse);
@@ -137,7 +137,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+            'http://127.0.0.1:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
@@ -145,8 +145,6 @@ class UserProvider with ChangeNotifier {
     http.StreamedResponse response = await request.send();
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
-
-    print(response.statusCode);
 
     if (resMap['status'] == "Success") {
       return (await stringResponse);
