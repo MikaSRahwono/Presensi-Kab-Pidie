@@ -27,6 +27,7 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
     super.initState();
     timerController = CountdownTimerController(endTime: endTime);
   }
+
   @override
   void dispose() {
     kodeController.dispose();
@@ -39,7 +40,12 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
     final dataUser = Provider.of<UserProvider>(context);
 
     void setOtp() {
-      otpCode = _fieldOne.text + _fieldTwo.text + _fieldThree.text + _fieldFour.text + _fieldFive.text + _fieldSix.text;
+      otpCode = _fieldOne.text +
+          _fieldTwo.text +
+          _fieldThree.text +
+          _fieldFour.text +
+          _fieldFive.text +
+          _fieldSix.text;
       if (otpCode.length == 6) {
         setState(() {
           isFull = true;
@@ -52,7 +58,8 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
       print(otpCode);
     }
 
-    Widget PinField(TextEditingController controller, int height, int width, int fontSize) {
+    Widget PinField(
+        TextEditingController controller, int height, int width, int fontSize) {
       return SizedBox(
         height: height.h,
         width: width.w,
@@ -79,19 +86,23 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
         ),
       );
     }
+
     Widget KodeField(int height, int width, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Center(
-            child: AutoSizeText( "Kode",
+            child: AutoSizeText(
+              "Kode",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
               minFontSize: 18,
             ),
           ),
-          SizedBox(height: 6,),
+          SizedBox(
+            height: 6,
+          ),
           Container(
             height: height.h,
             margin: EdgeInsets.symmetric(horizontal: 12.w),
@@ -112,6 +123,7 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
         ],
       );
     }
+
     final alertDialogFailed = CupertinoAlertDialog(
       title: const Text('Kode OTP Salah'),
       content: SingleChildScrollView(
@@ -141,20 +153,27 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text('Submit', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+        child: const Text(
+          'Submit',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
         onPressed: () async {
           print(otpCode);
           var response = await otpCheck(widget.email, otpCode);
           print(response);
-          if (response == 'Error'){
-            showDialog<void> (
+          if (response == 'Error') {
+            showDialog<void>(
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
                   return alertDialogFailed;
-                } );
+                });
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChangePasswordForgotPage(email: widget.email)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ChangePasswordForgotPage(email: widget.email)));
           }
         },
       ),
@@ -170,7 +189,10 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text('Submit', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+        child: const Text(
+          'Submit',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
         onPressed: null,
       ),
     );
@@ -179,15 +201,19 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
       margin: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          minimumSize: Size.fromHeight(50.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          side: BorderSide(color: Colors.black38)
-
+            backgroundColor: Colors.white,
+            minimumSize: Size.fromHeight(50.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            side: BorderSide(color: Colors.black38)),
+        child: const Text(
+          'Kirim Ulang Kode',
+          style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF8253F0)),
         ),
-        child: const Text('Kirim Ulang Kode', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF8253F0)),),
         onPressed: () async {
           print("start");
           setState(() {
@@ -199,32 +225,30 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
       ),
     );
     final resendCode = CountdownTimer(
-      endTime: endTime,
-      widgetBuilder: (_, CurrentRemainingTime? time) {
-        if (time == null) {
-          return Container(
-              margin: EdgeInsets.symmetric(vertical: 20.h),
-              child: resendButton
-          );
-        } else {
-        return Padding(
-          padding: EdgeInsets.all(40.h),
-          child: Text(
-              'Kirim ulang kode dalam: ${time.min ?? "00"}:${time.sec}')
-        );
-      }});
+        endTime: endTime,
+        widgetBuilder: (_, CurrentRemainingTime? time) {
+          if (time == null) {
+            return Container(
+                margin: EdgeInsets.symmetric(vertical: 20.h),
+                child: resendButton);
+          } else {
+            return Padding(
+                padding: EdgeInsets.all(40.h),
+                child: Text(
+                    'Kirim ulang kode dalam: ${time.min ?? "00"}:${time.sec}'));
+          }
+        });
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: true,
         centerTitle: false,
-        title: Text(
-            'Masukkan Kode',
+        title: Text('Masukkan Kode',
             style: GoogleFonts.poppins(
               color: Colors.white,
-              fontWeight: FontWeight.w500,)
-        ),
+              fontWeight: FontWeight.w500,
+            )),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined),
           color: Colors.white,
@@ -241,27 +265,27 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
             children: [
               Center(
                 child: Container(
-                  decoration: const BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10
-                        )
-                      ]
-                  ),
+                  decoration: const BoxDecoration(boxShadow: [
+                    BoxShadow(color: Colors.black12, blurRadius: 10)
+                  ]),
                   child: Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.sp)),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0, top: 0.0, right: 20.0),
+                      padding: const EdgeInsets.only(
+                          left: 20.0, top: 0.0, right: 20.0),
                       child: Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 90.w, vertical: 7.h),
-                            child: Image.asset('resources/images/png/checkEmail.png'),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 90.w, vertical: 7.h),
+                            child: Image.asset(
+                                'resources/images/png/checkEmail.png'),
                           ),
                           Column(
                             children: [
-                              const AutoSizeText("Cek Email Anda!",
+                              const AutoSizeText(
+                                "Cek Email Anda!",
                                 maxFontSize: 30,
                                 minFontSize: 24,
                                 style: TextStyle(
@@ -271,13 +295,16 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
                               SizedBox(height: 10.h),
                               const Padding(
                                 padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
-                                child: AutoSizeText("Kami memberikan 6 digit kode pada email anda! Masukkan kode untuk melanjutkan reset password",
+                                child: AutoSizeText(
+                                  "Kami memberikan 6 digit kode pada email anda! Masukkan kode untuk melanjutkan reset password",
                                   textAlign: TextAlign.center,
                                   maxLines: 3,
                                   maxFontSize: 13,
                                 ),
                               ),
-                              SizedBox(height: 30.h,),
+                              SizedBox(
+                                height: 30.h,
+                              ),
                               KodeField(70, 30, 30),
                               resendCode,
                             ],
@@ -288,13 +315,7 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
                   ),
                 ),
               ),
-              if (!isFull)
-                ...[
-                  disabledButton
-                ] else
-                  ...[
-                    sendButton
-                  ]
+              if (!isFull) ...[disabledButton] else ...[sendButton]
             ],
           ),
         ),

@@ -1,4 +1,5 @@
 part of '_pages.dart';
+
 class ComingSoon extends StatefulWidget {
   const ComingSoon({Key? key}) : super(key: key);
 
@@ -7,7 +8,6 @@ class ComingSoon extends StatefulWidget {
 }
 
 class _ComingSoonState extends State<ComingSoon> {
-
   // Cara manggil token
   String _token = '';
   String _refreshToken = '';
@@ -19,42 +19,40 @@ class _ComingSoonState extends State<ComingSoon> {
     readToken();
     readRefreshToken();
     readFlag();
-
   }
 
   Future<String?> readToken() async {
     String? token = await FlutterSecureStorage().read(key: 'token');
-    if (token != null){
+    if (token != null) {
       return _token = token;
-    }
-    else{
+    } else {
       return token = '';
     }
   }
 
   Future<String?> readRefreshToken() async {
-    String? refreshToken = await FlutterSecureStorage().read(key: 'refresh_token');
-    if (refreshToken != null){
+    String? refreshToken =
+        await FlutterSecureStorage().read(key: 'refresh_token');
+    if (refreshToken != null) {
       return _refreshToken = refreshToken;
-    }
-    else{
+    } else {
       return refreshToken = '';
     }
   }
 
   Future<String?> readFlag() async {
-    String? flagFirstLogin = await FlutterSecureStorage().read(key: 'flag_first_login');
-    if (flagFirstLogin != null){
+    String? flagFirstLogin =
+        await FlutterSecureStorage().read(key: 'flag_first_login');
+    if (flagFirstLogin != null) {
       return _flag = flagFirstLogin;
-    }
-    else{
+    } else {
       return flagFirstLogin = '';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final dataUser = Provider.of<UserProvider>(context,listen: false);
+    final dataUser = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
       body: Padding(
@@ -62,19 +60,24 @@ class _ComingSoonState extends State<ComingSoon> {
         child: Center(
           child: Column(
             children: [
-             Padding(
-               padding: const EdgeInsets.all(16.0),
-               child: SingleChildScrollView(
-                 scrollDirection: Axis.horizontal,
-                 child: Row(
-                   children: [
-                     Text("Access Token:"),
-                     SizedBox(width: 20,),
-                     Text(_token, style: TextStyle(fontSize: 20, color: Colors.black), ),
-                   ],
-                 ),
-               ),
-             ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Text("Access Token:"),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        _token,
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
@@ -82,8 +85,13 @@ class _ComingSoonState extends State<ComingSoon> {
                   child: Row(
                     children: [
                       Text("Refresh Token:"),
-                      SizedBox(width: 20,),
-                      Text(_refreshToken, style: TextStyle(fontSize: 20, color: Colors.black), ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        _refreshToken,
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
                     ],
                   ),
                 ),
@@ -95,8 +103,13 @@ class _ComingSoonState extends State<ComingSoon> {
                   child: Row(
                     children: [
                       Text("flag:"),
-                      SizedBox(width: 20,),
-                      Text(_flag, style: TextStyle(fontSize: 20, color: Colors.black), ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        _flag,
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
                     ],
                   ),
                 ),

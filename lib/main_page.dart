@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -6,8 +5,6 @@ import 'package:flutter/material.dart';
 
 import 'features/home/presentation/page/_pages.dart';
 import 'features/profile/presentation/profile.dart';
-
-
 
 class MainPage extends StatefulWidget {
   final int startIndex;
@@ -35,17 +32,17 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBody: true,
-        backgroundColor: Colors.transparent,
-        resizeToAvoidBottomInset: false,
-        body: _children[_currentIndex],
-
+      extendBody: true,
+      backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
+      body: _children[_currentIndex],
     );
   }
 
   void onTabTapped(int index) {
-    if (mounted) setState(() {
-      _currentIndex = index;
-    });
+    if (mounted)
+      setState(() {
+        _currentIndex = index;
+      });
   }
 }

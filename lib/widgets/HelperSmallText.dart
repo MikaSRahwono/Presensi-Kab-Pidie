@@ -8,11 +8,15 @@ class HelperSmallText extends StatelessWidget {
   TextOverflow overFlow;
   double height;
 
-  HelperSmallText({Key? key, this.color = const Color(0xFFccc7c5),
-    required this.text,
-    this.maxLines = 1,
-    this.size = 12,
-    this.overFlow=TextOverflow.ellipsis,this.height=1.2 }) : super(key: key);
+  HelperSmallText(
+      {Key? key,
+      this.color = const Color(0xFFccc7c5),
+      required this.text,
+      this.maxLines = 1,
+      this.size = 12,
+      this.overFlow = TextOverflow.ellipsis,
+      this.height = 1.2})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,6 @@ class HelperSmallText extends StatelessWidget {
         color: color,
         fontSize: size,
         height: height,
-
       ),
     );
   }

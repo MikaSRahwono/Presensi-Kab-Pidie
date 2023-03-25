@@ -25,14 +25,9 @@ class _LoginPageState extends State<LoginPage> {
     Widget NIPField(int height, int fontSize) {
       return Container(
         height: height.h,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 10
-              )
-            ]
-        ),
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(color: Colors.grey.shade200, blurRadius: 10)
+        ]),
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           child: Center(
@@ -52,19 +47,16 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
+
     Widget PasswordField(int height, int fontSize) {
       return Container(
         height: height.h,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 10
-              )
-            ]
-        ),
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(color: Colors.grey.shade200, blurRadius: 10)
+        ]),
         child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8.0, 1, 8.0, 1),
@@ -80,10 +72,10 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: fontSize.h),
                 ),
               ),
-            )
-        ),
+            )),
       );
     }
+
     final dataUser = Provider.of<UserProvider>(context);
     final logo = FittedBox(
       fit: BoxFit.fitWidth,
@@ -100,8 +92,7 @@ class _LoginPageState extends State<LoginPage> {
     );
     const heading = Padding(
       padding: EdgeInsets.only(left: 32, right: 32),
-      child: AutoSizeText(
-          'Sistem Informasi Presensi Kepegawaian Kab. Pidie',
+      child: AutoSizeText('Sistem Informasi Presensi Kepegawaian Kab. Pidie',
           maxLines: 3,
           minFontSize: 16,
           style: TextStyle(
@@ -109,21 +100,19 @@ class _LoginPageState extends State<LoginPage> {
             fontWeight: FontWeight.w500,
             fontSize: 23,
           ),
-          textAlign: TextAlign.center
-      ),
+          textAlign: TextAlign.center),
     );
     final forgotLabel = TextButton(
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text("Lupa Password",
-                style: TextStyle(color: Colors.black, fontSize: 13)),
-            Icon(Icons.chevron_right, color: Colors.black)
-          ]
-      ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+        Text("Lupa Password",
+            style: TextStyle(color: Colors.black, fontSize: 13)),
+        Icon(Icons.chevron_right, color: Colors.black)
+      ]),
       onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) => ForgetPassPage()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ForgetPassPage()));
       },
     );
     final alertDialogFailed = CupertinoAlertDialog(
@@ -155,33 +144,39 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(10.sp),
             ),
           ),
-          child: const AutoSizeText('Login', maxFontSize: 18,),
+          child: const AutoSizeText(
+            'Login',
+            maxFontSize: 18,
+          ),
           onPressed: () async {
             var response = await dataUser.attemptLogIn(
                 nipController.text, passController.text);
             print(response);
-            if (response == 'Error'){
-              showDialog<void> (
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext context) {
-              return alertDialogFailed;
-            } ); }
-            else {
+            if (response == 'Error') {
+              showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return alertDialogFailed;
+                  });
+            } else {
               if (dataUser.firstLogin) {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (BuildContext context) => FirstPassResetPage()));
-              }
-              else {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (BuildContext context) => HomePage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            FirstPassResetPage()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => HomePage()));
               }
             }
           },
         ),
       ),
     );
-
 
     return Scaffold(
       backgroundColor: Color(0xFFF6F2FF),
@@ -193,25 +188,17 @@ class _LoginPageState extends State<LoginPage> {
             logo,
             heading,
             SizedBox(height: 48.0.h),
-            if (MediaQuery
-                .of(context)
-                .size
-                .width <= 380)...[
+            if (MediaQuery.of(context).size.width <= 380) ...[
               NIPField(82, 20)
-            ] else
-              ...[
-                NIPField(70, 16)
-              ],
+            ] else ...[
+              NIPField(70, 16)
+            ],
             SizedBox(height: 8.0.h),
-            if (MediaQuery
-                .of(context)
-                .size
-                .width <= 380)...[
+            if (MediaQuery.of(context).size.width <= 380) ...[
               PasswordField(82, 20)
-            ] else
-              ...[
-                PasswordField(70, 16)
-              ],
+            ] else ...[
+              PasswordField(70, 16)
+            ],
             SizedBox(height: 20.0.h),
             loginButton,
             forgotLabel
