@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
   void didChangeDependencies() {
     final dataUser = Provider.of<UserProvider>(context);
     super.didChangeDependencies();
-    respData = dataUser.getRequestWithJWT("http://10.0.2.2:8000/presensi/");
+    respData = dataUser.getRequestWithJWT("http://127.0.0.1:8000/presensi/");
     respData.then((response_) {
       if (response_?.statusCode == 200) {
         dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
@@ -103,187 +103,185 @@ class _HomePageState extends State<HomePage> {
     context: context,
     builder: (context) =>
         Dialog(
-      child: Container(
-        width: 326.w,
-        height: 384.h,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 24.0.h, right: 20.0.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: () => {
-                      Navigator.pop(context)
-                    },
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      child: SvgPicture.asset(
-                        'resources/images/svg/cancel_icon.svg',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 48.h,),
-            StreamBuilder(
-              stream: Stream.periodic(const Duration(seconds: 1)),
-              builder: (context, snapshot) {
-                return AutoSizeText(
-                    DateFormat('hh:mm').format(DateTime.now()),
-                    maxFontSize: 75,
-                    style: TextStyle(
-                        fontSize: 75.sp,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Poppins")
-                );
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 24.0.h, left: 32.w, right: 32.w),
-              child: AutoSizeText(title,
-                  maxFontSize: 16,
-                  maxLines: 1,
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "Poppins")
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0.h, left: 45.h, right: 45.h),
-              child: AutoSizeText("Data Kehadiran akan tercatat oleh sistem secara otomatis",
-                  maxFontSize: 12,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color.fromRGBO(157, 153, 174, 1),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: "Poppins")
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top:20.0.h, left: 20.w, right: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  InkWell(
-                    onTap: () => {
-                      Navigator.pop(context)
-                    },
-                    child: Container(
-                      width: 124.w,
-                      height: 38.h,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent ,
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 2,
+          child: Container(
+            width: 326.w,
+            height: 384.h,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 24.0.h, right: 20.0.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () => {
+                          Navigator.pop(context)
+                        },
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          child: SvgPicture.asset(
+                            'resources/images/svg/cancel_icon.svg',
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h),
-                        child: Center(
-                          child:
-                          AutoSizeText("Tidak Sekarang",
-                              maxFontSize: 12,
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Color.fromRGBO(40, 34, 86, 1),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: "Poppins")
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 48.h,),
+                StreamBuilder(
+                  stream: Stream.periodic(const Duration(seconds: 1)),
+                  builder: (context, snapshot) {
+                    return AutoSizeText(
+                        DateFormat('hh:mm').format(DateTime.now()),
+                        maxFontSize: 75,
+                        style: TextStyle(
+                            fontSize: 75.sp,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: "Poppins")
+                    );
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 24.0.h, left: 32.w, right: 32.w),
+                  child: AutoSizeText(title,
+                      maxFontSize: 16,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: "Poppins")
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 8.0.h, left: 45.h, right: 45.h),
+                  child: AutoSizeText("Data Kehadiran akan tercatat oleh sistem secara otomatis",
+                      maxFontSize: 12,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Color.fromRGBO(157, 153, 174, 1),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Poppins")
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top:20.0.h, left: 20.w, right: 20.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      InkWell(
+                        onTap: () => {
+                          Navigator.pop(context)
+                        },
+                        child: Container(
+                          width: 124.w,
+                          height: 38.h,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent ,
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h),
+                            child: Center(
+                              child:
+                              AutoSizeText("Tidak Sekarang",
+                                  maxFontSize: 12,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Color.fromRGBO(40, 34, 86, 1),
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: "Poppins")
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(width: 16.w,),
-                  InkWell(
-                    onTap: () => {
-                      // TODO:  Navigator to homepage using push replacement
+                      SizedBox(width: 16.w,),
+                      InkWell(
+                        onTap: () => {
+                          // TODO:  Navigator to homepage using push replacement
+                          if (status == ""){
+                            print(_encodeBody),
+                            respData = dataUser.postRequestWithJWT("http://127.0.0.1:8000/presensi/", _encodeBody),
+                            respData.then((response_) {
+                              print(_encodeBody);
+                              print(response_?.statusCode);
+                              if (response_?.statusCode == 200){
+                                onTapStatusAbsensi(context, "masuk");
+                                dataUser.getData("http://127.0.0.1:8000/presensi/");
+                                Navigator.of(context,rootNavigator: true).pop();
+                                dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
+                                onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                              }
+                              else {
+                                // Error response
+                                print('Request failed with status: ${response_}.');
+                              }
+                            }
 
-
-                      if (status == ""){
-
-
-                        respData = dataUser.postRequestWithJWT("http://10.0.2.2:8000/presensi/", _encodeBody),
-                        respData.then((response_) {
-                          print(response_?.statusCode);
-                          if (response_?.statusCode == 200){
-                            onTapStatusAbsensi(context, "masuk");
-                            dataUser.getData("http://10.0.2.2:8000/presensi/");
-                            Navigator.of(context,rootNavigator: true).pop();
-                            dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
-                            onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                            )
                           }
-                          else {
-                            // Error response
-                            print('Request failed with status: ${response_}.');
-                          }
-                        }
+                          else if (status == "masuk"){
+                          respData = dataUser.putRequestWithJWT("http://127.0.0.1:8000/presensi/", _encodeBody),
+                            respData.then((response_) {
+                              if (response_?.statusCode == 200){
+                                onTapStatusAbsensi(context, "keluar");
+                                dataUser.getData("http://127.0.0.1:8000/presensi/");
+                                Navigator.of(context,rootNavigator: true).pop();
+                                dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
+                                onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
 
-                        )
-                      }
-                      else if (status == "masuk"){
-                      respData = dataUser.putRequestWithJWT("http://10.0.2.2:8000/presensi/", _encodeBody),
-                        respData.then((response_) {
-                          if (response_?.statusCode == 200){
-                            onTapStatusAbsensi(context, "keluar");
-                            dataUser.getData("http://10.0.2.2:8000/presensi/");
-                            Navigator.of(context,rootNavigator: true).pop();
-                            dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
-                            onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                              }
 
-                          }
+                              else {
+                                // Error response
+                                print('Request failed with status: ${response_?.body}.');
+                              }
+                            }
 
-                          else {
-                            // Error response
-                            print('Request failed with status: ${response_?.body}.');
-                          }
-                        }
-
-                        ),
+                            ),
 
 
-                      },
-                      // Navigator.pop(context),
-                    },
-                    child: Container(
-                      width: 128.w,
-                      height: 38.h,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(255, 212, 101, 1) ,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
-                        child: Center(
-                          child:
-                          AutoSizeText(descButton,
-                              maxFontSize: 12,
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Color.fromRGBO(40, 34, 86, 1),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: "Poppins")
+                          },
+                          // Navigator.pop(context),
+                        },
+                        child: Container(
+                          width: 128.w,
+                          height: 38.h,
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(255, 212, 101, 1) ,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
+                            child: Center(
+                              child:
+                              AutoSizeText(descButton,
+                                  maxFontSize: 12,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Color.fromRGBO(40, 34, 86, 1),
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: "Poppins")
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
           ],
         ),
 
@@ -293,9 +291,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAbsensiContent(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
-    String _clockIn = dataUser.getPresensi()?.data.jamAbsensiMasuk ?? '- - : - -';
-    String _clockOut = dataUser.getPresensi()?.data.jamAbsensiKeluar ?? '- - : - -';
-    switch (status) {
+    String _clockIn = dataUser.getPresensi()?.data.jamAbsensiMasuk.toString().substring(0, 5) ?? '- - : - -';
+    String _clockOut = dataUser.getPresensi()?.data.jamAbsensiKeluar.toString().substring(0, 5) ?? '- - : - -';
+    String statClockIn = dataUser.getPresensi()?.data.keteranganAbsensiMasuk ?? "";
+    String statClockOut = dataUser.getPresensi()?.data.keteranganAbsensiKeluar ?? "";
+
+    String stat = dataUser.getPresensi()?.status ?? "";
+    switch (stat) {
       case "masuk":
         return
           Column(
@@ -424,7 +426,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 12.h,),
-                      Text(_clockIn.substring(0,5) ?? '',
+                      Text(_clockIn,
                         style: TextStyle(
                           fontSize: 28.sp,
                           fontFamily: 'Poppins',
@@ -432,7 +434,7 @@ class _HomePageState extends State<HomePage> {
                         ),
 
                       ),
-                      Text("Status: Terlambat",
+                      Text("Status: $statClockIn",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontFamily: 'Poppins',
@@ -514,6 +516,7 @@ class _HomePageState extends State<HomePage> {
                     encodeBody['latitude'] = lat,
                     encodeBody['longitude'] = longi,
                     encodeBody['status'] = dataUser.flagDinas!,
+                    print(encodeBody),
                     displayDialog(
                         context, "Anda yakin ingin absen keluar?", "iya, keluar!", dataUser,  encodeBody)
 
@@ -684,14 +687,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 12.h,),
-                      Text(_clockIn.substring(0,5) ?? '',
+                      Text(_clockIn,
                         style: TextStyle(
                           fontSize: 28.sp,
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text("Status: Terlambat",
+                      Text("Status: $statClockIn",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontFamily: 'Poppins',
@@ -709,7 +712,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 12.h,),
                       Padding(
                         padding: EdgeInsets.only(top:4.0.h,),
-                        child: Text(_clockOut.substring(0,5) ?? '',
+                        child: Text(_clockOut,
                           style: TextStyle(
                             fontSize: 28.sp,
                             fontFamily: 'Poppins',
@@ -718,7 +721,7 @@ class _HomePageState extends State<HomePage> {
 
                         ),
                       ),
-                      Text("Status: Tepat waktu",
+                      Text("Status: $statClockOut",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontFamily: 'Poppins',
@@ -996,7 +999,10 @@ class _HomePageState extends State<HomePage> {
                   encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
                   encodeBody['latitude'] = lat,
                   encodeBody['longitude'] = longi,
+                  print("test"),
                   encodeBody['status'] = dataUser.flagDinas!,
+                  print("test"),
+                  print(encodeBody),
                   displayDialog(
                       context, "Anda yakin ingin absen masuk?", "iya, masuk!", dataUser,  encodeBody)
 

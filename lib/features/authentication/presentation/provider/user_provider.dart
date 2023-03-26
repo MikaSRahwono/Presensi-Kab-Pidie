@@ -134,7 +134,7 @@ class UserProvider with ChangeNotifier {
   //   print("abcd");
   //   print(jwtToken);
   //   http.Response res = await http.post(
-  //       Uri.parse('http://10.0.2.2:2020/api/auth/pasien'),
+  //       Uri.parse('http://127.0.0.1:2020/api/auth/pasien'),
   //       headers: <String, String>{"Content-Type": "application/json",
   //         "Accept": "application/json",
   //         "Authorization": "Bearer $jwtToken",
@@ -185,7 +185,7 @@ class UserProvider with ChangeNotifier {
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
-          'http://10.0.2.2:8000/account/login'),
+          'http://127.0.0.1:8000/account/login'),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -233,7 +233,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://10.0.2.2:8000/account/force-change-pass'));
+            'http://127.0.0.1:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
@@ -261,7 +261,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://10.0.2.2:8000//account/force-change-pass'));
+            'http://127.0.0.1:8000//account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
