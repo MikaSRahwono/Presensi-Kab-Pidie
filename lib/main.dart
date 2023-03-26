@@ -1,13 +1,18 @@
+
 import 'package:flutter/material.dart';
+import 'package:presensi_mobileapp/checkAuth.dart';
+import 'package:presensi_mobileapp/features/home/presentation/page/_pages.dart';
+import 'package:presensi_mobileapp/main_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:presensi_mobileapp/features/authentication/presentation/pages/_pages.dart';
 import 'package:presensi_mobileapp/main_page.dart';
 
+import 'package:presensi_mobileapp/splashScreen.dart';
 import 'package:provider/provider.dart';
 
 import 'features/authentication/presentation/provider/_provider.dart';
 
-void main() {
+void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserProvider()),
@@ -26,8 +31,16 @@ class MyApp extends StatelessWidget {
       builder: (context, child) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Presensi',
-        theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'poppins'),
-        home: LoginPage(),
+        theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              color: Colors.white,
+              foregroundColor: Colors.black,
+              iconTheme: IconThemeData(color: Colors.black),
+            ),
+            primaryColor: Colors.black,
+            fontFamily: 'poppins'),
+
+        home: CheckAuth(),
       ),
       designSize: const Size(390, 844),
     );

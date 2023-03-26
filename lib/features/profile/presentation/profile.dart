@@ -2,10 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:presensi_mobileapp/features/profile/presentation/_pages.dart';
 import 'package:presensi_mobileapp/widgets/_widgets.dart';
 import 'package:provider/provider.dart';
 
-import '../../authentication/data/model/user_model.dart';
+import '../../authentication/presentation/pages/_pages.dart';
 import '../../authentication/presentation/provider/_provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -295,25 +296,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontFamily: "Poppins")),
                 ),
                 onPressed: () async {
-                  // if (!_formKey.currentState!.validate()) {
-                  //   return;
-                  // }
-                  // var response = await dataUser
-                  //     .topUpSaldo(int.parse(saldoController.text));
-                  // print(response.statusCode);
-                  // if (response.statusCode == 200) {
-                  //   Navigator.pushReplacement(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (_) => MainPage(
-                  //             startIndex: 4,
-                  //           )));
-                  //   displayDialog(
-                  //       context, "Top Up Saldo", "Top up saldo berhasil!");
-                  // } else {
-                  //   displayDialog(
-                  //       context, "An Error Occurred", dataUser.outputTopUp);
-                  // }
+                  Navigator.push(context,MaterialPageRoute(builder: (BuildContext context) => ChangePasswordPage()));
                 },
               ),
             ),
@@ -343,25 +326,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.w500,
                           fontFamily: "Poppins")),
                   onPressed: () async {
-                    // if (!_formKey.currentState!.validate()) {
-                    //   return;
-                    // }
-                    // var response = await dataUser
-                    //     .topUpSaldo(int.parse(saldoController.text));
-                    // print(response.statusCode);
-                    // if (response.statusCode == 200) {
-                    //   Navigator.pushReplacement(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (_) => MainPage(
-                    //             startIndex: 4,
-                    //           )));
-                    //   displayDialog(
-                    //       context, "Top Up Saldo", "Top up saldo berhasil!");
-                    // } else {
-                    //   displayDialog(
-                    //       context, "An Error Occurred", dataUser.outputTopUp);
-                    // }
+                    dataUser.logout();
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
                   },
                 ),
               ),

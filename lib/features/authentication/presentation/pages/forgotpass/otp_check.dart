@@ -22,6 +22,8 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
   bool isFull = false;
   String otpCode = "";
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,6 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
           isFull = false;
         });
       }
-      print(otpCode);
     }
 
     Widget PinField(
@@ -158,9 +159,10 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         onPressed: () async {
-          print(otpCode);
+          setState(() {
+            isLoading = true;
+          });
           var response = await otpCheck(widget.email, otpCode);
-          print(response);
           if (response == 'Error') {
             showDialog<void>(
                 context: context,
@@ -175,6 +177,9 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
                     builder: (BuildContext context) =>
                         ChangePasswordForgotPage(email: widget.email)));
           }
+          setState(() {
+            isLoading = false;
+          });
         },
       ),
     );
@@ -215,7 +220,6 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
               color: Color(0xFF8253F0)),
         ),
         onPressed: () async {
-          print("start");
           setState(() {
             endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 120;
             timerController = CountdownTimerController(endTime: endTime);
@@ -246,77 +250,78 @@ class _OTPCheckPageState extends State<OTPCheckPage> {
         centerTitle: false,
         title: Text('Masukkan Kode',
             style: GoogleFonts.poppins(
-              color: Colors.white,
               fontWeight: FontWeight.w500,
             )),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined),
-          color: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
       backgroundColor: Color(0xFFF6F2FF),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  decoration: const BoxDecoration(boxShadow: [
-                    BoxShadow(color: Colors.black12, blurRadius: 10)
-                  ]),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.sp)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, top: 0.0, right: 20.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 90.w, vertical: 7.h),
-                            child: Image.asset(
-                                'resources/images/png/checkEmail.png'),
-                          ),
-                          Column(
-                            children: [
-                              const AutoSizeText(
-                                "Cek Email Anda!",
-                                maxFontSize: 30,
-                                minFontSize: 24,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+      body: ModalProgressHUD(
+        inAsyncCall: isLoading,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(color: Colors.black12, blurRadius: 10)
+                    ]),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.sp)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20.0, top: 0.0, right: 20.0),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 90.w, vertical: 7.h),
+                              child: Image.asset(
+                                  'resources/images/png/checkEmail.png'),
+                            ),
+                            Column(
+                              children: [
+                                const AutoSizeText(
+                                  "Cek Email Anda!",
+                                  maxFontSize: 30,
+                                  minFontSize: 24,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 10.h),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
-                                child: AutoSizeText(
-                                  "Kami memberikan 6 digit kode pada email anda! Masukkan kode untuk melanjutkan reset password",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 3,
-                                  maxFontSize: 13,
+                                SizedBox(height: 10.h),
+                                const Padding(
+                                  padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
+                                  child: AutoSizeText(
+                                    "Kami memberikan 6 digit kode pada email anda! Masukkan kode untuk melanjutkan reset password",
+                                    textAlign: TextAlign.center,
+                                    maxLines: 3,
+                                    maxFontSize: 13,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 30.h,
-                              ),
-                              KodeField(70, 30, 30),
-                              resendCode,
-                            ],
-                          ),
-                        ],
+                                SizedBox(
+                                  height: 30.h,
+                                ),
+                                KodeField(70, 30, 30),
+                                resendCode,
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              if (!isFull) ...[disabledButton] else ...[sendButton]
-            ],
+                if (!isFull) ...[disabledButton] else ...[sendButton]
+              ],
+            ),
           ),
         ),
       ),

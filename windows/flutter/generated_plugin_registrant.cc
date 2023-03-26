@@ -8,10 +8,13 @@
 
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
 #include <geolocator_windows/geolocator_windows.h>
+#include <modal_progress_hud_nsn/modal_progress_hud_nsn_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
+  ModalProgressHudNsnPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("ModalProgressHudNsnPlugin"));
   GeolocatorWindowsRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("GeolocatorWindows"));
 }

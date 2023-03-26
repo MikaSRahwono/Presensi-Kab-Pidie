@@ -88,6 +88,12 @@ class UserProvider with ChangeNotifier {
   }
 
 
+  void logout() {
+    jwtToken = null;
+    refreshToken = null;
+    firstLogin = true;
+  }
+
 
 
   User? getUser(){
@@ -219,18 +225,20 @@ class UserProvider with ChangeNotifier {
       },
       body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
     );
-    JwtResponse response = jwtResponseFromJson(res.body);
-    jwtToken = response.tokens.access;
-    refreshToken = response.tokens.refresh;
-    firstLogin = response.firstLogin;
-    print(jwtToken);
-    print(refreshToken);
-    print(firstLogin);
-    await setAccessToken(jwtToken);
-    await setFirstLogin(firstLogin);
-    await setRefreshToken(refreshToken);
-    notifyListeners();
-    return res;
+    if (res.statusCode == 200){
+      JwtResponse response = jwtResponseFromJson(res.body);
+      jwtToken = response.tokens.access;
+      refreshToken = response.tokens.refresh;
+      firstLogin = response.firstLogin;
+      await setAccessToken(jwtToken);
+      await setFirstLogin(firstLogin);
+      await setRefreshToken(refreshToken);
+      notifyListeners();
+      return res;
+    }
+    else {
+      return res;
+    }
   }
 
   Future<Presensi?> getData(url) async {
@@ -256,7 +264,7 @@ class UserProvider with ChangeNotifier {
 
   Future<String> forceChangePass(pass, confPass) async {
     var token = getAccessToken() ?? "";
-    var headers = {'Authorization': 'Bearer ' + token};
+    var headers = {'Authorization': 'Bearer $token'};
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
@@ -269,8 +277,6 @@ class UserProvider with ChangeNotifier {
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
 
-    print(response.statusCode);
-
     if (resMap['status'] == "Success") {
       return (await stringResponse);
     } else if (resMap['detail'] ==
@@ -282,14 +288,13 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<String> changePassword(prevPass, pass, confPass) async {
-    // TODO: Implement Change Password
     var token = getAccessToken() ?? "";
     var headers = {'Authorization': 'Bearer ' + token};
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://127.0.0.1:8000//account/force-change-pass'));
-    request.fields.addAll({'password': pass, 'confirm_password': confPass});
+            'http://127.0.0.1:8000/account/change-pass'));
+    request.fields.addAll({'old_password':prevPass, 'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
 
@@ -297,13 +302,15 @@ class UserProvider with ChangeNotifier {
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
 
-    print(response.statusCode);
+    print(resMap);
 
     if (resMap['status'] == "Success") {
       return (await stringResponse);
     } else if (resMap['detail'] ==
         "Authentication credentials were not provided.") {
       return ("Authentication credentials were not provided.");
+    } else if (resMap["message"] == "Password lama tidak sesuai") {
+      return ("Password lama tidak sesuai");
     } else {
       return ("Password tidak sama");
     }
