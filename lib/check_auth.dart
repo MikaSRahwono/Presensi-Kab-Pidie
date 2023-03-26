@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:presensi_mobileapp/splashScreen.dart';
+import 'package:presensi_mobileapp/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'features/authentication/presentation/pages/_pages.dart';
@@ -18,6 +18,7 @@ class _CheckAuthState extends State<CheckAuth> {
   Future<bool> loginCheckFuture(dataUser) async {
     var token = dataUser.jwtToken;
     if (token != null) {
+      dataUser.getDataPresensi();
       return true;
     }
     return false;

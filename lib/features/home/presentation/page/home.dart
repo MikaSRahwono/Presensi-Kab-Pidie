@@ -18,20 +18,8 @@ class _HomePageState extends State<HomePage> {
   String lat = '';
   String longi = '';
   String _flag = '';
+  var isLoading = false;
   late Map<String, String> encodeBody = {};
-
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final dataUser = Provider.of<UserProvider>(context);
-  //   Future.delayed(Duration.zero, ()
-  //     {
-  //       dataFuturePresensi = dataUser.getRequestWithJWT("http://localhost:8000/presensi/") as Future<Presensi>;
-  //     }
-  //   );
-  //
-  // }
 
   @override
   void initState() {
@@ -39,8 +27,8 @@ class _HomePageState extends State<HomePage> {
     getCurrentLocation().then((value) => {
       lat = '${value.latitude}',
       longi = '${value.longitude}'
-    }
-    );
+    } );
+    _dinas = false;
   }
   @override
   void dispose() {
@@ -48,998 +36,644 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-
   @override
-  void didChangeDependencies() {
-    final dataUser = Provider.of<UserProvider>(context);
-    super.didChangeDependencies();
-    respData = dataUser.getRequestWithJWT("http://127.0.0.1:8000/presensi/");
-    respData.then((response_) {
-      if (response_?.statusCode == 200) {
-        dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
-      }
-      else {
-        // Error response
-        print('Request failed with status: ${response_?.statusCode}.');
-      }
-    }
-    );
+  /// -----------------------------------
+  /// Methods
+  /// -----------------------------------
 
-
-
-  }
-  @override
-  Widget build(BuildContext context) {
-    // Step 1: panggil data user
-    final dataUser = Provider.of<UserProvider>(context);
-    _flag = dataUser.flagAbsensi.toString();
-    final icon = "icon-absensi-1";
-    return Scaffold(
-      extendBody: true,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Presensi", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-      ),
-      backgroundColor: Color.fromRGBO(246, 242, 255, 1),
-      body: SingleChildScrollView(
-        child: _buildAbsensiContent(context),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
-        },
-        label: Text("Profile"), icon: Icon(Icons.person),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-
-  void displayDialog(context, String title, String descButton, UserProvider dataUser, Map<String, String> _encodeBody) =>
-      showDialog(
-    context: context,
-    builder: (context) =>
-        Dialog(
-          child: Container(
-            width: 326.w,
-            height: 384.h,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 24.0.h, right: 20.0.w),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      InkWell(
-                        onTap: () => {
-                          Navigator.pop(context)
-                        },
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          child: SvgPicture.asset(
-                            'resources/images/svg/cancel_icon.svg',
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(height: 48.h,),
-                StreamBuilder(
-                  stream: Stream.periodic(const Duration(seconds: 1)),
-                  builder: (context, snapshot) {
-                    return AutoSizeText(
-                        DateFormat('hh:mm').format(DateTime.now()),
-                        maxFontSize: 75,
-                        style: TextStyle(
-                            fontSize: 75.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: "Poppins")
-                    );
-                  },
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 24.0.h, left: 32.w, right: 32.w),
-                  child: AutoSizeText(title,
-                      maxFontSize: 16,
-                      maxLines: 1,
-                      style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: "Poppins")
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 8.0.h, left: 45.h, right: 45.h),
-                  child: AutoSizeText("Data Kehadiran akan tercatat oleh sistem secara otomatis",
-                      maxFontSize: 12,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 12.sp,
-                          color: Color.fromRGBO(157, 153, 174, 1),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Poppins")
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top:20.0.h, left: 20.w, right: 20.w),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      InkWell(
-                        onTap: () => {
-                          Navigator.pop(context)
-                        },
-                        child: Container(
-                          width: 124.w,
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent ,
-                            borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 2,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h),
-                            child: Center(
-                              child:
-                              AutoSizeText("Tidak Sekarang",
-                                  maxFontSize: 12,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color.fromRGBO(40, 34, 86, 1),
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: "Poppins")
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 16.w,),
-                      InkWell(
-                        onTap: () => {
-                          // TODO:  Navigator to homepage using push replacement
-                          if (status == ""){
-                            print(_encodeBody),
-                            respData = dataUser.postRequestWithJWT("http://127.0.0.1:8000/presensi/", _encodeBody),
-                            respData.then((response_) {
-                              print(_encodeBody);
-                              print(response_?.statusCode);
-                              if (response_?.statusCode == 200){
-                                onTapStatusAbsensi(context, "masuk");
-                                dataUser.getData("http://127.0.0.1:8000/presensi/");
-                                Navigator.of(context,rootNavigator: true).pop();
-                                dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
-                                onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
-                              }
-                              else {
-                                // Error response
-                                print('Request failed with status: ${response_}.');
-                              }
-                            }
-
-                            )
-                          }
-                          else if (status == "masuk"){
-                          respData = dataUser.putRequestWithJWT("http://127.0.0.1:8000/presensi/", _encodeBody),
-                            respData.then((response_) {
-                              if (response_?.statusCode == 200){
-                                onTapStatusAbsensi(context, "keluar");
-                                dataUser.getData("http://127.0.0.1:8000/presensi/");
-                                Navigator.of(context,rootNavigator: true).pop();
-                                dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
-                                onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
-
-                              }
-
-                              else {
-                                // Error response
-                                print('Request failed with status: ${response_?.body}.');
-                              }
-                            }
-
-                            ),
-
-
-                          },
-                          // Navigator.pop(context),
-                        },
-                        child: Container(
-                          width: 128.w,
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(255, 212, 101, 1) ,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
-                            child: Center(
-                              child:
-                              AutoSizeText(descButton,
-                                  maxFontSize: 12,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Color.fromRGBO(40, 34, 86, 1),
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: "Poppins")
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+  void displayDialog(context, String title, String descButton, UserProvider dataUser, Map<String, String> _encodeBody) {
+    final alertDialogFailedLokasi = CupertinoAlertDialog(
+      title: const Text('Lokasi terlalu jauh dari kantor'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('Silahkan mendekat ke lokasi kantor'),
           ],
         ),
-
       ),
-    )
-  );
+      actions: <Widget>[
+        TextButton(
+          child: const Text('oke'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+    final alertDialogFailedWaktu = CupertinoAlertDialog(
+      title: const Text('Waktu berbeda dengan waktu server'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('Silahkan menyesuaikan waktu device dengan waktu server (WIB)'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('oke'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
 
+    showDialog(
+        context: context,
+        builder: (context) =>
+            ModalProgressHUD(
+              inAsyncCall: isLoading,
+              child: Dialog(
+                child: Container(
+                  width: 326.w,
+                  height: 384.h,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 24.0.h, right: 20.0.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () => {
+                                Navigator.pop(context)
+                              },
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                child: SvgPicture.asset(
+                                  'resources/images/svg/cancel_icon.svg',
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 48.h,),
+                      StreamBuilder(
+                        stream: Stream.periodic(const Duration(seconds: 1)),
+                        builder: (context, snapshot) {
+                          return AutoSizeText(
+                              DateFormat('hh:mm').format(DateTime.now()),
+                              maxFontSize: 60,
+                              style: TextStyle(
+                                  fontSize: 60.sp,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Poppins")
+                          );
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24.0.h, left: 32.w, right: 32.w),
+                        child: AutoSizeText(title,
+                            maxFontSize: 16,
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: "Poppins")
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.0.h, left: 45.h, right: 45.h),
+                        child: AutoSizeText("Data Kehadiran akan tercatat oleh sistem secara otomatis",
+                            maxFontSize: 12,
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Color.fromRGBO(157, 153, 174, 1),
+                                fontWeight: FontWeight.w400,
+                                fontFamily: "Poppins")
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top:20.0.h, left: 20.w, right: 20.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                              onTap: () => {
+                                Navigator.pop(context)
+                              },
+                              child: Container(
+                                width: 124.w,
+                                height: 46.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent ,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h),
+                                  child: Center(
+                                    child:
+                                    AutoSizeText("Tidak Sekarang",
+                                        maxFontSize: 12,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Color.fromRGBO(40, 34, 86, 1),
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: "Poppins")
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16.w,),
+                            InkWell(
+                              onTap: () async => {
+                                setState(() {
+                                  isLoading = true;
+                                }),
+                                print('isLoadin $isLoading'),
+                                if (dataUser.getPresensi()?.status == null){
+                                  print(_encodeBody),
+                                  respData = dataUser.absenMasuk(_encodeBody),
+                                  respData.then((response_) {
+                                    var resMap = jsonDecode(response_!.body);
+                                    print(resMap);
+                                    print(_encodeBody);
+                                    print(response_?.statusCode);
+                                    if (response_?.statusCode == 200){
+                                      onTapStatusAbsensi(context, "masuk");
+                                      dataUser.getDataPresensi();
+                                      Navigator.of(context,rootNavigator: true).pop();
+                                      dataUser.presensiModel = Presensi.fromJson(resMap);
+                                      onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                                    } else if (resMap['message'] == 'Lokasi terlalu jauh dari kantor'){
+                                      showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return alertDialogFailedLokasi;
+                                          });
+                                      print('Request failed with status: ${response_}.');
+                                    } else if (resMap['message'] == 'Waktu tidak sesuai dengan waktu server'){
+                                      showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return alertDialogFailedWaktu;
+                                          });
+                                      print('Request failed with status: ${response_}.');
+                                    }
+                                  })
+                                } else if (dataUser.getPresensi()?.status == "masuk"){
+                                  respData = dataUser.absenKeluar(_encodeBody),
+                                  respData.then((response_) {
+                                    if (response_?.statusCode == 200){
+                                      onTapStatusAbsensi(context, "keluar");
+                                      dataUser.getDataPresensi();
+                                      Navigator.of(context,rootNavigator: true).pop();
+                                      dataUser.presensiModel = Presensi.fromJson(jsonDecode(response_!.body));
+                                      onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                                    } else {
+
+                                      print('Request failed with status: ${response_?.body}.');
+                                    }
+                                  }),
+                                },
+                                setState(() {
+                                  isLoading = false;
+                                }),
+                              },
+                              child: Container(
+                                width: 124.w,
+                                height: 46.h,
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(255, 212, 101, 1) ,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
+                                  child: Center(
+                                    child:
+                                    AutoSizeText(descButton,
+                                        maxFontSize: 12,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Color.fromRGBO(40, 34, 86, 1),
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: "Poppins")
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                ),
+              ),
+            )
+    );
+  }
   Widget _buildAbsensiContent(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
-    String _clockIn = dataUser.getPresensi()?.data.jamAbsensiMasuk.toString().substring(0, 5) ?? '- - : - -';
-    String _clockOut = dataUser.getPresensi()?.data.jamAbsensiKeluar.toString().substring(0, 5) ?? '- - : - -';
-    String statClockIn = dataUser.getPresensi()?.data.keteranganAbsensiMasuk ?? "";
-    String statClockOut = dataUser.getPresensi()?.data.keteranganAbsensiKeluar ?? "";
-
+    String _clockIn = dataUser.getPresensi()?.data?.jamAbsensiMasuk.toString().substring(0, 5) ?? '- - : - -';
+    String? _clockOut = dataUser.getPresensi()?.data?.jamAbsensiKeluar == null ? '- - : - -' : dataUser.getPresensi()?.data?.jamAbsensiKeluar.toString().substring(0, 5);
+    String statClockIn = dataUser.getPresensi()?.data?.keteranganAbsensiMasuk ?? "";
+    String statClockOut = dataUser.getPresensi()?.data?.keteranganAbsensiKeluar ?? "";
     String stat = dataUser.getPresensi()?.status ?? "";
-    switch (stat) {
-      case "masuk":
-        return
-          Column(
+    final batasWaktu = Padding(
+      padding: EdgeInsets.only(
+          top: 20.0.h, left: 32.w, right: 32.w
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 157.w,
+            height: 80.h,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius
+                    .circular(8.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(112, 144, 176, 0.2),
+                    blurRadius: 40,
+                    offset: Offset(0, 14),
+                  ),
+                ]
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 12.0.h),
+                  child: Text("Batas waktu masuk", style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top:4.0.h,),
+                  child: Text("09.00", style: TextStyle(
+                    fontSize: 20.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w700,
+                  ),),
+                ),
+              ],
+            )
+            ,
+          ),
+          SizedBox(width: 12.w,),
+          Container(
+            width: 157.w,
+            height: 80.h,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius
+                    .circular(8.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(112, 144, 176, 0.2),
+                    blurRadius: 40,
+                    offset: Offset(0, 14),
+                  ),
+                ]
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 12.0.h),
+                  child: Text("Batas waktu keluar", style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top:4.0.h,),
+                  child: Text("17.00", style: TextStyle(
+                    fontSize: 20.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w700,
+                  ),),
+                ),
+              ],
+            )
+            ,
+          ),
+        ],
+      ),
+    );
+    final jamMasuk = Column(
+      children: [
+        Text("Jam Masuk", style: TextStyle(
+          fontSize: 20.sp,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.bold,
+        ),),
+        Text(_clockIn, style: TextStyle(
+          fontSize: 28.sp,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w500,
+        ),),
+        if (stat == "masuk" || stat == "keluar")
+          ...[Text("Status: $statClockIn",
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+            ),
+          )]
+      ],
+    );
+    final jamKeluar = Column(
+      children: [
+        Text("Jam Keluar", style: TextStyle(
+          fontSize: 20.sp,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.bold,
+        ),),
+        Text(_clockOut!, style: TextStyle(
+          fontSize: 28.sp,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w500,
+        ),),
+        if (stat == "keluar")
+          ...[Text("Status: $statClockOut",
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+            ),
+          )],
+        SizedBox(height: 20.h,)
+      ],
+    );
+    final switchDinas = Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AutoSizeText("Sedang perjalanan dinas",
+              maxFontSize: 16,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Color.fromRGBO(40, 34, 86, 1),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: "Poppins")
+          ),
+          Switch(
+            value: _dinas,
+            activeColor: Colors.redAccent,
+            onChanged: (value) async {
+              setState(()  {
+                _dinas = value;
+                if (_dinas) {
+                  _dinas = true;
+                } else {
+                  _dinas = false;
+                }
+              });
+              if (_dinas) {
+                await dataUser.setFlagDinas("Perjalanan Dinas");
+                print(dataUser.getFlagDinas().toString());
+              } else {
+                await dataUser.setFlagDinas("");
+                print(dataUser.getFlagDinas().toString());
+              }
+            },
+          ),
+        ],
+      ),
+    );
+    Widget DataCard(String img) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius
+                  .circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(112, 144, 176, 0.2),
+                  blurRadius: 40,
+                  offset: Offset(0, 14),
+                ),
+              ]
+          ),
+          child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(
-                    top: 76.0.h, left: 32.w, right: 32.w
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 157.w,
-                      height: 80.h,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius
-                              .circular(8.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(112, 144, 176, 0.2),
-                              blurRadius: 40,
-                              offset: Offset(0, 14),
-                            ),
-                          ]
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 12.0.h),
-                            child: Text("Batas waktu masuk", style: TextStyle(
-                              fontSize: 12.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                            ),),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top:4.0.h,),
-                            child: Text("09.00", style: TextStyle(
-                              fontSize: 20.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w700,
-                            ),),
-                          ),
-                        ],
-                      )
-                      ,
-                    ),
-                    SizedBox(width: 12.w,),
-                    Container(
-                      width: 157.w,
-                      height: 80.h,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius
-                              .circular(8.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(112, 144, 176, 0.2),
-                              blurRadius: 40,
-                              offset: Offset(0, 14),
-                            ),
-                          ]
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 12.0.h),
-                            child: Text("Batas waktu keluar", style: TextStyle(
-                              fontSize: 12.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                            ),),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top:4.0.h,),
-                            child: Text("17.00", style: TextStyle(
-                              fontSize: 20.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w700,
-                            ),),
-                          ),
-                        ],
-                      )
-                      ,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16.0.h, left: 32.w, right: 32.w),
+                padding: EdgeInsets.only(top: 40.0.h, left: 48.w, right: 48.w,),
                 child: Container(
-                  width: 325.w,
-                  height: 580.h,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius
-                          .circular(8.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromRGBO(112, 144, 176, 0.2),
-                          blurRadius: 40,
-                          offset: Offset(0, 14),
-                        ),
-                      ]
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 40.0.h, left: 48.w, right: 48.w, ),
-                        child: Container(
-                          width: 231.w,
-                          height: 178.h,
-                          child: Image.asset("resources/images/png/icon-absensi-masuk.png", fit:BoxFit.contain ,),
-                        ),
-                      ),
-                      SizedBox(height: 24.h,),
-                      Text("Jam Masuk",
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 12.h,),
-                      Text(_clockIn,
-                        style: TextStyle(
-                          fontSize: 28.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                        ),
-
-                      ),
-                      Text("Status: $statClockIn",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 16.h,),
-                      Text("Jam Keluar",
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 12.h,),
-                      Padding(
-                        padding: EdgeInsets.only(top:4.0.h,),
-                        child: Text("- - : - -",
-                          style: TextStyle(
-                            fontSize: 28.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                          ),
-
-                        ),
-                      ),
-
-                    ],
-                  ),
+                  width: 231.w,
+                  height: 178.h,
+                  child: Image.asset(img,
+                    fit: BoxFit.contain,),
                 ),
               ),
-              SizedBox(height: 16.h,),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AutoSizeText("Sedang perjalanan dinas",
-                        maxFontSize: 16,
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Color.fromRGBO(40, 34, 86, 1),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "Poppins")
-                    ),
-                    Switch(
-                      value: _dinas,
-                      activeColor: Colors.redAccent,
-                      onChanged: (value) {
-                        setState(() {
-                          _dinas = value;
-                          if (_dinas) {
-                            _dinas = true;
-                            dataUser.setFlagDinas("Perjalanan Dinas");
-                            print(dataUser.getFlagDinas().toString());
-                          } else {
-                            _dinas = false;
-                            dataUser.setFlagDinas("");
-                            print(dataUser.getFlagDinas().toString());
-                          }
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16.h,),
-              Center(
-                child: InkWell(
-                  onTap: () => {
-
-                    getCurrentLocation().then((value) => {
-                      lat = '${value.latitude}',
-                      longi = '${value.longitude}'
-                    }
-                    ),
-                    encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
-                    encodeBody['latitude'] = lat,
-                    encodeBody['longitude'] = longi,
-                    encodeBody['status'] = dataUser.flagDinas!,
-                    print(encodeBody),
-                    displayDialog(
-                        context, "Anda yakin ingin absen keluar?", "iya, keluar!", dataUser,  encodeBody)
-
-                  },
-                  child: Container(
-                    width: 200.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(130, 83, 240, 1) ,
-                      borderRadius: BorderRadius.circular(8.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
-                          spreadRadius: 0,
-                          blurRadius: 9,
-                          offset: const Offset(2, 4), // changes position of shadow
-                        ),
-                      ]
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
-                      child: Center(
-                        child: HelperBigText(
-                          text: "Keluar",
-                          color: Colors.white,
-                          maxLines: 1,
-                          size: 18.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 100.h,),
+              SizedBox(height: 24.h,),
+              jamMasuk,
+              SizedBox(height: 20.h,),
+              if (stat == "keluar" || stat == "masuk")
+                ...[jamKeluar]
             ],
-          );
-      case "keluar":
-        return
-          Column(
+          ),
+        ),
+      );
+    };
+    final buttonAbsenMasuk = Center(
+      child: InkWell(
+        onTap: () => {
+          print('awal masuk'),
+          print(""),
+          getCurrentLocation().then((value) => {
+            lat = '${value.latitude}',
+            longi = '${value.longitude}'
+          }
+          ),
+
+          print("lat "+ lat),
+          print("longitude "+ longi),
+          encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
+          encodeBody['latitude'] = lat,
+          encodeBody['longitude'] = longi,
+          print("test"),
+          encodeBody['status'] = dataUser.getFlagDinas().toString() ?? '',
+          print("test"),
+          print(encodeBody),
+          displayDialog(
+              context, "Anda yakin ingin absen masuk?", "iya, masuk!", dataUser,  encodeBody)
+
+
+        },
+        child: Container(
+          width: 200.w,
+          height: 48.h,
+          decoration: BoxDecoration(
+              color: Color.fromRGBO(130, 83, 240, 1) ,
+              borderRadius: BorderRadius.circular(8.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  spreadRadius: 0,
+                  blurRadius: 9,
+                  offset: const Offset(2, 4), // changes position of shadow
+                ),
+              ]
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
+            child: Center(
+              child: HelperBigText(
+                text: "Masuk",
+                color: Colors.white,
+                maxLines: 1,
+                size: 18.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final buttonAbsenKeluar = Center(
+      child: InkWell(
+        onTap: () => {
+
+          getCurrentLocation().then((value) => {
+            lat = '${value.latitude}',
+            longi = '${value.longitude}'
+          } ),
+
+          encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
+          encodeBody['latitude'] = lat,
+          encodeBody['longitude'] = longi,
+          encodeBody['status'] = dataUser.getFlagDinas().toString() ?? "",
+          print(encodeBody),
+          displayDialog(
+              context, "Anda yakin ingin absen keluar?", "iya, keluar!", dataUser,  encodeBody)
+
+        },
+        child: Container(
+          width: 200.w,
+          height: 48.h,
+          decoration: BoxDecoration(
+              color: Color.fromRGBO(130, 83, 240, 1) ,
+              borderRadius: BorderRadius.circular(8.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  spreadRadius: 0,
+                  blurRadius: 9,
+                  offset: const Offset(2, 4), // changes position of shadow
+                ),
+              ]
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
+            child: Center(
+              child: HelperBigText(
+                text: "Keluar",
+                color: Colors.white,
+                maxLines: 1,
+                size: 18.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final buttonAbsenSelesai = Center(
+      child: InkWell(
+        onTap: null,
+        child: Container(
+          width: 200.w,
+          height: 48.h,
+          decoration: BoxDecoration(
+              color: Color.fromRGBO(236, 236, 236, 1) ,
+              borderRadius: BorderRadius.circular(8.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  spreadRadius: 0,
+                  blurRadius: 9,
+                  offset: const Offset(2, 4), // changes position of shadow
+                ),
+              ]
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
+            child: Center(
+              child: HelperBigText(
+                text: "Keluar",
+                color: Color.fromRGBO(83,83,83, 1),
+                maxLines: 1,
+                size: 18.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+      switch (stat) {
+        case "masuk":
+          return
+            Column(
+              children: [
+                batasWaktu,
+                DataCard("resources/images/png/icon-absensi-masuk.png"),
+                SizedBox(height: 5.h,),
+                switchDinas,
+                SizedBox(height: 16.h,),
+                buttonAbsenKeluar,
+                SizedBox(height: 100.h,),
+              ],
+            );
+        case "keluar":
+          return
+            Column(
+              children: [
+                batasWaktu,
+                DataCard("resources/images/png/icon-absensi-keluar.png"),
+                SizedBox(height: 5.h,),
+                switchDinas,
+                SizedBox(height: 16.h,),
+                buttonAbsenSelesai,
+                SizedBox(height: 100.h,),
+              ],
+            );
+        default:
+          return Column(
             children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 76.0.h, left: 32.w, right: 32.w
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 157.w,
-                      height: 80.h,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius
-                              .circular(8.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(112, 144, 176, 0.2),
-                              blurRadius: 40,
-                              offset: Offset(0, 14),
-                            ),
-                          ]
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 12.0.h),
-                            child: Text("Batas waktu masuk", style: TextStyle(
-                              fontSize: 12.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                            ),),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top:4.0.h,),
-                            child: Text("09.00", style: TextStyle(
-                              fontSize: 20.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w700,
-                            ),),
-                          ),
-                        ],
-                      )
-                      ,
-                    ),
-                    SizedBox(width: 12.w,),
-                    Container(
-                      width: 157.w,
-                      height: 80.h,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius
-                              .circular(8.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(112, 144, 176, 0.2),
-                              blurRadius: 40,
-                              offset: Offset(0, 14),
-                            ),
-                          ]
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 12.0.h),
-                            child: Text("Batas waktu keluar",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top:4.0.h,),
-                            child: Text("17.00",
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-
-                        ],
-                      )
-                      ,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16.0.h, left: 32.w, right: 32.w),
-                child: Container(
-                  width: 325.w,
-                  height: 580.h,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius
-                          .circular(8.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromRGBO(112, 144, 176, 0.2),
-                          blurRadius: 40,
-                          offset: Offset(0, 14),
-                        ),
-                      ]
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 40.0.h, left: 48.w, right: 48.w, ),
-                        child: Container(
-                          width: 231.w,
-                          height: 178.h,
-                          child: Image.asset("resources/images/png/icon-absensi-keluar.png", fit:BoxFit.contain ,),
-                        ),
-                      ),
-                      SizedBox(height: 24.h,),
-                      Text("Jam Masuk",
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 12.h,),
-                      Text(_clockIn,
-                        style: TextStyle(
-                          fontSize: 28.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text("Status: $statClockIn",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 16.h,),
-                      Text("Jam Keluar",
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 12.h,),
-                      Padding(
-                        padding: EdgeInsets.only(top:4.0.h,),
-                        child: Text(_clockOut,
-                          style: TextStyle(
-                            fontSize: 28.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                          ),
-
-                        ),
-                      ),
-                      Text("Status: $statClockOut",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 40.h,),
-
-
-                    ],
-                  ),
-                ),
-              ),
+              batasWaktu,
+              DataCard("resources/images/png/icon-absensi-1.png"),
+              SizedBox(height: 5.h,),
+              switchDinas,
               SizedBox(height: 16.h,),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AutoSizeText("Sedang perjalanan dinas",
-                        maxFontSize: 16,
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Color.fromRGBO(40, 34, 86, 1),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "Poppins")
-                    ),
-                    Switch(
-                      activeColor: Colors.redAccent,
-                      value: _dinas,
-                      onChanged: (value) {
-                        setState(() {
-                          _dinas = value;
-                          if (_dinas) {
-                            _dinas = true;
-                            dataUser.setFlagDinas("Perjalanan Dinas");
-                            print(dataUser.getFlagDinas().toString());
-                          } else {
-                            _dinas = false;
-                            dataUser.setFlagDinas("");
-                            print(dataUser.getFlagDinas().toString());
-                          }
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16.h,),
-              Center(
-                child: InkWell(
-                  onTap: null,
-                  child: Container(
-                    width: 200.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(236, 236, 236, 1) ,
-                      borderRadius: BorderRadius.circular(8.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.25),
-                            spreadRadius: 0,
-                            blurRadius: 9,
-                            offset: const Offset(2, 4), // changes position of shadow
-                          ),
-                        ]
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
-                      child: Center(
-                        child: HelperBigText(
-                          text: "Keluar",
-                          color: Color.fromRGBO(83,83,83, 1),
-                          maxLines: 1,
-                          size: 18.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 100.h,),
+              buttonAbsenMasuk,
+              SizedBox(height: 68.h,),
             ],
           );
-      default:
-        return Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                  top: 76.0.h, left: 32.w, right: 32.w
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 157.w,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius
-                            .circular(8.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromRGBO(112, 144, 176, 0.2),
-                            blurRadius: 40,
-                            offset: Offset(0, 14),
-                          ),
-                        ]
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 12.0.h),
-                          child: Text("Batas waktu masuk", style: TextStyle(
-                            fontSize: 12.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                          ),),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top:4.0.h,),
-                          child: Text("09.00", style: TextStyle(
-                            fontSize: 20.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                          ),),
-                        ),
-                      ],
-                    )
-                    ,
-                  ),
-                  SizedBox(width: 12.w,),
-                  Container(
-                    width: 157.w,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius
-                            .circular(8.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromRGBO(112, 144, 176, 0.2),
-                            blurRadius: 40,
-                            offset: Offset(0, 14),
-                          ),
-                        ]
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 12.0.h),
-                          child: Text("Batas waktu keluar", style: TextStyle(
-                            fontSize: 12.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                          ),),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top:4.0.h,),
-                          child: Text("17.00", style: TextStyle(
-                            fontSize: 20.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                          ),),
-                        ),
-                      ],
-                    )
-                    ,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16.0.h, left: 32.w, right: 32.w),
-              child: Container(
-                width: 325.w,
-                height: 369.h,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius
-                        .circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromRGBO(112, 144, 176, 0.2),
-                        blurRadius: 40,
-                        offset: Offset(0, 14),
-                      ),
-                    ]
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 40.0.h, left: 48.w, right: 48.w, ),
-                      child: Container(
-                        width: 231.w,
-                        height: 178.h,
-                        child: Image.asset("resources/images/png/icon-absensi-1.png", fit:BoxFit.contain ,),
-                      ),
-                    ),
-                    SizedBox(height: 24.h,),
-                    Text("Jam Masuk", style: TextStyle(
-                      fontSize: 20.sp,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),),
-                    SizedBox(height: 12.h,),
-                    Text("- - : - -", style: TextStyle(
-                      fontSize: 28.sp,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                    ),
-                    ),
-
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16.h,),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AutoSizeText("Sedang perjalanan dinas",
-                      maxFontSize: 16,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Color.fromRGBO(40, 34, 86, 1),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Poppins")
-                  ),
-                  Switch(
-                    activeColor: Colors.redAccent,
-                    value: _dinas,
-                    onChanged: (value) {
-                      setState(() {
-                        _dinas = value;
-                        if (_dinas) {
-                          _dinas = true;
-                          dataUser.setFlagDinas("Perjalanan Dinas");
-                          print(dataUser.getFlagDinas().toString());
-                        } else {
-                          _dinas = false;
-                          dataUser.setFlagDinas("");
-                          print(dataUser.getFlagDinas().toString());
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h,),
-            Center(
-              child: InkWell(
-                onTap: () => {
-                  print('awal masuk'),
-                  print(""),
-                  getCurrentLocation().then((value) => {
-                  lat = '${value.latitude}',
-                  longi = '${value.longitude}'
-                    }
-                  ),
-
-
-                  print("lat "+ lat),
-                  print("longitude "+ longi),
-                  encodeBody['date_time'] = DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now()).toString(),
-                  encodeBody['latitude'] = lat,
-                  encodeBody['longitude'] = longi,
-                  print("test"),
-                  encodeBody['status'] = dataUser.flagDinas!,
-                  print("test"),
-                  print(encodeBody),
-                  displayDialog(
-                      context, "Anda yakin ingin absen masuk?", "iya, masuk!", dataUser,  encodeBody)
-
-
-                },
-                child: Container(
-                  width: 200.w,
-                  height: 48.h,
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(130, 83, 240, 1) ,
-                    borderRadius: BorderRadius.circular(8.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
-                          spreadRadius: 0,
-                          blurRadius: 9,
-                          offset: const Offset(2, 4), // changes position of shadow
-                        ),
-                      ]
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 8.0.h, bottom: 8.0.h,),
-                    child: Center(
-                      child: HelperBigText(
-                        text: "Masuk",
-                        color: Colors.white,
-                        maxLines: 1,
-                        size: 18.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 68.h,),
-          ],
-        );
+      }
     }
-  }
   void onTapStatusAbsensi(BuildContext context, flagg) {
     final dataUser = Provider.of<UserProvider>(context, listen: false);
     if (mounted) {
@@ -1047,7 +681,7 @@ class _HomePageState extends State<HomePage> {
         status = flagg;
       });
     }
-    }
+  }
   void onTapClockIn(BuildContext context, _clockIn) {
     final dataUser = Provider.of<UserProvider>(context, listen: false);
     if (mounted)
@@ -1055,7 +689,6 @@ class _HomePageState extends State<HomePage> {
         dataUser.clockIn = _clockIn;
       });
   }
-
   void onTapClockOut(BuildContext context, _clockOut) {
     final dataUser = Provider.of<UserProvider>(context, listen: false);
     if (mounted)
@@ -1063,7 +696,6 @@ class _HomePageState extends State<HomePage> {
         dataUser.clockOut = _clockOut;
       });
   }
-
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -1083,5 +715,44 @@ class _HomePageState extends State<HomePage> {
       );
     }
     return await Geolocator.getCurrentPosition();
+  }
+
+  /// -----------------------------------
+  /// Build
+  /// -----------------------------------
+  Widget build(BuildContext context) {
+    final dataUser = Provider.of<UserProvider>(context);
+    _flag = dataUser.flagAbsensi.toString();
+    final icon = "icon-absensi-1";
+    return Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Presensi", style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+      ),
+      backgroundColor: Color.fromRGBO(246, 242, 255, 1),
+      body: ModalProgressHUD(
+        inAsyncCall: isLoading,
+        child: SingleChildScrollView(
+          child: _buildAbsensiContent(context),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF8253F0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
+        },
+        label: Text("Profile"),
+        icon: IconTheme(
+          data: new IconThemeData(
+            color: Colors.black
+          )
+        , child: Icon(Icons.person),),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
   }
 }

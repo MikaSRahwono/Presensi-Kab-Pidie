@@ -2,10 +2,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:presensi_mobileapp/features/profile/presentation/_pages.dart';
 import 'package:presensi_mobileapp/widgets/_widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../../authentication/data/model/user_model.dart';
 import '../../authentication/presentation/pages/_pages.dart';
 import '../../authentication/presentation/provider/_provider.dart';
 
@@ -20,27 +22,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late Future<User?> dataFutureUser;
 
-  // // diganti ga pake text nanti
-  // TextEditingController instansiController = TextEditingController(text: "nama instansi");
-  //
-  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Future<void> getDataInit() async {
+    final dataUser = Provider.of<UserProvider>(context);
+    dataUser.getDataUser();
+  }
 
   @override
   void initState() {
+    getDataInit();
     super.initState();
-  }
-  // @override
-  // void dispose() {
-  //   // dispose any resources
-  //   super.dispose();
-  // }
-
-
-  @override
-  void didChangeDependencies() {
-    final dataUser = Provider.of<UserProvider>(context);
-    super.didChangeDependencies();
-    dataUser.getDataUser();
   }
 
   @override
@@ -120,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.only(
                             left: 24.0, right: 24, top: 4),
                         child: Container(
-                          height: 44.h,
+                          height: 50.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
@@ -132,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(Icons.account_balance),
+                                Icon(Icons.apartment),
                                 SizedBox(
                                   width: 24.w,
                                 ),
@@ -158,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.only(
                             left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 44,
+                          height: 50.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
@@ -170,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(Icons.account_balance),
+                                Icon(Icons.event_seat),
                                 SizedBox(
                                   width: 24.w,
                                 ),
@@ -188,44 +178,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 28.0, top: 18),
                       child: HelperBigText(
-                        text: "Tanggal Lahir",
-                        size: 14.sp,
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.only(
-                            left: 24.0, right: 24.0, top: 4.0),
-                        child: Container(
-                          height: 44.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.r),
-                            color: Color.fromRGBO(240, 238, 252, 1),
-                            border: Border.all(color: Colors.black12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.account_balance),
-                                SizedBox(
-                                  width: 24.w,
-                                ),
-                                Expanded(
-                                    child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Text(
-                                          "22/04/1979",
-                                          style: TextStyle(fontSize: 14.sp),
-                                        )))
-                              ],
-                            ),
-                          ),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 28.0, top: 18),
-                      child: HelperBigText(
                         text: "Email",
                         size: 14.sp,
                       ),
@@ -234,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.only(
                             left: 24.0, right: 24.0, top: 4.0),
                         child: Container(
-                          height: 44.h,
+                          height: 50.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.r),
                             color: Color.fromRGBO(240, 238, 252, 1),
@@ -246,11 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8.0, bottom: 8),
-                                  child: Icon(Icons.account_balance),
-                                ),
+                                Icon(Icons.email),
                                 SizedBox(
                                   width: 24.w,
                                 ),
@@ -264,8 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                           ),
-                        )),
-                    SizedBox(
+                        )), SizedBox(
                       height: 104.h,
                     )
                   ],
@@ -305,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const EdgeInsets.only(top: 12.0, right: 60.0, left: 60.0),
               child: Container(
                 width: 400.w,
-                height: 48.h,
+                height: 58.h,
                 child: ElevatedButton.icon(
                   icon: Icon(Icons.logout),
                   label: AutoSizeText("Logout",

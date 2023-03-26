@@ -168,10 +168,13 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (BuildContext context) =>
                             FirstPassResetPage()));
               } else {
-                Navigator.push(
+                dataUser.getDataPresensi();
+                Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => HomePage()));
+                        builder: (BuildContext context) => HomePage()),
+                        (Route<dynamic> route) => false
+                );
               }
             }
             setState(() {

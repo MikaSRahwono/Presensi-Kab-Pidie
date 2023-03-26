@@ -14,17 +14,17 @@ class Presensi {
     required this.data,
   });
 
-  String status;
-  Data data;
+  String? status;
+  Data? data;
 
-  factory Presensi.fromJson(Map<String, dynamic> json) => Presensi(
-    status: json["status"],
-    data: Data.fromJson(json["data"]),
+  factory Presensi.fromJson(Map<String, dynamic>? json) => Presensi(
+    status: json!["status"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
-    "data": data.toJson(),
+    "data": data?.toJson(),
   };
 }
 
@@ -65,7 +65,7 @@ class Data {
     jamAbsensiMasuk: json["jam_absensi_masuk"],
     lokasiAbsensiMasuk: json["lokasi_absensi_masuk"],
     keteranganAbsensiMasuk: json["keterangan_absensi_masuk"],
-    jamAbsensiKeluar: json["jam_absensi_keluar"],
+    jamAbsensiKeluar: json["jam_absensi_keluar"] == "null" ? null : json["jam_absensi_keluar"],
     lokasiAbsensiKeluar: json["lokasi_absensi_keluar"],
     keteranganAbsensiKeluar: json["keterangan_absensi_keluar"],
     status: json["status"],

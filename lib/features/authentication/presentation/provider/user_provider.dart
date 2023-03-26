@@ -22,6 +22,9 @@ class UserProvider with ChangeNotifier {
   Presensi? presensiModel;
   User? pegawaiModel;
 
+  /// -------------------------------------
+  /// Setter and Getter
+  /// -------------------------------------
   Future<String?> setAccessToken(String? token) async {
     await _storage.write(key: _tokenKey, value: token);
     return token;
@@ -87,6 +90,13 @@ class UserProvider with ChangeNotifier {
     return presensiModel;
   }
 
+  User? getUser(){
+    return pegawaiModel;
+  }
+
+  /// ----------------------------------------
+  /// Methods
+  /// ----------------------------------------
 
   void logout() {
     jwtToken = null;
@@ -94,15 +104,10 @@ class UserProvider with ChangeNotifier {
     firstLogin = true;
   }
 
-
-
-  User? getUser(){
-    return pegawaiModel;
-  }
-  Future<http.Response> postRequestWithJWT(
-      String url, Map<String, String> encodeBody) async {
+  Future<http.Response> absenMasuk(Map<String, String> encodeBody) async {
+    print(jwtToken);
     var res = await http.post(
-      Uri.parse(url),
+      Uri.parse("http://127.0.0.1:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -115,72 +120,9 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-  Future<http.Response> getRequestWithJWT(String url) async {
-    var res = await http.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json",
-        "Authorization": "Bearer $jwtToken",
-      },
-    );
-    // print("masuk get request with  jwt");
-    // if (res.statusCode == 200) {
-    //       print("masuk");
-    //       presensiModel = Presensi.fromJson(jsonDecode(res.body));
-    //
-    //       notifyListeners();
-    //       print(presensiModel?.status);
-    //       return presensiModel;
-    //     } else {
-    //       print("gamasik");
-    //       // If the server did not return a 200 OK response,
-    //       // then throw an exception.
-    //       throw Exception('Failed to get user detail');
-    //     }
-    return res;
-  }
-  // Future<User?> getDataUser() async {
-  //   print("abcd");
-  //   print(jwtToken);
-  //   http.Response res = await http.post(
-  //       Uri.parse('http://127.0.0.1:2020/api/auth/pasien'),
-  //       headers: <String, String>{"Content-Type": "application/json",
-  //         "Accept": "application/json",
-  //         "Authorization": "Bearer $jwtToken",
-  //       });
-  //   print(res.statusCode);
-  //   if (res.statusCode == 200) {
-  //     print("masuk");
-  //     pasienModel = User.fromJson(jsonDecode(res.body));
-  //
-  //     notifyListeners();
-  //     return pasienModel;
-  //   } else {
-  //     print("gamasik");
-  //     // If the server did not return a 200 OK response,
-  //     // then throw an exception.
-  //     throw Exception('Failed to get user detail');
-  //   }
-
-  Future<http.Response> deleteRequestWithJWT(
-      String url, Map<String, String> encodeBody) async {
-    var res = await http.delete(
-      Uri.parse(url),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json",
-        "Authorization": "Bearer $jwtToken",
-      },
-    );
-    print("masuk delete request with  jwt");
-    return res;
-  }
-
-  Future<http.Response> putRequestWithJWT(
-      String url, Map<String, String> encodeBody) async {
+  Future<http.Response> absenKeluar(Map<String, String> encodeBody) async {
     var res = await http.put(
-      Uri.parse(url),
+      Uri.parse("http://127.0.0.1:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -195,15 +137,14 @@ class UserProvider with ChangeNotifier {
   Future<User?> getDataUser() async {
     print(jwtToken);
     var res = await http.get(
-        Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
+        Uri.parse('http://127.0.0.1:8000/pegawai/info-pegawai'),
         headers: <String, String>{"Content-Type": "application/json",
           "Accept": "application/json",
           "Authorization": "Bearer $jwtToken",
         });
     if (res.statusCode == 200) {
-      print("masuk");
+      print("masuk2");
       pegawaiModel = User.fromJson(jsonDecode(res.body));
-
       notifyListeners();
       return pegawaiModel;
     } else {
@@ -213,7 +154,6 @@ class UserProvider with ChangeNotifier {
       throw Exception('Failed to get user detail');
     }
   }
-
 
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
@@ -241,23 +181,28 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<Presensi?> getData(url) async {
+  Future<Presensi?> getDataPresensi() async {
   var res = await http.get(
-    Uri.parse(url),
+    Uri.parse("http://127.0.0.1:8000/presensi/"),
     headers: <String, String>{
     "Content-Type": "application/json; charset=UTF-8",
     "Accept": "application/json",
     "Authorization": "Bearer $jwtToken",
     },
   );
+  print(res.body);
   if (res.statusCode == 200) {
-    presensiModel = Presensi.fromJson(jsonDecode(res.body));
-
+    var stringRes = jsonDecode(res.body);
+    print(stringRes);
+    if(stringRes['status'] == null){
+      print('masuk');
+      stringRes['data'] = null;
+      print(stringRes);
+    }
+    presensiModel = Presensi.fromJson(stringRes);
     notifyListeners();
     return presensiModel;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
     throw Exception('Failed to get user detail');
   }
 }
