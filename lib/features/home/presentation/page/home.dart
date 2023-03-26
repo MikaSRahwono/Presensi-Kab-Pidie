@@ -1,9 +1,7 @@
 part of '_pages.dart';
 
 class HomePage extends StatefulWidget {
-
   const HomePage({Key? key}) : super(key: key);
-
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -72,8 +70,7 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
-
-    // final dataUser = Provider.of<UserProvider>(context);
+    // Step 1: panggil data user
     final dataUser = Provider.of<UserProvider>(context);
     _flag = dataUser.flagAbsensi.toString();
     final icon = "icon-absensi-1";

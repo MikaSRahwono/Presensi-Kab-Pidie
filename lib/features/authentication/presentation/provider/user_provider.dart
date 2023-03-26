@@ -20,6 +20,7 @@ class UserProvider with ChangeNotifier {
   String? flagDinas;
   bool firstLogin = true;
   Presensi? presensiModel;
+  User? pegawaiModel;
 
   Future<String?> setAccessToken(String? token) async {
     await _storage.write(key: _tokenKey, value: token);
@@ -89,6 +90,9 @@ class UserProvider with ChangeNotifier {
 
 
 
+  User? getUser(){
+    return pegawaiModel;
+  }
   Future<http.Response> postRequestWithJWT(
       String url, Map<String, String> encodeBody) async {
     var res = await http.post(
@@ -181,6 +185,29 @@ class UserProvider with ChangeNotifier {
     print("masuk put request with  jwt");
     return res;
   }
+
+  Future<User?> getDataUser() async {
+    print(jwtToken);
+    var res = await http.get(
+        Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
+        headers: <String, String>{"Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        });
+    if (res.statusCode == 200) {
+      print("masuk");
+      pegawaiModel = User.fromJson(jsonDecode(res.body));
+
+      notifyListeners();
+      return pegawaiModel;
+    } else {
+      print("gamasik");
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to get user detail');
+    }
+  }
+
 
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
