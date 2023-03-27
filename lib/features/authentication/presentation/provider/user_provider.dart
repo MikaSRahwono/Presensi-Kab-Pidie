@@ -8,10 +8,25 @@ class UserProvider with ChangeNotifier {
   final String _tokenKey = 'token';
   final String _refreshTokenKey = 'refresh_token';
   final String _flagFirstLoginKey = 'flag_first_login';
+  final String _flagAbsensi = 'flag_absensi';
+  final String _clockIn = "clock_in";
+  final String _clockOut = "clock_Out";
+  final String _flagDinas = "flag_dinas";
+  // final String _lockedDinas = "";
   String? jwtToken;
   String? refreshToken;
+  String? flagAbsensi;
+  String? clockIn;
+  String? clockOut;
+  String? flagDinas;
   bool firstLogin = true;
+  bool isLockedDinas = false;
+  Presensi? presensiModel;
+  User? pegawaiModel;
 
+  /// -------------------------------------
+  /// Setter and Getter
+  /// -------------------------------------
   Future<String?> setAccessToken(String? token) async {
     await _storage.write(key: _tokenKey, value: token);
     return token;
@@ -28,6 +43,56 @@ class UserProvider with ChangeNotifier {
     return flag;
   }
 
+  Future<String?> setFlagAbsensi(String? flagAbsensi) async {
+    await _storage.write(key: _flagAbsensi, value: flagAbsensi.toString());
+    flagAbsensi = _flagAbsensi;
+    return flagAbsensi;
+  }
+
+  Future<String?> setClockIn(String? clock_in) async {
+    await _storage.write(key: _clockIn, value: clock_in.toString());
+    clockIn = clock_in;
+    return clock_in;
+  }
+
+  Future<String?> setClockOut(String? clock_out) async {
+    await _storage.write(key: _clockOut, value: clock_out.toString());
+    clockOut = clock_out;
+    return clock_out;
+  }
+  Future<String?> setFlagDinas(String? dinas) async {
+    await _storage.write(key: _flagDinas, value: dinas.toString());
+    flagDinas = dinas;
+    return dinas;
+  }
+  // Future<String?> setLockedDinas(String? isLockedDinas) async {
+  //   await _storage.write(key: _lockedDinas, value: isLockedDinas);
+  //   this.isLockedDinas = isLockedDinas == 'true';
+  //   return isLockedDinas;
+  // }
+
+  bool setLockedDinas(bool Locked) {
+    this.isLockedDinas = Locked;
+    return isLockedDinas;
+  }
+
+  Future<Presensi> setPresensiModel(Presensi presensiModel) async {
+    this.presensiModel = presensiModel;
+    return presensiModel;
+  }
+
+  Future<String?> getAccessTokenStorage() async {
+    if (jwtToken == null){
+      final token = await _storage.read(key: _tokenKey);
+      jwtToken = token;
+    }
+    return jwtToken;
+  }
+
+  bool getLockedDinas()  {
+    return isLockedDinas;
+  }
+
   String? getAccessToken() {
     return jwtToken;
   }
@@ -39,11 +104,44 @@ class UserProvider with ChangeNotifier {
   bool? getFirstLogin() {
     return firstLogin;
   }
+  String? getFlagAbsensi() {
+    return flagAbsensi;
+  }
+  String? getClockIn() {
+    return clockIn;
+  }
+  String? getClockOut() {
+    return clockOut;
+  }
+  String? getFlagDinas() {
+    return flagDinas;
+  }
+  Presensi? getPresensi(){
+    return presensiModel;
+  }
 
-  Future<http.Response> postRequestWithJWT(
-      String url, Map<String, String> encodeBody) async {
+  User? getUser(){
+    return pegawaiModel;
+  }
+
+  /// ----------------------------------------
+  /// Methods
+  /// ----------------------------------------
+
+  void logout() {
+    jwtToken = null;
+    refreshToken = null;
+    firstLogin = true;
+  }
+
+  Future<bool> isLoggedIn() async {
+    await getAccessTokenStorage();
+    return jwtToken == null ? false : true;
+  }
+
+  Future<http.Response> absenMasuk(Map<String, String> encodeBody) async {
     var res = await http.post(
-      Uri.parse(url),
+      Uri.parse("http://10.0.2.2:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -54,62 +152,98 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-  Future<http.Response> getRequestWithJWT(String url) async {
-    var res = await http.get(
-      Uri.parse(url),
+  Future<http.Response> absenKeluar(Map<String, String> encodeBody) async {
+    var res = await http.put(
+      Uri.parse("http://10.0.2.2:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
         "Authorization": "Bearer $jwtToken",
       },
+      body: jsonEncode(encodeBody),
     );
     return res;
   }
 
-  Future<http.Response> deleteRequestWithJWT(
-      String url, Map<String, String> encodeBody) async {
-    var res = await http.delete(
-      Uri.parse(url),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json",
-        "Authorization": "Bearer $jwtToken",
-      },
-    );
-    return res;
+  Future<User?> getDataUser() async {
+    var res = await http.get(
+        Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
+        headers: <String, String>{"Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        });
+    if (res.statusCode == 200) {
+      pegawaiModel = User.fromJson(jsonDecode(res.body));
+      notifyListeners();
+      return pegawaiModel;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to get user detail');
+    }
   }
 
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
-          'https://presensi-service-data-production.up.railway.app/account/login'),
+          'http://10.0.2.2:8000/account/login'),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
       },
       body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
     );
-    JwtResponse response = jwtResponseFromJson(res.body);
-    jwtToken = response.tokens.access;
-    refreshToken = response.tokens.refresh;
-    firstLogin = response.firstLogin;
-    print(jwtToken);
-    print(refreshToken);
-    print(firstLogin);
-    await setAccessToken(jwtToken);
-    await setFirstLogin(firstLogin);
-    await setRefreshToken(refreshToken);
-    notifyListeners();
-    return res;
+    if (res.statusCode == 200){
+      JwtResponse response = jwtResponseFromJson(res.body);
+      jwtToken = response.tokens.access;
+      refreshToken = response.tokens.refresh;
+      firstLogin = response.firstLogin;
+      await setAccessToken(jwtToken);
+      await setFirstLogin(firstLogin);
+      await setRefreshToken(refreshToken);
+      await getDataPresensi();
+      await getDataUser();
+      notifyListeners();
+      return res;
+    }
+    else {
+      return res;
+    }
   }
+
+  Future<Presensi?> getDataPresensi() async {
+  var res = await http.get(
+    Uri.parse("http://10.0.2.2:8000/presensi/"),
+    headers: <String, String>{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Accept": "application/json",
+    "Authorization": "Bearer $jwtToken",
+    },
+  );
+  if (res.statusCode == 200) {
+    var stringRes = jsonDecode(res.body);
+    if(stringRes['status'] == null){
+      setFlagDinas("");
+      setLockedDinas(false);
+      stringRes['data'] = null;
+    } else {
+      setLockedDinas(true);
+    }
+    presensiModel = Presensi.fromJson(stringRes);
+    notifyListeners();
+    return presensiModel;
+  } else {
+    throw Exception('Failed to get user detail');
+  }
+}
 
   Future<String> forceChangePass(pass, confPass) async {
     var token = getAccessToken() ?? "";
-    var headers = {'Authorization': 'Bearer ' + token};
+    var headers = {'Authorization': 'Bearer $token'};
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
+            'http://10.0.2.2:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
@@ -117,8 +251,6 @@ class UserProvider with ChangeNotifier {
     http.StreamedResponse response = await request.send();
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
-
-    print(response.statusCode);
 
     if (resMap['status'] == "Success") {
       return (await stringResponse);
@@ -131,14 +263,13 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<String> changePassword(prevPass, pass, confPass) async {
-    // TODO: Implement Change Password
     var token = getAccessToken() ?? "";
     var headers = {'Authorization': 'Bearer ' + token};
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://presensi-service-data-production.up.railway.app/account/force-change-pass'));
-    request.fields.addAll({'password': pass, 'confirm_password': confPass});
+            'http://10.0.2.2:8000/account/change-pass'));
+    request.fields.addAll({'old_password':prevPass, 'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
 
@@ -146,13 +277,13 @@ class UserProvider with ChangeNotifier {
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
 
-    print(response.statusCode);
-
     if (resMap['status'] == "Success") {
       return (await stringResponse);
     } else if (resMap['detail'] ==
         "Authentication credentials were not provided.") {
       return ("Authentication credentials were not provided.");
+    } else if (resMap["message"] == "Password lama tidak sesuai") {
+      return ("Password lama tidak sesuai");
     } else {
       return ("Password tidak sama");
     }

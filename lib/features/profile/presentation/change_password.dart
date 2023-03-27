@@ -12,6 +12,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   bool _passwordVisible1 = true;
   bool _passwordVisible2 = true;
 
+  bool isLoading = false;
+
   final prevpassController = TextEditingController();
   final passController1 = TextEditingController();
   final passController2 = TextEditingController();
@@ -245,6 +247,26 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
       ],
     );
+    final alertDialogFailedPrevPass = CupertinoAlertDialog(
+      title: const Text('Password lama tidak sesuai'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('password lama anda salah'),
+            Text('masukkan password lama anda dengan benar'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('oke'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+
     final alertDialogNoAuth = CupertinoAlertDialog(
       title: const Text('Ubah Password Gagal'),
       content: SingleChildScrollView(
@@ -283,6 +305,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         onPressed: () async {
+          setState(() {
+            isLoading = true;
+          });
           var response = await dataUser.changePassword(prevpassController.text,
               passController1.text, passController2.text);
           print(response);
@@ -301,6 +326,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 builder: (BuildContext context) {
                   return alertDialogNoAuth;
                 });
+          } else if (response ==
+              "Password lama tidak sesuai") {
+              showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+              return alertDialogFailedPrevPass;
+              });
           } else {
             showDialog<void>(
                 context: context,
@@ -309,6 +342,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return alertDialogSuccess;
                 });
           }
+          setState(() {
+            isLoading = false;
+          });
         },
       ),
     );
@@ -320,63 +356,64 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         centerTitle: false,
         title: Text('Ubah Password',
             style: GoogleFonts.poppins(
-              color: Colors.white,
               fontWeight: FontWeight.w500,
             )),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined),
-          color: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
       backgroundColor: Color(0xFFF6F2FF),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  decoration: const BoxDecoration(boxShadow: [
-                    BoxShadow(color: Colors.black12, blurRadius: 10)
-                  ]),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.sp)),
-                    child: Padding(
-                      padding: EdgeInsets.all(30.w),
-                      child: Column(
-                        children: [
-                          if (MediaQuery.of(context).size.width <= 360) ...[
-                            PreviousPasswordField(90, 20)
-                          ] else ...[
-                            PreviousPasswordField(55, 16)
+      body: ModalProgressHUD(
+        inAsyncCall: isLoading,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(color: Colors.black12, blurRadius: 10)
+                    ]),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.sp)),
+                      child: Padding(
+                        padding: EdgeInsets.all(30.w),
+                        child: Column(
+                          children: [
+                            if (MediaQuery.of(context).size.width <= 360) ...[
+                              PreviousPasswordField(90, 20)
+                            ] else ...[
+                              PreviousPasswordField(55, 16)
+                            ],
+                            SizedBox(height: 20.h),
+                            if (MediaQuery.of(context).size.width <= 360) ...[
+                              PasswordField(90, 20)
+                            ] else ...[
+                              PasswordField(55, 16)
+                            ],
+                            SizedBox(height: 20.h),
+                            if (MediaQuery.of(context).size.width <= 360) ...[
+                              RepeatPasswordField(85, 20)
+                            ] else ...[
+                              RepeatPasswordField(55, 16)
+                            ],
+                            SizedBox(
+                              height: 20.h,
+                            )
                           ],
-                          SizedBox(height: 20.h),
-                          if (MediaQuery.of(context).size.width <= 360) ...[
-                            PasswordField(90, 20)
-                          ] else ...[
-                            PasswordField(55, 16)
-                          ],
-                          SizedBox(height: 20.h),
-                          if (MediaQuery.of(context).size.width <= 360) ...[
-                            RepeatPasswordField(85, 20)
-                          ] else ...[
-                            RepeatPasswordField(55, 16)
-                          ],
-                          SizedBox(
-                            height: 20.h,
-                          )
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              saveButton
-            ],
+                saveButton
+              ],
+            ),
           ),
         ),
       ),

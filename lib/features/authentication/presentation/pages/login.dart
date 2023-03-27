@@ -9,6 +9,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final nipController = TextEditingController();
   final passController = TextEditingController();
+  var isLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -47,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
-
     Widget PasswordField(int height, int fontSize) {
       return Container(
         height: height.h,
@@ -75,7 +75,6 @@ class _LoginPageState extends State<LoginPage> {
             )),
       );
     }
-
     final dataUser = Provider.of<UserProvider>(context);
     final logo = FittedBox(
       fit: BoxFit.fitWidth,
@@ -149,10 +148,12 @@ class _LoginPageState extends State<LoginPage> {
             maxFontSize: 18,
           ),
           onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
             var response = await dataUser.attemptLogIn(
                 nipController.text, passController.text);
-            print(response);
-            if (response == 'Error') {
+            if (response.statusCode != 200) {
               showDialog<void>(
                   context: context,
                   barrierDismissible: false,
@@ -167,12 +168,17 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (BuildContext context) =>
                             FirstPassResetPage()));
               } else {
-                Navigator.push(
+                Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => HomePage()));
+                        builder: (BuildContext context) => HomePage()),
+                        (Route<dynamic> route) => false
+                );
               }
             }
+            setState(() {
+              isLoading = false;
+            });
           },
         ),
       ),
@@ -180,29 +186,32 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       backgroundColor: Color(0xFFF6F2FF),
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 24.0),
-          children: <Widget>[
-            logo,
-            heading,
-            SizedBox(height: 48.0.h),
-            if (MediaQuery.of(context).size.width <= 380) ...[
-              NIPField(82, 20)
-            ] else ...[
-              NIPField(70, 16)
+      body: ModalProgressHUD(
+        inAsyncCall: isLoading,
+        child: Center(
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 24.0),
+            children: <Widget>[
+              logo,
+              heading,
+              SizedBox(height: 48.0.h),
+              if (MediaQuery.of(context).size.width <= 380) ...[
+                NIPField(82, 20)
+              ] else ...[
+                NIPField(70, 16)
+              ],
+              SizedBox(height: 8.0.h),
+              if (MediaQuery.of(context).size.width <= 380) ...[
+                PasswordField(82, 20)
+              ] else ...[
+                PasswordField(70, 16)
+              ],
+              SizedBox(height: 20.0.h),
+              loginButton,
+              forgotLabel
             ],
-            SizedBox(height: 8.0.h),
-            if (MediaQuery.of(context).size.width <= 380) ...[
-              PasswordField(82, 20)
-            ] else ...[
-              PasswordField(70, 16)
-            ],
-            SizedBox(height: 20.0.h),
-            loginButton,
-            forgotLabel
-          ],
+          ),
         ),
       ),
     );

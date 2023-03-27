@@ -42,10 +42,14 @@ dependencies:
   cool_alert: ^2.0.1
   tmdb_api:
   http: ^0.13.5
+  geolocator: ^9.0.2
   provider: ^6.0.4
   flutter_secure_storage: ^6.0.0
   flutter_countdown_timer: ^4.1.0
-
+  intl: ^0.17.0
+  flutter_svg: ^2.0.4
+  modal_progress_hud_nsn: ^0.3.0
+  flutter_native_splash: ^2.2.19
 
 dev_dependencies:
   flutter_test:
@@ -97,3 +101,7 @@ flutter:
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_native_splash:
+  color: '#F6F2FF'
+  image: 'resources/images/png/splash_logo.png'
