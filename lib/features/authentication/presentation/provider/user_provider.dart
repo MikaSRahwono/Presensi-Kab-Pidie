@@ -223,6 +223,7 @@ class UserProvider with ChangeNotifier {
   if (res.statusCode == 200) {
     var stringRes = jsonDecode(res.body);
     if(stringRes['status'] == null){
+      setFlagDinas("");
       setLockedDinas(false);
       stringRes['data'] = null;
     } else {

@@ -437,6 +437,9 @@ class _HomePageState extends State<HomePage> {
         if (stat == "masuk" || stat == "keluar")
           ...[Text("Status: $statClockIn",
             style: TextStyle(
+              color: statClockIn == "Masuk Tepat Waktu" ? Colors.green :
+              statClockIn == "Masuk Terlambat" ? Colors.redAccent :
+              Colors.blueAccent,
               fontSize: 14.sp,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
@@ -459,12 +462,15 @@ class _HomePageState extends State<HomePage> {
         if (stat == "keluar")
           ...[Text("Status: $statClockOut",
             style: TextStyle(
+              color: statClockOut == "Pulang Tepat Waktu" ? Colors.green :
+              statClockOut == "Pulang Lebih Cepat" ? Colors.redAccent :
+              Colors.blueAccent,
               fontSize: 14.sp,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
             ),
           )],
-        SizedBox(height: 20.h,)
+        SizedBox(height: 40.h,)
       ],
     );
     final switchDinas = Center(
