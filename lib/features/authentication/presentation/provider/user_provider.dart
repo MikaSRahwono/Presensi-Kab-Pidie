@@ -141,7 +141,7 @@ class UserProvider with ChangeNotifier {
 
   Future<http.Response> absenMasuk(Map<String, String> encodeBody) async {
     var res = await http.post(
-      Uri.parse("http://127.0.0.1:8000/presensi/"),
+      Uri.parse("http://10.0.2.2:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -154,7 +154,7 @@ class UserProvider with ChangeNotifier {
 
   Future<http.Response> absenKeluar(Map<String, String> encodeBody) async {
     var res = await http.put(
-      Uri.parse("http://127.0.0.1:8000/presensi/"),
+      Uri.parse("http://10.0.2.2:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -167,7 +167,7 @@ class UserProvider with ChangeNotifier {
 
   Future<User?> getDataUser() async {
     var res = await http.get(
-        Uri.parse('http://127.0.0.1:8000/pegawai/info-pegawai'),
+        Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
         headers: <String, String>{"Content-Type": "application/json",
           "Accept": "application/json",
           "Authorization": "Bearer $jwtToken",
@@ -186,7 +186,7 @@ class UserProvider with ChangeNotifier {
   Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
-          'http://127.0.0.1:8000/account/login'),
+          'http://10.0.2.2:8000/account/login'),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -213,7 +213,7 @@ class UserProvider with ChangeNotifier {
 
   Future<Presensi?> getDataPresensi() async {
   var res = await http.get(
-    Uri.parse("http://127.0.0.1:8000/presensi/"),
+    Uri.parse("http://10.0.2.2:8000/presensi/"),
     headers: <String, String>{
     "Content-Type": "application/json; charset=UTF-8",
     "Accept": "application/json",
@@ -242,7 +242,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://127.0.0.1:8000/account/force-change-pass'));
+            'http://10.0.2.2:8000/account/force-change-pass'));
     request.fields.addAll({'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);
@@ -267,7 +267,7 @@ class UserProvider with ChangeNotifier {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://127.0.0.1:8000/account/change-pass'));
+            'http://10.0.2.2:8000/account/change-pass'));
     request.fields.addAll({'old_password':prevPass, 'password': pass, 'confirm_password': confPass});
 
     request.headers.addAll(headers);

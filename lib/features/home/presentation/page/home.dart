@@ -81,11 +81,11 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) =>
             AlertDialog(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
               content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState){
                   return  Container(
-                    width: 326.w,
-                    height: 360.h,
+                    height: 385.h,
                     child: Column(
                       children: [
                         Row(
@@ -99,6 +99,7 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.pop(context)
                               },
                               child: Container(
+                                margin: EdgeInsets.only(right: 10.w, top: 10.h),
                                 width: 10,
                                 height: 10,
                                 child: SvgPicture.asset(
@@ -111,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Center(
                           child: Container(
-                            margin: EdgeInsets.only(top: 50.h),
+                            margin: EdgeInsets.only(top: 30.h),
                             child: StreamBuilder(
                               stream: Stream.periodic(const Duration(seconds: 1)),
                               builder: (context, snapshot) {
@@ -129,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Center(
                           child: Container(
-                            margin: EdgeInsets.only(top: 15.h),
+                            margin: EdgeInsets.only(top: 5.h),
                             padding: EdgeInsets.symmetric(horizontal: 10.w),
                             child: AutoSizeText(title,
                                 maxFontSize: 16,
@@ -145,6 +146,7 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.only(top: 8.0.h, left: 45.h, right: 45.h),
                           child: AutoSizeText("Data Kehadiran akan tercatat oleh sistem secara otomatis",
                               maxFontSize: 12,
+                              minFontSize: 9,
                               maxLines: 2,
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -284,8 +286,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                                 child: Container(
                                   width: 100.w,
-                                  height: 40.h,
-                                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
                                   margin: EdgeInsets.symmetric(horizontal: 1.w),
                                   decoration: BoxDecoration(
                                     color: Color.fromRGBO(255, 212, 101, 1) ,
@@ -302,6 +303,7 @@ class _HomePageState extends State<HomePage> {
                                       ):
                                       AutoSizeText(descButton,
                                           maxFontSize: 12,
+                                          minFontSize: 9,
                                           maxLines: 1,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
