@@ -208,9 +208,11 @@ class _HomePageState extends State<HomePage> {
                                       if (response_.statusCode == 200){
                                         onTapStatusAbsensi(context, "masuk");
                                         dataUser.setPresensiModel(Presensi.fromJson(resMap));
+                                        print(response_.body);
+                                        print(resMap);
                                         onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
                                         setState(()  {
-                                          dataUser.setLockedDinas('true');
+                                          dataUser.setLockedDinas(true);
                                           print(dataUser.getLockedDinas());
                                           isLoading = false;
                                         });
@@ -246,9 +248,11 @@ class _HomePageState extends State<HomePage> {
                                       if (response_.statusCode == 200){
                                         onTapStatusAbsensi(context, "keluar");
                                         dataUser.setPresensiModel(Presensi.fromJson(resMap));
+                                        print(response_.body);
+                                        print(resMap);
                                         onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
                                         setState(() {
-                                          dataUser.setLockedDinas('true');
+                                          dataUser.setLockedDinas(true);
                                           print(dataUser.getLockedDinas());
                                           isLoading = false;
                                         });

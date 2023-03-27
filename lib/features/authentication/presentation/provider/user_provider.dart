@@ -12,7 +12,7 @@ class UserProvider with ChangeNotifier {
   final String _clockIn = "clock_in";
   final String _clockOut = "clock_Out";
   final String _flagDinas = "flag_dinas";
-  final String _lockedDinas = "";
+  // final String _lockedDinas = "";
   String? jwtToken;
   String? refreshToken;
   String? flagAbsensi;
@@ -65,9 +65,14 @@ class UserProvider with ChangeNotifier {
     flagDinas = dinas;
     return dinas;
   }
-  Future<String?> setLockedDinas(String? isLockedDinas) async {
-    await _storage.write(key: _lockedDinas, value: isLockedDinas);
-    this.isLockedDinas = isLockedDinas == 'true';
+  // Future<String?> setLockedDinas(String? isLockedDinas) async {
+  //   await _storage.write(key: _lockedDinas, value: isLockedDinas);
+  //   this.isLockedDinas = isLockedDinas == 'true';
+  //   return isLockedDinas;
+  // }
+
+  bool setLockedDinas(bool Locked) {
+    this.isLockedDinas = Locked;
     return isLockedDinas;
   }
 
@@ -80,7 +85,6 @@ class UserProvider with ChangeNotifier {
     if (jwtToken == null){
       final token = await _storage.read(key: _tokenKey);
       jwtToken = token;
-      print(token);
     }
     return jwtToken;
   }
@@ -90,7 +94,6 @@ class UserProvider with ChangeNotifier {
   }
 
   String? getAccessToken() {
-    print(jwtToken);
     return jwtToken;
   }
 
@@ -126,7 +129,6 @@ class UserProvider with ChangeNotifier {
   /// ----------------------------------------
 
   void logout() {
-    print(jwtToken);
     jwtToken = null;
     refreshToken = null;
     firstLogin = true;
@@ -171,7 +173,6 @@ class UserProvider with ChangeNotifier {
           "Authorization": "Bearer $jwtToken",
         });
     if (res.statusCode == 200) {
-      print(res.body);
       pegawaiModel = User.fromJson(jsonDecode(res.body));
       notifyListeners();
       return pegawaiModel;
@@ -202,9 +203,6 @@ class UserProvider with ChangeNotifier {
       await setRefreshToken(refreshToken);
       await getDataPresensi();
       await getDataUser();
-      print(getAccessToken());
-      print(getAccessTokenStorage());
-      print(jwtToken);
       notifyListeners();
       return res;
     }
@@ -222,14 +220,14 @@ class UserProvider with ChangeNotifier {
     "Authorization": "Bearer $jwtToken",
     },
   );
-  print(res.body);
   if (res.statusCode == 200) {
     var stringRes = jsonDecode(res.body);
     if(stringRes['status'] == null){
-      setLockedDinas('false');
+      setLockedDinas(false);
       stringRes['data'] = null;
+    } else {
+      setLockedDinas(true);
     }
-    setLockedDinas('true');
     presensiModel = Presensi.fromJson(stringRes);
     notifyListeners();
     return presensiModel;
