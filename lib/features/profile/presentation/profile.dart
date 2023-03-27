@@ -22,17 +22,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late Future<User?> dataFutureUser;
 
-  Future<void> getDataInit() async {
-    final dataUser = Provider.of<UserProvider>(context);
-    dataUser.getDataUser();
-  }
-
-  @override
-  void initState() {
-    getDataInit();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);

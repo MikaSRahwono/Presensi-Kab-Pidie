@@ -12,6 +12,7 @@ class UserProvider with ChangeNotifier {
   final String _clockIn = "clock_in";
   final String _clockOut = "clock_Out";
   final String _flagDinas = "flag_dinas";
+  final String _lockedDinas = "";
   String? jwtToken;
   String? refreshToken;
   String? flagAbsensi;
@@ -19,6 +20,7 @@ class UserProvider with ChangeNotifier {
   String? clockOut;
   String? flagDinas;
   bool firstLogin = true;
+  bool isLockedDinas = false;
   Presensi? presensiModel;
   User? pegawaiModel;
 
@@ -63,7 +65,32 @@ class UserProvider with ChangeNotifier {
     flagDinas = dinas;
     return dinas;
   }
+  Future<String?> setLockedDinas(String? isLockedDinas) async {
+    await _storage.write(key: _lockedDinas, value: isLockedDinas);
+    this.isLockedDinas = isLockedDinas == 'true';
+    return isLockedDinas;
+  }
+
+  Future<Presensi> setPresensiModel(Presensi presensiModel) async {
+    this.presensiModel = presensiModel;
+    return presensiModel;
+  }
+
+  Future<String?> getAccessTokenStorage() async {
+    if (jwtToken == null){
+      final token = await _storage.read(key: _tokenKey);
+      jwtToken = token;
+      print(token);
+    }
+    return jwtToken;
+  }
+
+  bool getLockedDinas()  {
+    return isLockedDinas;
+  }
+
   String? getAccessToken() {
+    print(jwtToken);
     return jwtToken;
   }
 
@@ -99,13 +126,18 @@ class UserProvider with ChangeNotifier {
   /// ----------------------------------------
 
   void logout() {
+    print(jwtToken);
     jwtToken = null;
     refreshToken = null;
     firstLogin = true;
   }
 
+  Future<bool> isLoggedIn() async {
+    await getAccessTokenStorage();
+    return jwtToken == null ? false : true;
+  }
+
   Future<http.Response> absenMasuk(Map<String, String> encodeBody) async {
-    print(jwtToken);
     var res = await http.post(
       Uri.parse("http://127.0.0.1:8000/presensi/"),
       headers: <String, String>{
@@ -115,8 +147,6 @@ class UserProvider with ChangeNotifier {
       },
       body: jsonEncode(encodeBody),
     );
-    print("masuk post request with  jwt");
-    print(res.body);
     return res;
   }
 
@@ -130,12 +160,10 @@ class UserProvider with ChangeNotifier {
       },
       body: jsonEncode(encodeBody),
     );
-    print("masuk put request with  jwt");
     return res;
   }
 
   Future<User?> getDataUser() async {
-    print(jwtToken);
     var res = await http.get(
         Uri.parse('http://127.0.0.1:8000/pegawai/info-pegawai'),
         headers: <String, String>{"Content-Type": "application/json",
@@ -143,12 +171,11 @@ class UserProvider with ChangeNotifier {
           "Authorization": "Bearer $jwtToken",
         });
     if (res.statusCode == 200) {
-      print("masuk2");
+      print(res.body);
       pegawaiModel = User.fromJson(jsonDecode(res.body));
       notifyListeners();
       return pegawaiModel;
     } else {
-      print("gamasik");
       // If the server did not return a 200 OK response,
       // then throw an exception.
       throw Exception('Failed to get user detail');
@@ -173,6 +200,11 @@ class UserProvider with ChangeNotifier {
       await setAccessToken(jwtToken);
       await setFirstLogin(firstLogin);
       await setRefreshToken(refreshToken);
+      await getDataPresensi();
+      await getDataUser();
+      print(getAccessToken());
+      print(getAccessTokenStorage());
+      print(jwtToken);
       notifyListeners();
       return res;
     }
@@ -193,12 +225,11 @@ class UserProvider with ChangeNotifier {
   print(res.body);
   if (res.statusCode == 200) {
     var stringRes = jsonDecode(res.body);
-    print(stringRes);
     if(stringRes['status'] == null){
-      print('masuk');
+      setLockedDinas('false');
       stringRes['data'] = null;
-      print(stringRes);
     }
+    setLockedDinas('true');
     presensiModel = Presensi.fromJson(stringRes);
     notifyListeners();
     return presensiModel;
@@ -246,8 +277,6 @@ class UserProvider with ChangeNotifier {
     http.StreamedResponse response = await request.send();
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
-
-    print(resMap);
 
     if (resMap['status'] == "Success") {
       return (await stringResponse);

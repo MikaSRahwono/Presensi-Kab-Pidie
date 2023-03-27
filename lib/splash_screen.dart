@@ -19,18 +19,6 @@ class SplashScreen extends StatelessWidget {
         ),
       ),
     );
-    const heading = Padding(
-      padding: EdgeInsets.only(left: 32, right: 32),
-      child: AutoSizeText('Sistem Informasi Presensi Kepegawaian Kab. Pidie',
-          maxLines: 3,
-          minFontSize: 16,
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-            fontSize: 23,
-          ),
-          textAlign: TextAlign.center),
-    );
     return Scaffold(
       backgroundColor: Color(0xFFF6F2FF),
       body: Center(
@@ -39,7 +27,6 @@ class SplashScreen extends StatelessWidget {
           shrinkWrap: true,
           children: [
             logo,
-            heading
           ],
         )
       ),

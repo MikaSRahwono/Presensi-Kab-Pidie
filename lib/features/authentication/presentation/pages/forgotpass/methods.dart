@@ -4,7 +4,7 @@ Future<String> forgetPass(email) async {
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'http://127.0.0.1:8000//account/req-change-pass'));
+          'http://127.0.0.1:8000/account/req-change-pass'));
   request.fields.addAll({'email': email});
   http.StreamedResponse response = await request.send();
   if (response.statusCode == 200) {

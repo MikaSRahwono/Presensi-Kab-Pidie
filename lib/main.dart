@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:presensi_mobileapp/check_auth.dart';
 import 'package:presensi_mobileapp/features/home/presentation/page/_pages.dart';
 import 'package:presensi_mobileapp/main_page.dart';
@@ -13,12 +14,17 @@ import 'package:provider/provider.dart';
 import 'features/authentication/presentation/provider/_provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.removeAfter(initialization);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserProvider()),
     ],
     child: MyApp(),
   ));
+}
+
+Future initialization(BuildContext? context) async {
 }
 
 class MyApp extends StatelessWidget {

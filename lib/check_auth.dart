@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
 import 'package:presensi_mobileapp/splash_screen.dart';
+import 'package:async/async.dart';
 import 'package:provider/provider.dart';
 
 import 'features/authentication/presentation/pages/_pages.dart';
@@ -14,19 +17,23 @@ class CheckAuth extends StatefulWidget {
 
 class _CheckAuthState extends State<CheckAuth> {
   bool isAuth = false;
+  final _myFuture = AsyncMemoizer<bool>();
 
-  Future<bool> loginCheckFuture(dataUser) async {
-    var token = dataUser.jwtToken;
-    if (token != null) {
-      dataUser.getDataPresensi();
-      return true;
-    }
-    return false;
+  Future<bool> loginCheckFuture(UserProvider dataUser) async {
+    return _myFuture.runOnce(() async {
+      if (await dataUser.isLoggedIn()) {
+        await dataUser.getDataPresensi();
+        await dataUser.getDataUser();
+        return true;
+      }
+      return false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final dataUser = Provider.of<UserProvider>(context);
+    final UserProvider dataUser = Provider.of<UserProvider>(context);
+
     Widget child;
     return FutureBuilder(
         future: loginCheckFuture(dataUser),
