@@ -811,7 +811,7 @@ class _HomePageState extends State<HomePage> {
                             fontSize:  18.sp,
                             fontWeight: FontWeight.w500,
                           ),),
-                        content:  Text("Maaf sesi anda telah habis, harap login kembali!",
+                        content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize:  12.sp,

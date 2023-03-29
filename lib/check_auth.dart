@@ -37,7 +37,7 @@ class _CheckAuthState extends State<CheckAuth> {
                           fontWeight: FontWeight.w500,
                         ),),
                       content: Text(
-                        "Maaf sesi anda telah habis, harap login kembali!",
+                        "Maaf sesi anda telah habis, mohon untuk login kembali!",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12.sp,
@@ -72,7 +72,7 @@ class _CheckAuthState extends State<CheckAuth> {
                             fontWeight: FontWeight.w500,
                           ),),
                         content: Text(
-                          "Maaf sesi anda telah habis, harap login kembali!",
+                          "Maaf sesi anda telah habis, mohon untuk login kembali!",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 12.sp,
