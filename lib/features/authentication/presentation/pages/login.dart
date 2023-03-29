@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
               isLoading = true;
             });
             var response = await dataUser.attemptLogIn(
-                nipController.text, passController.text, context);
+                nipController.text, passController.text);
             if (response.statusCode != 200) {
               showDialog<void>(
                   context: context,

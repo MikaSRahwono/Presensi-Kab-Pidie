@@ -120,6 +120,9 @@ class UserProvider with ChangeNotifier {
   Presensi? getPresensi(){
     return presensiModel;
   }
+  bool? getTokenIsValid(){
+    return tokenIsValid;
+  }
 
   User? getUser(){
     return pegawaiModel;
@@ -140,7 +143,7 @@ class UserProvider with ChangeNotifier {
     return jwtToken == null ? false : true;
   }
 
-  Future<http.Response> absenMasuk(Map<String, String> encodeBody) async {
+  Future<http.Response> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
     var res = await http.post(
       Uri.parse("http://10.0.2.2:8000/presensi/"),
       headers: <String, String>{
@@ -150,10 +153,50 @@ class UserProvider with ChangeNotifier {
       },
       body: jsonEncode(encodeBody),
     );
+    if (res.statusCode == 403) {
+      await refreshTokenUser();
+      if (tokenIsValid) {
+        if (!context.mounted){
+        }
+        return absenMasuk(encodeBody, context);
+      }
+      else {
+        if (context.mounted){
+          logout();
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  CupertinoAlertDialog(
+                    title: Text("Sesi telah habis",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize:  18.sp,
+                        fontWeight: FontWeight.w500,
+                      ),),
+                    content:  Text("Maaf sesi anda telah habis, harap login kembali!",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize:  12.sp,
+                      ),),
+                    actions: <CupertinoDialogAction>[
+                      CupertinoDialogAction(
+                        child: Text("Oke"),
+                        onPressed: (){
+                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                              LoginPage()), (Route<dynamic> route) => false);
+                        },
+                      ),
+                    ],
+                  ));
+        }
+        return res;
+      }
+    }
     return res;
   }
 
-  Future<http.Response> absenKeluar(Map<String, String> encodeBody) async {
+  Future<http.Response> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
     var res = await http.put(
       Uri.parse("http://10.0.2.2:8000/presensi/"),
       headers: <String, String>{
@@ -163,6 +206,46 @@ class UserProvider with ChangeNotifier {
       },
       body: jsonEncode(encodeBody),
     );
+    if (res.statusCode == 403) {
+      await refreshTokenUser();
+      if (tokenIsValid) {
+        if (!context.mounted){
+        }
+        return absenKeluar(encodeBody, context);
+      }
+      else {
+        if (context.mounted){
+          logout();
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  CupertinoAlertDialog(
+                    title: Text("Sesi telah habis",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize:  18.sp,
+                        fontWeight: FontWeight.w500,
+                      ),),
+                    content:  Text("Maaf sesi anda telah habis, harap login kembali!",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize:  12.sp,
+                      ),),
+                    actions: <CupertinoDialogAction>[
+                      CupertinoDialogAction(
+                        child: Text("Oke"),
+                        onPressed: (){
+                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                              LoginPage()), (Route<dynamic> route) => false);
+                        },
+                      ),
+                    ],
+                  ));
+        }
+        return res;
+      }
+    }
     return res;
   }
 
@@ -173,12 +256,14 @@ class UserProvider with ChangeNotifier {
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
         },
-        body:jsonEncode(<String, String>{'refresh': refreshToken.toString()})
+        body:jsonEncode(<String, String>{'refresh': "$refreshToken"})
     );
     if (res.statusCode == 200){
       final jsonData = json.decode(res.body);
       setAccessToken(jsonData['access']);
+      jwtToken = jsonData['access'];
       tokenIsValid = true;
+
       return tokenIsValid;
     }else {
       tokenIsValid = false;
@@ -187,7 +272,7 @@ class UserProvider with ChangeNotifier {
   }
 
 
-  Future<User?> getDataUser(BuildContext context) async {
+  Future<User?> getDataUser() async {
     var res = await http.get(
         Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
         headers: <String, String>{"Content-Type": "application/json",
@@ -201,20 +286,10 @@ class UserProvider with ChangeNotifier {
     } else if (res.statusCode == 403){
       await refreshTokenUser();
       if (tokenIsValid){
-        if (context.mounted){
-          return getDataUser(context);
-        }else{
-          throw Exception('Failed to get user detail');
-        }
-      }else{
-        if (context.mounted){
-          logout();
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-              LoginPage()), (Route<dynamic> route) => false);
+        return getDataUser();
+      }
+      else{
           return pegawaiModel;
-        }else{
-          throw Exception('Failed to get user detail');
-        }
       }
     } else {
       // If the server did not return a 200 OK response,
@@ -223,7 +298,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<http.Response> attemptLogIn(String nip, String password, BuildContext context) async {
+  Future<http.Response> attemptLogIn(String nip, String password) async {
     var res = await http.post(
       Uri.parse(
           'http://10.0.2.2:8000/account/login'),
@@ -242,20 +317,8 @@ class UserProvider with ChangeNotifier {
       await setFirstLogin(firstLogin);
       await setRefreshToken(refreshToken);
       tokenIsValid = true;
-      if (context.mounted){
-        await getDataPresensi(context);
-
-      }else{
-        throw Exception('Failed to get user detail');
-      }
-      if (context.mounted){
-        await getDataUser(context);
-
-      }else{
-        throw Exception('Failed to get user detail');
-      }
-
-
+      await getDataPresensi();
+      await getDataUser();
 
       notifyListeners();
       return res;
@@ -265,7 +328,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<Presensi?> getDataPresensi(BuildContext context) async {
+  Future<Presensi?> getDataPresensi() async {
   var res = await http.get(
     Uri.parse("http://10.0.2.2:8000/presensi/"),
     headers: <String, String>{
@@ -289,20 +352,10 @@ class UserProvider with ChangeNotifier {
   }else if (res.statusCode == 403){
     await refreshTokenUser();
     if (tokenIsValid){
-      if (context.mounted){
-        return getDataPresensi(context);
-      }else{
-        throw Exception('Failed to get user detail');
-      }
-    }else{
-      if (context.mounted){
-        logout();
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-            LoginPage()), (Route<dynamic> route) => false);
-        return presensiModel;
-      }else{
-        throw Exception('Failed to get user detail');
-      }
+      return getDataPresensi();
+    }
+    else{
+      return presensiModel;
     }
   }
   else {
@@ -335,7 +388,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<String> changePassword(prevPass, pass, confPass, BuildContext context) async {
+  Future<String> changePassword(prevPass, pass, confPass) async {
     var token = getAccessToken() ?? "";
     var headers = {'Authorization': 'Bearer ' + token};
     var request = http.MultipartRequest(
@@ -350,8 +403,16 @@ class UserProvider with ChangeNotifier {
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
 
-    if (tokenIsValid) {
+
+    if (response.statusCode == 403){
       await refreshTokenUser();
+      if (tokenIsValid){
+        return changePassword(prevPass, pass, confPass);
+      }
+      else{
+        return ("Maaf, sesi anda telah habis");
+      }
+    }else{
       if (resMap['status'] == "Success") {
         return (await stringResponse);
       } else if (resMap['detail'] ==
@@ -361,15 +422,6 @@ class UserProvider with ChangeNotifier {
         return ("Password lama tidak sesuai");
       } else {
         return ("Password tidak sama");
-      }
-    }else{
-      if (context.mounted){
-        logout();
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-            LoginPage()), (Route<dynamic> route) => false);
-        return "Maaf, sesi anda telah habis";
-      }else{
-        throw Exception('Failed to get user detail');
       }
     }
   }

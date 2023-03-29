@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
                 builder: (BuildContext context, StateSetter setState){
                   return  Container(
                     height: 385.h,
+                    width: 380.w,
                     child: Column(
                       children: [
                         Row(
@@ -204,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                                   print(isLoading),
                                   print(dataUser.getLockedDinas()),
                                   if (dataUser.getPresensi()?.status == null){
-                                    respData = dataUser.absenMasuk(_encodeBody),
+                                    respData = dataUser.absenMasuk(_encodeBody, context),
                                     respData.then((response_) {
                                       var resMap = jsonDecode(response_!.body);
                                       if (response_.statusCode == 200){
@@ -220,7 +221,8 @@ class _HomePageState extends State<HomePage> {
                                         });
                                         Navigator.pop(context);
                                         print(isLoading);
-                                      } else if (resMap['message'] == 'Lokasi terlalu jauh dari kantor'){
+                                      }
+                                      else if (resMap['message'] == 'Lokasi terlalu jauh dari kantor'){
                                         setState(() {
                                           isLoading = false;
                                         });
@@ -244,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                                     })
                                   }
                                   else if (dataUser.getPresensi()?.status == "masuk"){
-                                    respData = dataUser.absenKeluar(_encodeBody),
+                                    respData = dataUser.absenKeluar(_encodeBody, context),
                                     respData.then((response_) {
                                       var resMap = jsonDecode(response_!.body);
                                       if (response_.statusCode == 200){
@@ -506,9 +508,9 @@ class _HomePageState extends State<HomePage> {
             )]
           else
             ...[Switch(
-              value: dataUser.getFlagDinas() != "",
-              activeColor: Colors.redAccent,
-              onChanged: null
+                value: dataUser.getFlagDinas() != "",
+                activeColor: Colors.redAccent,
+                onChanged: null
             )]
         ],
       ),
@@ -679,46 +681,46 @@ class _HomePageState extends State<HomePage> {
     );
 
     switch (stat) {
-        case "masuk":
-          return
-            Column(
-              children: [
-                batasWaktu,
-                DataCard("resources/images/png/icon-absensi-masuk.png"),
-                SizedBox(height: 5.h,),
-                switchDinas,
-                SizedBox(height: 16.h,),
-                buttonAbsenKeluar,
-                SizedBox(height: 100.h,),
-              ],
-            );
-        case "keluar":
-          return
-            Column(
-              children: [
-                batasWaktu,
-                DataCard("resources/images/png/icon-absensi-keluar.png"),
-                SizedBox(height: 5.h,),
-                switchDinas,
-                SizedBox(height: 16.h,),
-                buttonAbsenSelesai,
-                SizedBox(height: 100.h,),
-              ],
-            );
-        default:
-          return Column(
+      case "masuk":
+        return
+          Column(
             children: [
               batasWaktu,
-              DataCard("resources/images/png/icon-absensi-1.png"),
+              DataCard("resources/images/png/icon-absensi-masuk.png"),
               SizedBox(height: 5.h,),
               switchDinas,
               SizedBox(height: 16.h,),
-              buttonAbsenMasuk,
-              SizedBox(height: 68.h,),
+              buttonAbsenKeluar,
+              SizedBox(height: 100.h,),
             ],
           );
-      }
+      case "keluar":
+        return
+          Column(
+            children: [
+              batasWaktu,
+              DataCard("resources/images/png/icon-absensi-keluar.png"),
+              SizedBox(height: 5.h,),
+              switchDinas,
+              SizedBox(height: 16.h,),
+              buttonAbsenSelesai,
+              SizedBox(height: 100.h,),
+            ],
+          );
+      default:
+        return Column(
+          children: [
+            batasWaktu,
+            DataCard("resources/images/png/icon-absensi-1.png"),
+            SizedBox(height: 5.h,),
+            switchDinas,
+            SizedBox(height: 16.h,),
+            buttonAbsenMasuk,
+            SizedBox(height: 68.h,),
+          ],
+        );
     }
+  }
   void onTapStatusAbsensi(BuildContext context, flagg) {
     final dataUser = Provider.of<UserProvider>(context, listen: false);
     if (mounted) {
@@ -784,16 +786,57 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         foregroundColor: Color(0xFF8253F0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
-        onPressed: (){
-          dataUser.getDataUser(context);
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
+        onPressed: () async {
+          // if (mounted){
+          //   dataUser.getDataUser(context);
+          // }
+          await dataUser.getDataUser();
+          print("ini hasil bool: " + dataUser.getTokenIsValid().toString());
+          if (dataUser.getTokenIsValid()!){
+            if (mounted){
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
+            }
+
+          }else{
+            if (mounted){
+              dataUser.logout();
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) =>
+                      CupertinoAlertDialog(
+                        title: Text("Sesi telah habis",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize:  18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),),
+                        content:  Text("Maaf sesi anda telah habis, harap login kembali!",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize:  12.sp,
+                          ),),
+                        actions: <CupertinoDialogAction>[
+                          CupertinoDialogAction(
+                            child: Text("Oke"),
+                            onPressed: (){
+                              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                  LoginPage()), (Route<dynamic> route) => false);
+                            },
+                          ),
+                        ],
+                      ));
+            }
+
+          }
+
         },
         label: Text("Profile"),
         icon: IconTheme(
           data: new IconThemeData(
-            color: Colors.black
+              color: Colors.black
           )
-        , child: Icon(Icons.person),),
+          , child: Icon(Icons.person),),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
