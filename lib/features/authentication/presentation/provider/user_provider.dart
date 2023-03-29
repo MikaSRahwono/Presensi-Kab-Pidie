@@ -21,6 +21,7 @@ class UserProvider with ChangeNotifier {
   String? flagDinas;
   bool firstLogin = true;
   bool isLockedDinas = false;
+  bool tokenIsValid = true;
   Presensi? presensiModel;
   User? pegawaiModel;
 
@@ -165,7 +166,28 @@ class UserProvider with ChangeNotifier {
     return res;
   }
 
-  Future<User?> getDataUser() async {
+  Future<bool> refreshTokenUser() async {
+    var res = await http.post(
+        Uri.parse("http://10.0.2.2:8000/api/token/refresh/"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+        },
+        body:jsonEncode(<String, String>{'refresh': refreshToken.toString()})
+    );
+    if (res.statusCode == 200){
+      final jsonData = json.decode(res.body);
+      setAccessToken(jsonData['access']);
+      tokenIsValid = true;
+      return tokenIsValid;
+    }else {
+      tokenIsValid = false;
+      return tokenIsValid;
+    }
+  }
+
+
+  Future<User?> getDataUser(BuildContext context) async {
     var res = await http.get(
         Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
         headers: <String, String>{"Content-Type": "application/json",
@@ -176,6 +198,24 @@ class UserProvider with ChangeNotifier {
       pegawaiModel = User.fromJson(jsonDecode(res.body));
       notifyListeners();
       return pegawaiModel;
+    } else if (res.statusCode == 403){
+      await refreshTokenUser();
+      if (tokenIsValid){
+        if (context.mounted){
+          return getDataUser(context);
+        }else{
+          throw Exception('Failed to get user detail');
+        }
+      }else{
+        if (context.mounted){
+          logout();
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+              LoginPage()), (Route<dynamic> route) => false);
+          return pegawaiModel;
+        }else{
+          throw Exception('Failed to get user detail');
+        }
+      }
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -183,7 +223,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<http.Response> attemptLogIn(String nip, String password) async {
+  Future<http.Response> attemptLogIn(String nip, String password, BuildContext context) async {
     var res = await http.post(
       Uri.parse(
           'http://10.0.2.2:8000/account/login'),
@@ -201,8 +241,22 @@ class UserProvider with ChangeNotifier {
       await setAccessToken(jwtToken);
       await setFirstLogin(firstLogin);
       await setRefreshToken(refreshToken);
-      await getDataPresensi();
-      await getDataUser();
+      tokenIsValid = true;
+      if (context.mounted){
+        await getDataPresensi(context);
+
+      }else{
+        throw Exception('Failed to get user detail');
+      }
+      if (context.mounted){
+        await getDataUser(context);
+
+      }else{
+        throw Exception('Failed to get user detail');
+      }
+
+
+
       notifyListeners();
       return res;
     }
@@ -211,7 +265,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<Presensi?> getDataPresensi() async {
+  Future<Presensi?> getDataPresensi(BuildContext context) async {
   var res = await http.get(
     Uri.parse("http://10.0.2.2:8000/presensi/"),
     headers: <String, String>{
@@ -232,7 +286,26 @@ class UserProvider with ChangeNotifier {
     presensiModel = Presensi.fromJson(stringRes);
     notifyListeners();
     return presensiModel;
-  } else {
+  }else if (res.statusCode == 403){
+    await refreshTokenUser();
+    if (tokenIsValid){
+      if (context.mounted){
+        return getDataPresensi(context);
+      }else{
+        throw Exception('Failed to get user detail');
+      }
+    }else{
+      if (context.mounted){
+        logout();
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+            LoginPage()), (Route<dynamic> route) => false);
+        return presensiModel;
+      }else{
+        throw Exception('Failed to get user detail');
+      }
+    }
+  }
+  else {
     throw Exception('Failed to get user detail');
   }
 }
@@ -262,7 +335,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<String> changePassword(prevPass, pass, confPass) async {
+  Future<String> changePassword(prevPass, pass, confPass, BuildContext context) async {
     var token = getAccessToken() ?? "";
     var headers = {'Authorization': 'Bearer ' + token};
     var request = http.MultipartRequest(
@@ -277,15 +350,27 @@ class UserProvider with ChangeNotifier {
     String stringResponse = await response.stream.bytesToString();
     Map resMap = json.decode(stringResponse);
 
-    if (resMap['status'] == "Success") {
-      return (await stringResponse);
-    } else if (resMap['detail'] ==
-        "Authentication credentials were not provided.") {
-      return ("Authentication credentials were not provided.");
-    } else if (resMap["message"] == "Password lama tidak sesuai") {
-      return ("Password lama tidak sesuai");
-    } else {
-      return ("Password tidak sama");
+    if (tokenIsValid) {
+      await refreshTokenUser();
+      if (resMap['status'] == "Success") {
+        return (await stringResponse);
+      } else if (resMap['detail'] ==
+          "Authentication credentials were not provided.") {
+        return ("Authentication credentials were not provided.");
+      } else if (resMap["message"] == "Password lama tidak sesuai") {
+        return ("Password lama tidak sesuai");
+      } else {
+        return ("Password tidak sama");
+      }
+    }else{
+      if (context.mounted){
+        logout();
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+            LoginPage()), (Route<dynamic> route) => false);
+        return "Maaf, sesi anda telah habis";
+      }else{
+        throw Exception('Failed to get user detail');
+      }
     }
   }
 }

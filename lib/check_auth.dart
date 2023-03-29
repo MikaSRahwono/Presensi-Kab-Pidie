@@ -19,11 +19,22 @@ class _CheckAuthState extends State<CheckAuth> {
   bool isAuth = false;
   final _myFuture = AsyncMemoizer<bool>();
 
-  Future<bool> loginCheckFuture(UserProvider dataUser) async {
+  Future<bool> loginCheckFuture(UserProvider dataUser, BuildContext context) async {
     return _myFuture.runOnce(() async {
       if (await dataUser.isLoggedIn()) {
-        await dataUser.getDataPresensi();
-        await dataUser.getDataUser();
+        if (context.mounted) {
+          await dataUser.getDataPresensi(context);
+        }else{
+          throw Exception('Failed to get user detail');
+        }
+        if (context.mounted) {
+          await dataUser.getDataUser(context);
+        }else{
+          throw Exception('Failed to get user detail');
+        }
+
+
+
         return true;
       }
       return false;
@@ -36,7 +47,7 @@ class _CheckAuthState extends State<CheckAuth> {
 
     Widget child;
     return FutureBuilder(
-        future: loginCheckFuture(dataUser),
+        future: loginCheckFuture(dataUser, context),
         builder: (context, snapshot){
 
           if(snapshot.hasData){

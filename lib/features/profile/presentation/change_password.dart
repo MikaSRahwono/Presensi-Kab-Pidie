@@ -309,7 +309,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             isLoading = true;
           });
           var response = await dataUser.changePassword(prevpassController.text,
-              passController1.text, passController2.text);
+              passController1.text, passController2.text, context);
           print(response);
           if (response == 'Password tidak sama') {
             showDialog<void>(

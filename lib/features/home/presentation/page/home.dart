@@ -785,7 +785,7 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Color(0xFF8253F0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
         onPressed: (){
-          dataUser.getDataUser();
+          dataUser.getDataUser(context);
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
         },
         label: Text("Profile"),
