@@ -162,12 +162,14 @@ class _LoginPageState extends State<LoginPage> {
                   });
             } else {
               if (dataUser.firstLogin) {
+                await dataUser.getDataUser();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
                             FirstPassResetPage()));
               } else {
+                await dataUser.getDataUser();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

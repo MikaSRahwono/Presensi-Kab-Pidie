@@ -786,12 +786,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         foregroundColor: Color(0xFF8253F0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
-        onPressed: () async {
-          // if (mounted){
-          //   dataUser.getDataUser(context);
-          // }
-          await dataUser.getDataUser();
-          print("ini hasil bool: " + dataUser.getTokenIsValid().toString());
+        onPressed: () {
           if (dataUser.getTokenIsValid()!){
             if (mounted){
               Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
