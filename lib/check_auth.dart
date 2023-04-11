@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:presensi_mobileapp/splash_screen.dart';
 import 'package:async/async.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +22,75 @@ class _CheckAuthState extends State<CheckAuth> {
     return _myFuture.runOnce(() async {
       if (await dataUser.isLoggedIn()) {
         await dataUser.getDataPresensi();
+        if (dataUser.getTokenIsValid()! == false) {
+          if (mounted) {
+            dataUser.logout();
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) =>
+                    CupertinoAlertDialog(
+                      title: Text("Sesi telah habis",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w500,
+                        ),),
+                      content: Text(
+                        "Maaf sesi anda telah habis, mohon untuk login kembali!",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 12.sp,
+                        ),),
+                      actions: <CupertinoDialogAction>[
+                        CupertinoDialogAction(
+                          child: Text("Oke"),
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(builder: (context) =>
+                                    LoginPage()), (Route<
+                                dynamic> route) => false);
+                          },
+                        ),
+                      ],
+                    ));
+          }
+        }
         await dataUser.getDataUser();
+          if (dataUser.getTokenIsValid()! == false) {
+            if (mounted) {
+              dataUser.logout();
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) =>
+                      CupertinoAlertDialog(
+                        title: Text("Sesi telah habis",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),),
+                        content: Text(
+                          "Maaf sesi anda telah habis, mohon untuk login kembali!",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 12.sp,
+                          ),),
+                        actions: <CupertinoDialogAction>[
+                          CupertinoDialogAction(
+                            child: Text("Oke"),
+                            onPressed: () {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(builder: (context) =>
+                                      LoginPage()), (
+                                  Route<dynamic> route) => false);
+                            },
+                          ),
+                        ],
+                      ));
+            }
+          }
         return true;
       }
       return false;
