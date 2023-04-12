@@ -40,42 +40,60 @@ class _HomePageState extends State<HomePage> {
   /// -----------------------------------
 
   void displayDialog(context, String title, String descButton, UserProvider dataUser, Map<String, String> _encodeBody) {
-    final alertDialogFailedLokasi = CupertinoAlertDialog(
-      title: const Text('Lokasi terlalu jauh dari kantor'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('Silahkan mendekat ke lokasi kantor'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-    final alertDialogFailedWaktu = CupertinoAlertDialog(
-      title: const Text('Waktu berbeda dengan waktu server'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('Silahkan menyesuaikan waktu device dengan waktu server (WIB)'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
+    void displayError(context, e) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Terjadi Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text(e.toString(),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    };
+    void serverError(context) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Server Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
 
     showDialog(
         context: context,
@@ -198,17 +216,17 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               InkWell(
-                                onTap: () async => {
+                                onTap: () async {
                                   setState(() {
                                     isLoading = true;
-                                  }),
-                                  print(isLoading),
-                                  print(dataUser.getLockedDinas()),
+                                  });
+                                  print(isLoading);
+                                  print(dataUser.getLockedDinas());
                                   if (dataUser.getPresensi()?.status == null){
-                                    respData = dataUser.absenMasuk(_encodeBody, context),
-                                    respData.then((response_) {
-                                      var resMap = jsonDecode(response_!.body);
-                                      if (response_.statusCode == 200){
+                                    try {
+                                      respData = dataUser.absenMasuk(_encodeBody, context);
+                                      respData.then((response_) {
+                                        var resMap = jsonDecode(response_!.body);
                                         onTapStatusAbsensi(context, "masuk");
                                         dataUser.setPresensiModel(Presensi.fromJson(resMap));
                                         print(response_.body);
@@ -221,35 +239,24 @@ class _HomePageState extends State<HomePage> {
                                         });
                                         Navigator.pop(context);
                                         print(isLoading);
+                                      });
+                                    }
+                                    catch(e) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      if(e.toString() == "Server Error") {
+                                        serverError(context);
+                                      } else {
+                                        displayError(context, e);
                                       }
-                                      else if (resMap['message'] == 'Lokasi terlalu jauh dari kantor'){
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        showDialog<void>(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return alertDialogFailedLokasi;
-                                            });
-                                      } else if (resMap['message'] == 'Waktu tidak sesuai dengan waktu server'){
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        showDialog<void>(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return alertDialogFailedWaktu;
-                                            });
-                                      }
-                                    })
+                                    }
                                   }
                                   else if (dataUser.getPresensi()?.status == "masuk"){
-                                    respData = dataUser.absenKeluar(_encodeBody, context),
-                                    respData.then((response_) {
-                                      var resMap = jsonDecode(response_!.body);
-                                      if (response_.statusCode == 200){
+                                    try {
+                                      respData = dataUser.absenKeluar(_encodeBody, context);
+                                      respData.then((response_) {
+                                        var resMap = jsonDecode(response_!.body);
                                         onTapStatusAbsensi(context, "keluar");
                                         dataUser.setPresensiModel(Presensi.fromJson(resMap));
                                         print(response_.body);
@@ -262,29 +269,19 @@ class _HomePageState extends State<HomePage> {
                                         });
                                         Navigator.pop(context);
                                         print(isLoading);
-                                      } else if (resMap['message'] == 'Lokasi terlalu jauh dari kantor'){
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        showDialog<void>(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return alertDialogFailedLokasi;
-                                            });
-                                      } else if (resMap['message'] == 'Waktu tidak sesuai dengan waktu server'){
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        showDialog<void>(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return alertDialogFailedWaktu;
-                                            });
+                                      });
+                                    }
+                                    catch(e) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      if(e.toString() == "Server Error") {
+                                        serverError(context);
+                                      } else {
+                                        displayError(context, e);
                                       }
-                                    }),
-                                  },
+                                    }
+                                  };
                                 },
                                 child: Container(
                                   width: 100.w,

@@ -143,115 +143,89 @@ class UserProvider with ChangeNotifier {
     return jwtToken == null ? false : true;
   }
 
-  Future<http.Response> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
-    var res = await http.post(
-      Uri.parse("http://10.0.2.2:8000/presensi/"),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json",
-        "Authorization": "Bearer $jwtToken",
-      },
-      body: jsonEncode(encodeBody),
-    );
-    if (res.statusCode == 403) {
-      await refreshTokenUser();
-      if (tokenIsValid) {
-        if (!context.mounted){
-        }
-        return absenMasuk(encodeBody, context);
-      }
-      else {
-        if (context.mounted){
-          logout();
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  CupertinoAlertDialog(
-                    title: Text("Sesi telah habis",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize:  18.sp,
-                        fontWeight: FontWeight.w500,
-                      ),),
-                    content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize:  12.sp,
-                      ),),
-                    actions: <CupertinoDialogAction>[
-                      CupertinoDialogAction(
-                        child: Text("Oke"),
-                        onPressed: (){
-                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                              LoginPage()), (Route<dynamic> route) => false);
-                        },
-                      ),
-                    ],
-                  ));
-        }
-        return res;
+  Future<http.Response?> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
+    try {
+      var res = await http.post(
+        Uri.parse("http://127.0.0.1:8000/presensi/"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        },
+        body: jsonEncode(encodeBody),
+      );
+      switch (res.statusCode) {
+        case 200:
+          return res;
+        case 403:
+          await refreshTokenUser();
+          if (tokenIsValid) {
+            if (!context.mounted){
+            }
+            return absenMasuk(encodeBody, context);
+          }
+          else {
+            if (context.mounted){
+              logout();
+              sessionTimeout(context);
+            }
+            return res;
+          }
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
       }
     }
-    return res;
+    catch (e){
+      throw HttpException(e.toString());
+    }
   }
 
-  Future<http.Response> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
-    var res = await http.put(
-      Uri.parse("http://10.0.2.2:8000/presensi/"),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json",
-        "Authorization": "Bearer $jwtToken",
-      },
-      body: jsonEncode(encodeBody),
-    );
-    if (res.statusCode == 403) {
-      await refreshTokenUser();
-      if (tokenIsValid) {
-        if (!context.mounted){
-        }
-        return absenKeluar(encodeBody, context);
-      }
-      else {
-        if (context.mounted){
-          logout();
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  CupertinoAlertDialog(
-                    title: Text("Sesi telah habis",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize:  18.sp,
-                        fontWeight: FontWeight.w500,
-                      ),),
-                    content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize:  12.sp,
-                      ),),
-                    actions: <CupertinoDialogAction>[
-                      CupertinoDialogAction(
-                        child: Text("Oke"),
-                        onPressed: (){
-                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                              LoginPage()), (Route<dynamic> route) => false);
-                        },
-                      ),
-                    ],
-                  ));
-        }
-        return res;
+  Future<http.Response?> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
+    try{
+      var res = await http.put(
+        Uri.parse("http://127.0.0.1:8000/presensi/"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        },
+        body: jsonEncode(encodeBody),
+      );
+      switch (res.statusCode) {
+        case 200:
+          return res;
+        case 403:
+          await refreshTokenUser();
+          if (tokenIsValid) {
+            if (!context.mounted){
+            }
+            return absenMasuk(encodeBody, context);
+          }
+          else {
+            if (context.mounted){
+              logout();
+              sessionTimeout(context);
+            }
+            return res;
+          }
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
       }
     }
-    return res;
+    catch(e) {
+      throw HttpException(e.toString());
+    }
   }
 
   Future<bool> refreshTokenUser() async {
     var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/token/refresh/"),
+        Uri.parse("http://127.0.0.1:8000/api/token/refresh/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -271,158 +245,245 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-
   Future<User?> getDataUser() async {
-    var res = await http.get(
-        Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
-        headers: <String, String>{"Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": "Bearer $jwtToken",
-        });
-    if (res.statusCode == 200) {
-      pegawaiModel = User.fromJson(jsonDecode(res.body));
-      notifyListeners();
-      return pegawaiModel;
-    } else if (res.statusCode == 403){
-      await refreshTokenUser();
-      if (tokenIsValid){
-        return getDataUser();
-      }
-      else{
+    try {
+      var res = await http.get(
+          Uri.parse('http://127.0.0.1:8000/pegawai/info-pegawai'),
+          headers: <String, String>{"Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": "Bearer $jwtToken",
+          });
+      switch (res.statusCode) {
+        case 200:
+          pegawaiModel = User.fromJson(jsonDecode(res.body));
+          notifyListeners();
           return pegawaiModel;
+        case 403:
+          await refreshTokenUser();
+          if (tokenIsValid){
+            return getDataUser();
+          }
+          else{
+            return pegawaiModel;
+          }
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
       }
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to get user detail');
+    }
+    catch(e) {
+      throw HttpException(e.toString());
     }
   }
 
   Future<http.Response> attemptLogIn(String nip, String password) async {
-    var res = await http.post(
-      Uri.parse(
-          'http://10.0.2.2:8000/account/login'),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Accept": "application/json",
-      },
-      body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
-    );
-    if (res.statusCode == 200){
-      JwtResponse response = jwtResponseFromJson(res.body);
-      jwtToken = response.tokens.access;
-      refreshToken = response.tokens.refresh;
-      firstLogin = response.firstLogin;
-      await setAccessToken(jwtToken);
-      await setFirstLogin(firstLogin);
-      await setRefreshToken(refreshToken);
-      tokenIsValid = true;
-      await getDataPresensi();
-      await getDataUser();
+    try{
+      var res = await http.post(
+        Uri.parse(
+            'http://127.0.0.1:8000/account/login'),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+        },
+        body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
+      );
+      print(res.statusCode);
+      switch (res.statusCode) {
+        case 200:
+          JwtResponse response = jwtResponseFromJson(res.body);
+          jwtToken = response.tokens.access;
+          refreshToken = response.tokens.refresh;
+          firstLogin = response.firstLogin;
+          await setAccessToken(jwtToken);
+          await setFirstLogin(firstLogin);
+          await setRefreshToken(refreshToken);
+          tokenIsValid = true;
+          await getDataPresensi();
+          await getDataUser();
 
-      notifyListeners();
-      return res;
+          notifyListeners();
+          return res;
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          print(stringRes['message']);
+          throw HttpException(stringRes['message']);
+      }
     }
-    else {
-      return res;
+    catch(e) {
+      print(e.toString());
+      throw HttpException(e.toString());
     }
   }
 
   Future<Presensi?> getDataPresensi() async {
-  var res = await http.get(
-    Uri.parse("http://10.0.2.2:8000/presensi/"),
-    headers: <String, String>{
-    "Content-Type": "application/json; charset=UTF-8",
-    "Accept": "application/json",
-    "Authorization": "Bearer $jwtToken",
-    },
-  );
-  if (res.statusCode == 200) {
-    var stringRes = jsonDecode(res.body);
-    if(stringRes['status'] == null){
-      setFlagDinas("");
-      setLockedDinas(false);
-      stringRes['data'] = null;
-    } else {
-      setLockedDinas(true);
+    try {
+      var res = await http.get(
+        Uri.parse("http://127.0.0.1:8000/presensi/"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        },
+      );
+      switch (res.statusCode) {
+        case 200:
+          var stringRes = jsonDecode(res.body);
+          if(stringRes['status'] == null){
+            setFlagDinas("");
+            setLockedDinas(false);
+            stringRes['data'] = null;
+          } else {
+            setLockedDinas(true);
+          }
+          presensiModel = Presensi.fromJson(stringRes);
+          notifyListeners();
+          return presensiModel;
+        case 403:
+          await refreshTokenUser();
+          if (tokenIsValid){
+            return getDataPresensi();
+          }
+          else{
+            return presensiModel;
+          }
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
+      }
     }
-    presensiModel = Presensi.fromJson(stringRes);
-    notifyListeners();
-    return presensiModel;
-  }else if (res.statusCode == 403){
-    await refreshTokenUser();
-    if (tokenIsValid){
-      return getDataPresensi();
+    catch(e) {
+      throw HttpException(e.toString());
     }
-    else{
-      return presensiModel;
+}
+
+  Future<http.Response?> forceChangePass(pass, confPass, BuildContext context) async {
+    try{
+      var res = await http.post(
+        Uri.parse("http://127.0.0.1:8000/account/force-change-pass"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        },
+        body: jsonEncode(<String, String>{'password': pass, 'confirm_password': confPass}),
+      );
+
+      switch (res.statusCode) {
+        case 200:
+          return res;
+        case 403:
+          await refreshTokenUser();
+          if (tokenIsValid) {
+            if (!context.mounted){
+            }
+            return forceChangePass(pass, confPass, context);
+          }
+          else {
+            if (context.mounted){
+              logout();
+              sessionTimeout(context);
+            }
+          }
+          break;
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
+      }
+    }
+    catch(e) {
+      throw HttpException(e.toString());
     }
   }
-  else {
-    throw Exception('Failed to get user detail');
+
+  Future<http.Response?> changePassword(prevPass, pass, confPass, BuildContext context) async {
+    try {
+      var res = await http.post(
+        Uri.parse("http://127.0.0.1:8000/account/change-pass"),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "Accept": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        },
+        body: jsonEncode(<String, String>{'old_password':prevPass, 'password': pass, 'confirm_password': confPass}),
+      );
+
+      switch (res.statusCode) {
+        case 200:
+          return res;
+        case 403:
+          await refreshTokenUser();
+          if (tokenIsValid) {
+            if (!context.mounted){
+            }
+            return changePassword(prevPass, pass, confPass, context);
+          }
+          else {
+            if (context.mounted){
+              logout();
+              sessionTimeout(context);
+            }
+          }
+          break;
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
+      }
+    }
+    catch(e) {
+      throw HttpException(e.toString());
+    }
+  }
+
+  /// ----------------------------------------
+  /// Widgets
+  /// ----------------------------------------
+  void sessionTimeout(context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+            CupertinoAlertDialog(
+              title: Text("Sesi telah habis",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize:  18.sp,
+                  fontWeight: FontWeight.w500,
+                ),),
+              content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize:  12.sp,
+                ),),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                  child: Text("Oke"),
+                  onPressed: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                        LoginPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+              ],
+            ));
   }
 }
 
-  Future<String> forceChangePass(pass, confPass) async {
-    var token = getAccessToken() ?? "";
-    var headers = {'Authorization': 'Bearer $token'};
-    var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'http://10.0.2.2:8000/account/force-change-pass'));
-    request.fields.addAll({'password': pass, 'confirm_password': confPass});
+class HttpException implements Exception {
+  final String message;
 
-    request.headers.addAll(headers);
+  HttpException(this.message);  // Pass your message in constructor.
 
-    http.StreamedResponse response = await request.send();
-    String stringResponse = await response.stream.bytesToString();
-    Map resMap = json.decode(stringResponse);
-
-    if (resMap['status'] == "Success") {
-      return (await stringResponse);
-    } else if (resMap['detail'] ==
-        "Authentication credentials were not provided.") {
-      return ("Authentication credentials were not provided.");
-    } else {
-      return ("Password tidak sama");
-    }
-  }
-
-  Future<String> changePassword(prevPass, pass, confPass) async {
-    var token = getAccessToken() ?? "";
-    var headers = {'Authorization': 'Bearer ' + token};
-    var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'http://10.0.2.2:8000/account/change-pass'));
-    request.fields.addAll({'old_password':prevPass, 'password': pass, 'confirm_password': confPass});
-
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
-    String stringResponse = await response.stream.bytesToString();
-    Map resMap = json.decode(stringResponse);
-
-
-    if (response.statusCode == 403){
-      await refreshTokenUser();
-      if (tokenIsValid){
-        return changePassword(prevPass, pass, confPass);
-      }
-      else{
-        return ("Maaf, sesi anda telah habis");
-      }
-    }else{
-      if (resMap['status'] == "Success") {
-        return (await stringResponse);
-      } else if (resMap['detail'] ==
-          "Authentication credentials were not provided.") {
-        return ("Authentication credentials were not provided.");
-      } else if (resMap["message"] == "Password lama tidak sesuai") {
-        return ("Password lama tidak sesuai");
-      } else {
-        return ("Password tidak sama");
-      }
-    }
+  @override
+  String toString() {
+    return message;
   }
 }
