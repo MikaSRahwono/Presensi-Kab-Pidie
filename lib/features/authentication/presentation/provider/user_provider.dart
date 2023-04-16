@@ -143,7 +143,7 @@ class UserProvider with ChangeNotifier {
     return jwtToken == null ? false : true;
   }
 
-  Future<http.Response?> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
+  Future<http.Response> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
     try {
       var res = await http.post(
         Uri.parse("http://127.0.0.1:8000/presensi/"),
@@ -183,7 +183,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<http.Response?> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
+  Future<http.Response> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
     try{
       var res = await http.put(
         Uri.parse("http://127.0.0.1:8000/presensi/"),
@@ -289,7 +289,6 @@ class UserProvider with ChangeNotifier {
         },
         body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
       );
-      print(res.statusCode);
       switch (res.statusCode) {
         case 200:
           JwtResponse response = jwtResponseFromJson(res.body);
@@ -309,12 +308,10 @@ class UserProvider with ChangeNotifier {
           throw HttpException("Server Error");
         default:
           var stringRes = jsonDecode(res.body);
-          print(stringRes['message']);
           throw HttpException(stringRes['message']);
       }
     }
     catch(e) {
-      print(e.toString());
       throw HttpException(e.toString());
     }
   }

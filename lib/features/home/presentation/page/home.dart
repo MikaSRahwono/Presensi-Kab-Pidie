@@ -10,7 +10,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   late Future<Presensi?> dataFuturePresensi;
-  late Future<http.Response?> respData;
   bool _dinas = false;
   late String status = '';
   late String clockin = '';
@@ -220,31 +219,24 @@ class _HomePageState extends State<HomePage> {
                                   setState(() {
                                     isLoading = true;
                                   });
-                                  print(isLoading);
-                                  print(dataUser.getLockedDinas());
                                   if (dataUser.getPresensi()?.status == null){
                                     try {
-                                      respData = dataUser.absenMasuk(_encodeBody, context);
-                                      respData.then((response_) {
-                                        var resMap = jsonDecode(response_!.body);
-                                        onTapStatusAbsensi(context, "masuk");
-                                        dataUser.setPresensiModel(Presensi.fromJson(resMap));
-                                        print(response_.body);
-                                        print(resMap);
-                                        onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
-                                        setState(()  {
-                                          dataUser.setLockedDinas(true);
-                                          print(dataUser.getLockedDinas());
-                                          isLoading = false;
-                                        });
-                                        Navigator.pop(context);
-                                        print(isLoading);
+                                      var respData = await dataUser.absenMasuk(_encodeBody, context);
+                                      var resMap = jsonDecode(respData.body);
+                                      onTapStatusAbsensi(context, "masuk");
+                                      dataUser.setPresensiModel(Presensi.fromJson(resMap));
+                                      onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                                      setState(()  {
+                                        dataUser.setLockedDinas(true);
+                                        isLoading = false;
                                       });
+                                      Navigator.pop(context);
                                     }
                                     catch(e) {
                                       setState(() {
                                         isLoading = false;
                                       });
+                                      Navigator.pop(context);
                                       if(e.toString() == "Server Error") {
                                         serverError(context);
                                       } else {
@@ -254,27 +246,22 @@ class _HomePageState extends State<HomePage> {
                                   }
                                   else if (dataUser.getPresensi()?.status == "masuk"){
                                     try {
-                                      respData = dataUser.absenKeluar(_encodeBody, context);
-                                      respData.then((response_) {
-                                        var resMap = jsonDecode(response_!.body);
-                                        onTapStatusAbsensi(context, "keluar");
-                                        dataUser.setPresensiModel(Presensi.fromJson(resMap));
-                                        print(response_.body);
-                                        print(resMap);
-                                        onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
-                                        setState(() {
-                                          dataUser.setLockedDinas(true);
-                                          print(dataUser.getLockedDinas());
-                                          isLoading = false;
-                                        });
-                                        Navigator.pop(context);
-                                        print(isLoading);
+                                      var respData = await dataUser.absenKeluar(_encodeBody, context);
+                                      var resMap = jsonDecode(respData.body);
+                                      onTapStatusAbsensi(context, "keluar");
+                                      dataUser.setPresensiModel(Presensi.fromJson(resMap));
+                                      onTapClockIn(context, DateFormat('hh:mm').format(DateTime.now()));
+                                      setState(() {
+                                        dataUser.setLockedDinas(true);
+                                        isLoading = false;
                                       });
+                                      Navigator.pop(context);
                                     }
                                     catch(e) {
                                       setState(() {
                                         isLoading = false;
                                       });
+                                      Navigator.pop(context);
                                       if(e.toString() == "Server Error") {
                                         serverError(context);
                                       } else {
