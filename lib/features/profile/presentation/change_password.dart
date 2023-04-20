@@ -206,89 +206,90 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       );
     }
 
-    final alertDialogSuccess = CupertinoAlertDialog(
-      title: const Text('Login Ulang'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('lakukan login ulang'),
-            Text('dengan password baru anda'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage()));
-          },
-        ),
-      ],
-    );
-    final alertDialogFailed = CupertinoAlertDialog(
-      title: const Text('Password tidak sama'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('password anda tidak sama'),
-            Text('masukkan password baru anda kembali'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-    final alertDialogFailedPrevPass = CupertinoAlertDialog(
-      title: const Text('Password lama tidak sesuai'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('password lama anda salah'),
-            Text('masukkan password lama anda dengan benar'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
+    void alertDialogSuccess() {
+      showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) =>
+              CupertinoAlertDialog(
+                title: const Text('Login Ulang'),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: const <Widget>[
+                      Text('lakukan login ulang'),
+                      Text('dengan password baru anda'),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('oke'),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => LoginPage()));
+                    },
+                  ),
+                ],
+              )
+      );
+    }
+    void serverError(context) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Server Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
+    void displayError(context, e) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Terjadi Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text(e.toString(),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
 
-    final alertDialogNoAuth = CupertinoAlertDialog(
-      title: const Text('Ubah Password Gagal'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('login ulang dengan'),
-            Text('password yang telah diberikan'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage()));
-          },
-        ),
-      ],
-    );
     final saveButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       margin: EdgeInsets.fromLTRB(40.w, 0, 40.w, 0),
@@ -308,70 +309,17 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           setState(() {
             isLoading = true;
           });
-          var response = await dataUser.changePassword(prevpassController.text,
-              passController1.text, passController2.text);
-          print(response);
-          if (response ==
-            "Maaf, sesi anda telah habis") {
-            if (mounted){
-              dataUser.logout();
-              showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) =>
-                      CupertinoAlertDialog(
-                        title: Text("Sesi telah habis",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize:  18.sp,
-                            fontWeight: FontWeight.w500,
-                          ),),
-                        content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize:  12.sp,
-                          ),),
-                        actions: <CupertinoDialogAction>[
-                          CupertinoDialogAction(
-                            child: Text("Oke"),
-                            onPressed: (){
-                              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                                  LoginPage()), (Route<dynamic> route) => false);
-                            },
-                          ),
-                        ],
-                      ));
+          try {
+            var response = await dataUser.changePassword(prevpassController.text,
+                passController1.text, passController2.text, context);
+            alertDialogSuccess();
+          }
+          catch(e) {
+            if(e.toString() == "Server Error") {
+              serverError(context);
+            } else {
+              displayError(context, e);
             }
-          } else if (response == 'Password tidak sama') {
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return alertDialogFailed;
-                });
-          } else if (response ==
-              "Authentication credentials were not provided.") {
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return alertDialogNoAuth;
-                });
-          } else if (response ==
-              "Password lama tidak sesuai") {
-              showDialog<void>(
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext context) {
-              return alertDialogFailedPrevPass;
-              });
-          } else {
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return alertDialogSuccess;
-                });
           }
           setState(() {
             isLoading = false;

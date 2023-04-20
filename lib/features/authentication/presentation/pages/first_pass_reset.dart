@@ -145,69 +145,90 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
         ],
       );
     }
-    final alertDialogSuccess = CupertinoAlertDialog(
-      title: const Text('Login Ulang'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('lakukan login ulang'),
-            Text('dengan password baru anda'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage()));
-          },
-        ),
-      ],
-    );
-    final alertDialogFailed = CupertinoAlertDialog(
-      title: const Text('Password tidak sama'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('password anda tidak sama'),
-            Text('masukkan password baru anda kembali'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-    final alertDialogNoAuth = CupertinoAlertDialog(
-      title: const Text('Ubah Password Gagal'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('login ulang dengan'),
-            Text('password yang telah diberikan'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage()));
-          },
-        ),
-      ],
-    );
+    void alertDialogSuccess() {
+      showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: const Text('Login Ulang'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: const <Widget>[
+                    Text('lakukan login ulang'),
+                    Text('dengan password baru anda'),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('oke'),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => LoginPage()));
+                  },
+                ),
+              ],
+            )
+          );
+    }
+    void serverError(context) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Server Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
+    void displayError(context, e) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Terjadi Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text(e.toString(),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
+
     final saveButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       margin: EdgeInsets.fromLTRB(40.w, 0, 40.w, 0),
@@ -227,30 +248,17 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
           setState(() {
             isLoading = true;
           });
-          var response = await dataUser.forceChangePass(
-              passController1.text, passController2.text);
-          if (response == 'Password tidak sama') {
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return alertDialogFailed;
-                });
-          } else if (response ==
-              "Authentication credentials were not provided.") {
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return alertDialogNoAuth;
-                });
-          } else {
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return alertDialogSuccess;
-                });
+          try {
+            var response = await dataUser.forceChangePass(
+                passController1.text, passController2.text, context);
+            alertDialogSuccess();
+          }
+          catch(e) {
+            if(e.toString() == "Server Error") {
+              serverError(context);
+            } else {
+              displayError(context, e);
+            }
           }
           setState(() {
             isLoading = false;

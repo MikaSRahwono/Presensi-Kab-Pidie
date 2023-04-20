@@ -114,24 +114,61 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (BuildContext context) => ForgetPassPage()));
       },
     );
-    final alertDialogFailed = CupertinoAlertDialog(
-      title: const Text('NIP atau Password Salah'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('Lakukan login kembali'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('oke'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
+    void serverError(context) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Server Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
+    void displayError(context, e) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: Text("Terjadi Error",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),),
+                content:  Text(e.toString(),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize:  12.sp,
+                  ),),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    child: Text("Oke"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
+    }
+
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.h),
       child: SizedBox(
@@ -151,16 +188,9 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               isLoading = true;
             });
-            var response = await dataUser.attemptLogIn(
-                nipController.text, passController.text);
-            if (response.statusCode != 200) {
-              showDialog<void>(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    return alertDialogFailed;
-                  });
-            } else {
+            try {
+              var response = await dataUser.attemptLogIn(
+                  nipController.text, passController.text);
               if (dataUser.firstLogin) {
                 Navigator.push(
                     context,
@@ -173,7 +203,13 @@ class _LoginPageState extends State<LoginPage> {
                     MaterialPageRoute(
                         builder: (BuildContext context) => HomePage()),
                         (Route<dynamic> route) => false
-                );
+                );}
+            }
+            catch(e) {
+              if(e.toString() == "Server Error") {
+                serverError(context);
+              } else {
+                displayError(context, e);
               }
             }
             setState(() {
