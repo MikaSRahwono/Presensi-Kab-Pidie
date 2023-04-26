@@ -1,13 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:presensi_mobileapp/splash_screen.dart';
-import 'package:async/async.dart';
-import 'package:provider/provider.dart';
-
-import 'features/authentication/presentation/pages/_pages.dart';
-import 'features/authentication/presentation/provider/_provider.dart';
-import 'features/home/presentation/page/_pages.dart';
+part of '_pages.dart';
 
 class CheckAuth extends StatefulWidget {
   @override

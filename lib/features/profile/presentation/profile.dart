@@ -1,15 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:presensi_mobileapp/features/profile/presentation/_pages.dart';
-import 'package:presensi_mobileapp/widgets/_widgets.dart';
-import 'package:provider/provider.dart';
-
-import '../../authentication/data/model/user_model.dart';
-import '../../authentication/presentation/pages/_pages.dart';
-import '../../authentication/presentation/provider/_provider.dart';
+part of '_pages.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
