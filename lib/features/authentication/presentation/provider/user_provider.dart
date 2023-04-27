@@ -146,7 +146,7 @@ class UserProvider with ChangeNotifier {
   Future<http.Response> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
     try {
       var res = await http.post(
-        Uri.parse("http://127.0.0.1:8000/presensi/"),
+        Uri.parse("http://10.0.2.2:8000/presensi/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -186,7 +186,7 @@ class UserProvider with ChangeNotifier {
   Future<http.Response> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
     try{
       var res = await http.put(
-        Uri.parse("http://127.0.0.1:8000/presensi/"),
+        Uri.parse("http://10.0.2.2:8000/presensi/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -225,7 +225,7 @@ class UserProvider with ChangeNotifier {
 
   Future<bool> refreshTokenUser() async {
     var res = await http.post(
-        Uri.parse("http://127.0.0.1:8000/api/token/refresh/"),
+        Uri.parse("http://10.0.2.2:8000/api/token/refresh/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -248,7 +248,7 @@ class UserProvider with ChangeNotifier {
   Future<User?> getDataUser() async {
     try {
       var res = await http.get(
-          Uri.parse('http://127.0.0.1:8000/pegawai/info-pegawai'),
+          Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
           headers: <String, String>{"Content-Type": "application/json",
             "Accept": "application/json",
             "Authorization": "Bearer $jwtToken",
@@ -282,13 +282,14 @@ class UserProvider with ChangeNotifier {
     try{
       var res = await http.post(
         Uri.parse(
-            'http://127.0.0.1:8000/account/login'),
+            'http://10.0.2.2:8000/account/login'),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
         },
         body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
       );
+      print(res);
       switch (res.statusCode) {
         case 200:
           JwtResponse response = jwtResponseFromJson(res.body);
@@ -319,7 +320,7 @@ class UserProvider with ChangeNotifier {
   Future<Presensi?> getDataPresensi() async {
     try {
       var res = await http.get(
-        Uri.parse("http://127.0.0.1:8000/presensi/"),
+        Uri.parse("http://10.0.2.2:8000/presensi/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -362,7 +363,7 @@ class UserProvider with ChangeNotifier {
   Future<http.Response?> forceChangePass(pass, confPass, BuildContext context) async {
     try{
       var res = await http.post(
-        Uri.parse("http://127.0.0.1:8000/account/force-change-pass"),
+        Uri.parse("http://10.0.2.2:8000/account/force-change-pass"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -403,7 +404,7 @@ class UserProvider with ChangeNotifier {
   Future<http.Response?> changePassword(prevPass, pass, confPass, BuildContext context) async {
     try {
       var res = await http.post(
-        Uri.parse("http://127.0.0.1:8000/account/change-pass"),
+        Uri.parse("http://10.0.2.2:8000/account/change-pass"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -474,13 +475,3 @@ class UserProvider with ChangeNotifier {
   }
 }
 
-class HttpException implements Exception {
-  final String message;
-
-  HttpException(this.message);  // Pass your message in constructor.
-
-  @override
-  String toString() {
-    return message;
-  }
-}

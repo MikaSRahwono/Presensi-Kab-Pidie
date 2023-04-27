@@ -12,7 +12,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final _children = <Widget>[
     const HomePage(),
-    // // ComingSoonPage(),
     ProfilePage(),
   ];
   late int _currentIndex;
