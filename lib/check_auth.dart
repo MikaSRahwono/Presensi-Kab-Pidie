@@ -7,39 +7,16 @@ class CheckAuth extends StatefulWidget {
 
 class _CheckAuthState extends State<CheckAuth> {
   bool isAuth = false;
-  final _myFuture = AsyncMemoizer<bool>();
-
-  Future<bool> loginCheckFuture(UserProvider dataUser, HelperDialog helperDialog) async {
-    return _myFuture.runOnce(() async {
-      if (await dataUser.isLoggedIn()) {
-        await dataUser.getDataPresensi();
-        if (dataUser.getTokenIsValid()! == false) {
-          if (mounted) {
-            dataUser.logout();
-            helperDialog.checkAuthDialog(context);
-          }
-        }
-        await dataUser.getDataUser();
-          if (dataUser.getTokenIsValid()! == false) {
-            if (mounted) {
-              dataUser.logout();
-              helperDialog.checkAuthDialog(context);
-            }
-          }
-        return true;
-      }
-      return false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final UserProvider dataUser = Provider.of<UserProvider>(context);
     HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
 
     Widget child;
     return FutureBuilder(
-        future: loginCheckFuture(dataUser, helperDialog),
+        future: helperMethod.loginCheckFuture(context,dataUser, helperDialog),
         builder: (context, snapshot){
 
           if(snapshot.hasData){
@@ -49,7 +26,7 @@ class _CheckAuthState extends State<CheckAuth> {
               child = LoginPage();
             }
           } else{
-            // future hasnt completed yet
+            // Future hasn't completed yet
             child = SplashScreen();
           }
 

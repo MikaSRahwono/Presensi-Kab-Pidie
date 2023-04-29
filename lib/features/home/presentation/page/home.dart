@@ -22,7 +22,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    getCurrentLocation().then((value) => {
+    HelperMethod helperMethod = HelperMethod();
+
+    helperMethod.getCurrentLocation().then((value) => {
       lat = '${value.latitude}',
       longi = '${value.longitude}'
     } );
@@ -45,6 +47,8 @@ class _HomePageState extends State<HomePage> {
     String statClockOut = dataPresensi?.keteranganAbsensiKeluar ?? "";
     String stat = dataUser.getPresensi()?.status ?? "";
     HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
+
     final batasWaktu = Padding(
       padding: EdgeInsets.only(
           top: 20.0.h, left: 32.w, right: 32.w
@@ -262,7 +266,7 @@ class _HomePageState extends State<HomePage> {
     final buttonAbsenMasuk = Center(
       child: InkWell(
         onTap: () => {
-          getCurrentLocation().then((value) => {
+          helperMethod.getCurrentLocation().then((value) => {
             lat = '${value.latitude}',
             longi = '${value.longitude}'
           }
@@ -310,7 +314,7 @@ class _HomePageState extends State<HomePage> {
       child: InkWell(
         onTap: () => {
 
-          getCurrentLocation().then((value) => {
+          helperMethod.getCurrentLocation().then((value) => {
             lat = '${value.latitude}',
             longi = '${value.longitude}'
           } ),
@@ -443,32 +447,14 @@ class _HomePageState extends State<HomePage> {
         dataUser.clockIn = _clockIn;
       });
   }
-  Future<Position> getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location service are disabled');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request location'
-      );
-    }
-    return await Geolocator.getCurrentPosition();
-  }
 
   /// -----------------------------------
   /// Build
   /// -----------------------------------
   Widget build(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
+    HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
     final icon = "icon-absensi-1";
     return Scaffold(
       extendBody: true,
@@ -493,33 +479,8 @@ class _HomePageState extends State<HomePage> {
 
           }else{
             if (mounted){
-              dataUser.logout();
-              showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) =>
-                      CupertinoAlertDialog(
-                        title: Text("Sesi telah habis",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize:  18.sp,
-                            fontWeight: FontWeight.w500,
-                          ),),
-                        content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize:  12.sp,
-                          ),),
-                        actions: <CupertinoDialogAction>[
-                          CupertinoDialogAction(
-                            child: Text("Oke"),
-                            onPressed: (){
-                              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                                  LoginPage()), (Route<dynamic> route) => false);
-                            },
-                          ),
-                        ],
-                      ));
+              helperMethod.logout(dataUser);
+              helperDialog.sessionTimeoutDialog(context);
             }
 
           }

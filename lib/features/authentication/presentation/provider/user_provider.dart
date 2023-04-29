@@ -12,7 +12,6 @@ class UserProvider with ChangeNotifier {
   final String _clockIn = "clock_in";
   final String _clockOut = "clock_Out";
   final String _flagDinas = "flag_dinas";
-  // final String _lockedDinas = "";
   String? jwtToken;
   String? refreshToken;
   String? flagAbsensi;
@@ -40,7 +39,6 @@ class UserProvider with ChangeNotifier {
 
   Future<bool?> setFirstLogin(bool? flag) async {
     await _storage.write(key: _flagFirstLoginKey, value: flag.toString());
-
     return flag;
   }
 
@@ -61,16 +59,12 @@ class UserProvider with ChangeNotifier {
     clockOut = clock_out;
     return clock_out;
   }
+
   Future<String?> setFlagDinas(String? dinas) async {
     await _storage.write(key: _flagDinas, value: dinas.toString());
     flagDinas = dinas;
     return dinas;
   }
-  // Future<String?> setLockedDinas(String? isLockedDinas) async {
-  //   await _storage.write(key: _lockedDinas, value: isLockedDinas);
-  //   this.isLockedDinas = isLockedDinas == 'true';
-  //   return isLockedDinas;
-  // }
 
   bool setLockedDinas(bool Locked) {
     this.isLockedDinas = Locked;
@@ -105,21 +99,27 @@ class UserProvider with ChangeNotifier {
   bool? getFirstLogin() {
     return firstLogin;
   }
+
   String? getFlagAbsensi() {
     return flagAbsensi;
   }
+
   String? getClockIn() {
     return clockIn;
   }
+
   String? getClockOut() {
     return clockOut;
   }
+
   String? getFlagDinas() {
     return flagDinas;
   }
+
   Presensi? getPresensi(){
     return presensiModel;
   }
+
   bool? getTokenIsValid(){
     return tokenIsValid;
   }
@@ -132,45 +132,25 @@ class UserProvider with ChangeNotifier {
   /// Methods
   /// ----------------------------------------
 
-  void logout() {
-    jwtToken = null;
-    refreshToken = null;
-    firstLogin = true;
-  }
-
-  Future<bool> isLoggedIn() async {
-    await getAccessTokenStorage();
-    return jwtToken == null ? false : true;
-  }
-
-  Future<http.Response> absenMasuk(Map<String, String> encodeBody, BuildContext context) async {
+  Future<http.Response> absenMasuk(Map<String, String> encodeBody, BuildContext context, HelperMethod helperMethod, UserProvider dataUser) async {
     try {
-      var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/presensi/"),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-          "Authorization": "Bearer $jwtToken",
-        },
-        body: jsonEncode(encodeBody),
-      );
+      var res = await helperMethod.absenMasukApi(encodeBody, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
           return res;
         case 403:
-          await refreshTokenUser();
+          await refreshTokenUser(helperMethod);
           if (tokenIsValid) {
             if (!context.mounted){
             }
-            return absenMasuk(encodeBody, context);
+            return absenMasuk(encodeBody, context, helperMethod, dataUser);
           }
           else {
             if (context.mounted){
-              logout();
-              sessionTimeout(context);
+              helperMethod.logout(dataUser);
             }
-            return res;
           }
+          throw HttpException("Session Habis");
         case 500:
           throw HttpException("Server Error");
         default:
@@ -183,34 +163,25 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<http.Response> absenKeluar(Map<String, String> encodeBody, BuildContext context) async {
+  Future<http.Response> absenKeluar(Map<String, String> encodeBody, BuildContext context, HelperMethod helperMethod, UserProvider dataUser) async {
     try{
-      var res = await http.put(
-        Uri.parse("http://10.0.2.2:8000/presensi/"),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-          "Authorization": "Bearer $jwtToken",
-        },
-        body: jsonEncode(encodeBody),
-      );
+      var res = await helperMethod.absenKeluarApi(encodeBody, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
           return res;
         case 403:
-          await refreshTokenUser();
+          await refreshTokenUser(helperMethod);
           if (tokenIsValid) {
             if (!context.mounted){
             }
-            return absenMasuk(encodeBody, context);
+            return absenMasuk(encodeBody, context, helperMethod, dataUser);
           }
           else {
             if (context.mounted){
-              logout();
-              sessionTimeout(context);
+              helperMethod.logout(dataUser);
             }
-            return res;
           }
+          throw HttpException("Session Habis");
         case 500:
           throw HttpException("Server Error");
         default:
@@ -223,15 +194,8 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> refreshTokenUser() async {
-    var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/token/refresh/"),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-        },
-        body:jsonEncode(<String, String>{'refresh': "$refreshToken"})
-    );
+  Future<bool> refreshTokenUser(HelperMethod helperMethod) async {
+    var res = await helperMethod.refreshTokenUserApi(refreshToken ?? '');
     if (res.statusCode == 200){
       final jsonData = json.decode(res.body);
       setAccessToken(jsonData['access']);
@@ -245,23 +209,18 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<User?> getDataUser() async {
+  Future<User?> getDataUser(HelperMethod helperMethod) async {
     try {
-      var res = await http.get(
-          Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
-          headers: <String, String>{"Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": "Bearer $jwtToken",
-          });
+      var res = await helperMethod.getDataUserApi(jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
           pegawaiModel = User.fromJson(jsonDecode(res.body));
           notifyListeners();
           return pegawaiModel;
         case 403:
-          await refreshTokenUser();
+          await refreshTokenUser(helperMethod);
           if (tokenIsValid){
-            return getDataUser();
+            return getDataUser(helperMethod);
           }
           else{
             return pegawaiModel;
@@ -278,18 +237,9 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<http.Response> attemptLogIn(String nip, String password) async {
+  Future<http.Response> attemptLogIn(String nip, String password, HelperMethod helperMethod) async {
     try{
-      var res = await http.post(
-        Uri.parse(
-            'http://10.0.2.2:8000/account/login'),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-        },
-        body: jsonEncode(<String, String>{'nip': nip, 'password': password}),
-      );
-      print(res);
+      var res = await helperMethod.attemptLogInApi(nip, password);
       switch (res.statusCode) {
         case 200:
           JwtResponse response = jwtResponseFromJson(res.body);
@@ -300,8 +250,8 @@ class UserProvider with ChangeNotifier {
           await setFirstLogin(firstLogin);
           await setRefreshToken(refreshToken);
           tokenIsValid = true;
-          await getDataPresensi();
-          await getDataUser();
+          await getDataPresensi(helperMethod);
+          await getDataUser(helperMethod);
 
           notifyListeners();
           return res;
@@ -317,16 +267,9 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<Presensi?> getDataPresensi() async {
+  Future<Presensi?> getDataPresensi(HelperMethod helperMethod) async {
     try {
-      var res = await http.get(
-        Uri.parse("http://10.0.2.2:8000/presensi/"),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-          "Authorization": "Bearer $jwtToken",
-        },
-      );
+      var res = await helperMethod.getDataPresensiApi(jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
           var stringRes = jsonDecode(res.body);
@@ -341,9 +284,9 @@ class UserProvider with ChangeNotifier {
           notifyListeners();
           return presensiModel;
         case 403:
-          await refreshTokenUser();
+          await refreshTokenUser(helperMethod);
           if (tokenIsValid){
-            return getDataPresensi();
+            return getDataPresensi(helperMethod);
           }
           else{
             return presensiModel;
@@ -358,37 +301,27 @@ class UserProvider with ChangeNotifier {
     catch(e) {
       throw HttpException(e.toString());
     }
-}
+  }
 
-  Future<http.Response?> forceChangePass(pass, confPass, BuildContext context) async {
+  Future<http.Response?> forceChangePass(pass, confPass, BuildContext context, HelperMethod helperMethod, UserProvider dataUser) async {
     try{
-      var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/account/force-change-pass"),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-          "Authorization": "Bearer $jwtToken",
-        },
-        body: jsonEncode(<String, String>{'password': pass, 'confirm_password': confPass}),
-      );
-
+      var res = await helperMethod.forceChangePassApi(pass, confPass, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
           return res;
         case 403:
-          await refreshTokenUser();
+          await refreshTokenUser(helperMethod);
           if (tokenIsValid) {
             if (!context.mounted){
             }
-            return forceChangePass(pass, confPass, context);
+            return forceChangePass(pass, confPass, context, helperMethod, dataUser);
           }
           else {
             if (context.mounted){
-              logout();
-              sessionTimeout(context);
+              helperMethod.logout(dataUser);
             }
           }
-          break;
+          throw HttpException("Session Habis");
         case 500:
           throw HttpException("Server Error");
         default:
@@ -401,35 +334,25 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<http.Response?> changePassword(prevPass, pass, confPass, BuildContext context) async {
+  Future<http.Response?> changePassword(prevPass, pass, confPass, BuildContext context, HelperMethod helperMethod, UserProvider dataUser) async {
     try {
-      var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/account/change-pass"),
-        headers: <String, String>{
-          "Content-Type": "application/json; charset=UTF-8",
-          "Accept": "application/json",
-          "Authorization": "Bearer $jwtToken",
-        },
-        body: jsonEncode(<String, String>{'old_password':prevPass, 'password': pass, 'confirm_password': confPass}),
-      );
-
+      var res = await helperMethod.changePasswordApi(prevPass ,pass, confPass, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
           return res;
         case 403:
-          await refreshTokenUser();
+          await refreshTokenUser(helperMethod);
           if (tokenIsValid) {
             if (!context.mounted){
             }
-            return changePassword(prevPass, pass, confPass, context);
+            return changePassword(prevPass, pass, confPass, context, helperMethod, dataUser);
           }
           else {
             if (context.mounted){
-              logout();
-              sessionTimeout(context);
+              helperMethod.logout(dataUser);
             }
           }
-          break;
+          throw HttpException("Session Habis");
         case 500:
           throw HttpException("Server Error");
         default:
@@ -440,38 +363,5 @@ class UserProvider with ChangeNotifier {
     catch(e) {
       throw HttpException(e.toString());
     }
-  }
-
-  /// ----------------------------------------
-  /// Widgets
-  /// ----------------------------------------
-  void sessionTimeout(context) {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) =>
-            CupertinoAlertDialog(
-              title: Text("Sesi telah habis",
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize:  18.sp,
-                  fontWeight: FontWeight.w500,
-                ),),
-              content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize:  12.sp,
-                ),),
-              actions: <CupertinoDialogAction>[
-                CupertinoDialogAction(
-                  child: Text("Oke"),
-                  onPressed: (){
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                        LoginPage()), (Route<dynamic> route) => false);
-                  },
-                ),
-              ],
-            ));
   }
 }
-

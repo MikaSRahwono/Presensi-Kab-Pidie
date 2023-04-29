@@ -14,6 +14,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
+    HelperMethod helperMethod = HelperMethod();
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -251,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.w500,
                           fontFamily: "Poppins")),
                   onPressed: () async {
-                    dataUser.logout();
+                    helperMethod.logout(dataUser);
                     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
                   },
                 ),

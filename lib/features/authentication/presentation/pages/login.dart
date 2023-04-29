@@ -77,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
     }
     final dataUser = Provider.of<UserProvider>(context);
     HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
 
     final logo = FittedBox(
       fit: BoxFit.fitWidth,
@@ -138,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
             });
             try {
               var response = await dataUser.attemptLogIn(
-                  nipController.text, passController.text);
+                  nipController.text, passController.text, helperMethod);
               if (dataUser.firstLogin) {
                 Navigator.push(
                     context,
@@ -156,6 +157,8 @@ class _LoginPageState extends State<LoginPage> {
             catch(e) {
               if(e.toString() == "Server Error") {
                 helperDialog.serverError(context);
+              } else if(e.toString() == "Session Habis"){
+                helperDialog.sessionTimeoutDialog(context);
               } else {
                 helperDialog.displayError(context, e);
               }

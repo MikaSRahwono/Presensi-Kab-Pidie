@@ -2,62 +2,9 @@ part of "_widgets.dart";
 
 class HelperDialog {
   var isLoading = false;
+  HelperMethod helperMethod = HelperMethod();
 
-   void displayDialog(context, String title, String descButton, UserProvider dataUser, Map<String, String> _encodeBody, Function onTapStatusAbsensi, Function onTapClockIn) {
-    void displayError(context, e) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              CupertinoAlertDialog(
-                title: Text("Terjadi Error",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),),
-                content:  Text(e.toString(),
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  12.sp,
-                  ),),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    child: Text("Oke"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
-    };
-    void serverError(context) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              CupertinoAlertDialog(
-                title: Text("Server Error",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),),
-                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  12.sp,
-                  ),),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    child: Text("Oke"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
-    }
+  void displayDialog(context, String title, String descButton, UserProvider dataUser, Map<String, String> _encodeBody, Function onTapStatusAbsensi, Function onTapClockIn) {
 
     showDialog(
         context: context,
@@ -186,7 +133,7 @@ class HelperDialog {
                                   });
                                   if (dataUser.getPresensi()?.status == null){
                                     try {
-                                      var respData = await dataUser.absenMasuk(_encodeBody, context);
+                                      var respData = await dataUser.absenMasuk(_encodeBody, context, helperMethod, dataUser);
                                       var resMap = jsonDecode(respData.body);
                                       onTapStatusAbsensi(context, "masuk");
                                       dataUser.setPresensiModel(Presensi.fromJson(resMap));
@@ -204,6 +151,8 @@ class HelperDialog {
                                       Navigator.pop(context);
                                       if(e.toString() == "Server Error") {
                                         serverError(context);
+                                      } else if(e.toString() == "Session Habis"){
+                                        sessionTimeoutDialog(context);
                                       } else {
                                         displayError(context, e);
                                       }
@@ -211,7 +160,7 @@ class HelperDialog {
                                   }
                                   else if (dataUser.getPresensi()?.status == "masuk"){
                                     try {
-                                      var respData = await dataUser.absenKeluar(_encodeBody, context);
+                                      var respData = await dataUser.absenKeluar(_encodeBody, context, helperMethod, dataUser);
                                       var resMap = jsonDecode(respData.body);
                                       onTapStatusAbsensi(context, "keluar");
                                       dataUser.setPresensiModel(Presensi.fromJson(resMap));
@@ -229,6 +178,8 @@ class HelperDialog {
                                       Navigator.pop(context);
                                       if(e.toString() == "Server Error") {
                                         serverError(context);
+                                      } else if(e.toString() == "Session Habis"){
+                                        sessionTimeoutDialog(context);
                                       } else {
                                         displayError(context, e);
                                       }
@@ -309,6 +260,7 @@ class HelperDialog {
             )
     );
   }
+
   void serverError(context) {
     showDialog(
         context: context,
@@ -336,6 +288,7 @@ class HelperDialog {
               ],
             ));
   }
+
   void displayError(context, e) {
     showDialog(
         context: context,
@@ -390,6 +343,35 @@ class HelperDialog {
                         MaterialPageRoute(builder: (context) =>
                             LoginPage()), (Route<
                         dynamic> route) => false);
+                  },
+                ),
+              ],
+            ));
+  }
+
+  void sessionTimeoutDialog(context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+            CupertinoAlertDialog(
+              title: Text("Sesi telah habis",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize:  18.sp,
+                  fontWeight: FontWeight.w500,
+                ),),
+              content:  Text("Maaf sesi anda telah habis, mohon untuk login kembali!",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize:  12.sp,
+                ),),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                  child: Text("Oke"),
+                  onPressed: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                        LoginPage()), (Route<dynamic> route) => false);
                   },
                 ),
               ],

@@ -33,6 +33,7 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
   Widget build(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
     HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
     Widget PasswordField(int height, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,12 +165,14 @@ class _FirstPassResetPageState extends State<FirstPassResetPage> {
           });
           try {
             var response = await dataUser.forceChangePass(
-                passController1.text, passController2.text, context);
+                passController1.text, passController2.text, context, helperMethod, dataUser);
             helperDialog.alertDialogSuccess(context);
           }
           catch(e) {
             if(e.toString() == "Server Error") {
               helperDialog.serverError(context);
+            } else if(e.toString() == "Session Habis"){
+              helperDialog.sessionTimeoutDialog(context);
             } else {
               helperDialog.displayError(context, e);
             }
