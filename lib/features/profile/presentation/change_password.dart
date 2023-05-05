@@ -36,10 +36,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
-    // Step 1: panggil data user
-    // final dataUser = Provider.of<UserProvider>(context);
-    // Step 2: Jangan membuat widgets menjadi const
-    // Step 3: dataUser.getFirstLogin()!.toString() ?? ''
+    HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
     Widget PreviousPasswordField(int height, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,90 +204,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       );
     }
 
-    void alertDialogSuccess() {
-      showDialog<void>(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) =>
-              CupertinoAlertDialog(
-                title: const Text('Login Ulang'),
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: const <Widget>[
-                      Text('lakukan login ulang'),
-                      Text('dengan password baru anda'),
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('oke'),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => LoginPage()));
-                    },
-                  ),
-                ],
-              )
-      );
-    }
-    void serverError(context) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              CupertinoAlertDialog(
-                title: Text("Server Error",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),),
-                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  12.sp,
-                  ),),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    child: Text("Oke"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
-    }
-    void displayError(context, e) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              CupertinoAlertDialog(
-                title: Text("Terjadi Error",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),),
-                content:  Text(e.toString(),
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  12.sp,
-                  ),),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    child: Text("Oke"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
-    }
-
     final saveButton = Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       margin: EdgeInsets.fromLTRB(40.w, 0, 40.w, 0),
@@ -311,14 +225,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           });
           try {
             var response = await dataUser.changePassword(prevpassController.text,
-                passController1.text, passController2.text, context);
-            alertDialogSuccess();
+                passController1.text, passController2.text, context, helperMethod, dataUser);
+            helperDialog.alertDialogSuccess(context);
           }
           catch(e) {
             if(e.toString() == "Server Error") {
-              serverError(context);
+              helperDialog.serverError(context);
+            }else if(e.toString() == "Session Habis"){
+              helperDialog.sessionTimeoutDialog(context);
             } else {
-              displayError(context, e);
+              helperDialog.displayError(context, e);
             }
           }
           setState(() {

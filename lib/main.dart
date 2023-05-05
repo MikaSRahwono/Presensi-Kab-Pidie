@@ -1,17 +1,4 @@
-
-import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:presensi_mobileapp/check_auth.dart';
-import 'package:presensi_mobileapp/features/home/presentation/page/_pages.dart';
-import 'package:presensi_mobileapp/main_page.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:presensi_mobileapp/features/authentication/presentation/pages/_pages.dart';
-import 'package:presensi_mobileapp/main_page.dart';
-
-import 'package:presensi_mobileapp/splash_screen.dart';
-import 'package:provider/provider.dart';
-
-import 'features/authentication/presentation/provider/_provider.dart';
+part of '_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

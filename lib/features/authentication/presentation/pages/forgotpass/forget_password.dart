@@ -19,10 +19,6 @@ class _ForgetPassPageState extends State<ForgetPassPage> {
   @override
   Widget build(BuildContext context) {
     final dataUser = Provider.of<UserProvider>(context);
-    // Step 1: panggil data user
-    // final dataUser = Provider.of<UserProvider>(context);
-    // Step 2: Jangan membuat widgets menjadi const
-    // Step 3: dataUser.getFirstLogin()!.toString() ?? ''
     Widget EmailField(int height, int fontSize) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,

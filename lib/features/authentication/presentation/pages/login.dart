@@ -76,6 +76,9 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
     final dataUser = Provider.of<UserProvider>(context);
+    HelperDialog helperDialog = HelperDialog();
+    HelperMethod helperMethod = HelperMethod();
+
     final logo = FittedBox(
       fit: BoxFit.fitWidth,
       child: Padding(
@@ -114,60 +117,6 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (BuildContext context) => ForgetPassPage()));
       },
     );
-    void serverError(context) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              CupertinoAlertDialog(
-                title: Text("Server Error",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),),
-                content:  Text("Laporkan ke admin jika anda menemukan peringatan ini!",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  12.sp,
-                  ),),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    child: Text("Oke"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
-    }
-    void displayError(context, e) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              CupertinoAlertDialog(
-                title: Text("Terjadi Error",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  18.sp,
-                    fontWeight: FontWeight.w500,
-                  ),),
-                content:  Text(e.toString(),
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize:  12.sp,
-                  ),),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    child: Text("Oke"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
-    }
 
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 5.h),
@@ -190,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
             });
             try {
               var response = await dataUser.attemptLogIn(
-                  nipController.text, passController.text);
+                  nipController.text, passController.text, helperMethod);
               if (dataUser.firstLogin) {
                 Navigator.push(
                     context,
@@ -207,9 +156,11 @@ class _LoginPageState extends State<LoginPage> {
             }
             catch(e) {
               if(e.toString() == "Server Error") {
-                serverError(context);
+                helperDialog.serverError(context);
+              } else if(e.toString() == "Session Habis"){
+                helperDialog.sessionTimeoutDialog(context);
               } else {
-                displayError(context, e);
+                helperDialog.displayError(context, e);
               }
             }
             setState(() {

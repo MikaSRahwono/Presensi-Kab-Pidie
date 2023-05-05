@@ -1,8 +1,4 @@
-// To parse this JSON data, do
-//
-//     final presensi = presensiFromJson(jsonString);
-
-import 'dart:convert';
+part of '_model.dart';
 
 Presensi presensiFromJson(String str) => Presensi.fromJson(json.decode(str));
 
