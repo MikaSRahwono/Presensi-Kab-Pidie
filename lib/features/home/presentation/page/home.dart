@@ -474,7 +474,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           if (dataUser.getTokenIsValid()!){
             if (mounted){
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HistoryPage()));
             }
 
           }else{
