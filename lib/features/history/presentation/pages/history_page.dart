@@ -8,12 +8,18 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  static List<Tab> historyTabs = <Tab>[];
+  static List<Widget> historyTabs = <Widget>[];
+  static List<dynamic> historyData = <dynamic>[];
 
-  void setMonth() {
+
+
+  Future<void> setMonth(UserProvider dataUser, HelperMethod helperMethod) async {
     historyTabs.clear();
     var now = new DateTime.now();
     var formatter = new DateFormat('MMMM');
+    var formatter2 = new DateFormat('MM');
+    int bulanSaatIni = int.parse(formatter2.format(now));
+    historyData = (await dataUser.getDataHistory(bulanSaatIni, helperMethod))!;
     for (int i = 5; i >= 0; i--){
       var dateMonth = new DateTime(now.year, now.month - i, now.day);
       String month = formatter.format(dateMonth);
@@ -25,6 +31,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget tabBarView() {
     return TabBarView(
         children: historyTabs.map((e) {
+          print(e);
           return cardPresensi();
         }).toList()
     );
@@ -35,7 +42,10 @@ class _HistoryPageState extends State<HistoryPage> {
         margin: EdgeInsets.symmetric(vertical: 10.h),
         child: Row(
           children: [
-            Icon(Icons.login, size: 30.w, color: Color.fromRGBO(130, 83, 240, 1),),
+            SvgPicture.asset(
+                'resources/images/svg/in.svg',
+              width: 30.w,
+            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
@@ -57,7 +67,10 @@ class _HistoryPageState extends State<HistoryPage> {
         margin: EdgeInsets.symmetric(vertical: 10.h),
         child: Row(
           children: [
-            Icon(Icons.logout, size: 30.w, color: Color.fromRGBO(130, 83, 240, 1),),
+            SvgPicture.asset(
+              'resources/images/svg/out.svg',
+              width: 30.w,
+            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
@@ -104,14 +117,7 @@ class _HistoryPageState extends State<HistoryPage> {
   PreferredSizeWidget appBarWithTabs() {
     return AppBar(
       automaticallyImplyLeading: true,
-      centerTitle: false,
       title: Text("Riwayat Presensi"),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_outlined),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
       bottom: TabBar(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         isScrollable: true,
@@ -126,7 +132,9 @@ class _HistoryPageState extends State<HistoryPage> {
   /// ---------------------------------------------
   @override
   Widget build(BuildContext context) {
-    setMonth();
+    HelperMethod helperMethod = HelperMethod();
+    final dataUser = Provider.of<UserProvider>(context);
+    setMonth(dataUser, helperMethod);
     return DefaultTabController(
       length: historyTabs.length,
       initialIndex: 5,

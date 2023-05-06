@@ -25,13 +25,6 @@ class _ProfilePageState extends State<ProfilePage> {
           style: GoogleFonts.poppins(
               color: Colors.black, fontWeight: FontWeight.w700),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_outlined),
-          color: Color.fromRGBO(130, 83, 240, 1),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
       backgroundColor: Color.fromRGBO(246, 242, 255, 1),
       body: SingleChildScrollView(

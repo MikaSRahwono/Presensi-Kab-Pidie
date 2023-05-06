@@ -32,7 +32,7 @@ class HelperMethod {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://10.0.2.2:8000/account/req-change-pass'));
+            'http://127.0.0.1:8000/account/req-change-pass'));
     request.fields.addAll({'email': email});
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
@@ -46,7 +46,7 @@ class HelperMethod {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://10.0.2.2:8000/account/check-otp'));
+            'http://127.0.0.1:8000/account/check-otp'));
     request.fields.addAll({'email': email, 'unique_code': kode});
     http.StreamedResponse response = await request.send();
     String stringResponse = await response.stream.bytesToString();
@@ -62,7 +62,7 @@ class HelperMethod {
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'http://10.0.2.2:8000/account/change-forget-pass'));
+            'http://127.0.0.1:8000/account/change-forget-pass'));
     request.fields
         .addAll({'email': email, 'password': pass, 'confirm_password': confPass});
 
@@ -83,14 +83,20 @@ class HelperMethod {
   Future<bool> loginCheckFuture(BuildContext context, UserProvider dataUser, HelperDialog helperDialog) async {
     return _myFuture.runOnce(() async {
       if (await isLoggedIn(dataUser)) {
+        print(1);
         await dataUser.getDataPresensi(this);
+        print(2);
+
         if (dataUser.getTokenIsValid()! == false) {
           if (context.mounted) {
             logout(dataUser);
             helperDialog.checkAuthDialog(context);
           }
         }
+        print(1);
         await dataUser.getDataUser(this);
+        print(2);
+
         if (dataUser.getTokenIsValid()! == false) {
           if (context.mounted) {
             logout(dataUser);
@@ -123,7 +129,7 @@ class HelperMethod {
 
   Future<http.Response> absenMasukApi(Map<String, String> encodeBody, String jwtToken) async {
     var res = await http.post(
-      Uri.parse("http://10.0.2.2:8000/presensi/"),
+      Uri.parse("http://127.0.0.1:8000/presensi/"),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
         "Accept": "application/json",
@@ -136,7 +142,7 @@ class HelperMethod {
 
   Future<http.Response> absenKeluarApi(Map<String, String> encodeBody, String jwtToken) async {
       var res = await http.put(
-        Uri.parse("http://10.0.2.2:8000/presensi/"),
+        Uri.parse("http://127.0.0.1:8000/presensi/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -149,7 +155,7 @@ class HelperMethod {
 
   Future<http.Response> refreshTokenUserApi(String refreshToken) async {
     var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/token/refresh/"),
+        Uri.parse("http://127.0.0.1:8000/api/token/refresh/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -162,7 +168,7 @@ class HelperMethod {
 
   Future<http.Response> getDataUserApi(String jwtToken) async {
       var res = await http.get(
-          Uri.parse('http://10.0.2.2:8000/pegawai/info-pegawai'),
+          Uri.parse('http://127.0.0.1:8000/pegawai/info-pegawai'),
           headers: <String, String>{"Content-Type": "application/json",
             "Accept": "application/json",
             "Authorization": "Bearer $jwtToken",
@@ -173,7 +179,7 @@ class HelperMethod {
   Future<http.Response> attemptLogInApi(String nip, String password) async {
       var res = await http.post(
         Uri.parse(
-            'http://10.0.2.2:8000/account/login'),
+            'http://127.0.0.1:8000/account/login'),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -185,7 +191,7 @@ class HelperMethod {
 
   Future<http.Response> getDataPresensiApi(String jwtToken) async {
       var res = await http.get(
-        Uri.parse("http://10.0.2.2:8000/presensi/"),
+        Uri.parse("http://127.0.0.1:8000/presensi/"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -197,7 +203,7 @@ class HelperMethod {
 
   Future<http.Response> forceChangePassApi(pass, confPass, String jwtToken) async {
       var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/account/force-change-pass"),
+        Uri.parse("http://127.0.0.1:8000/account/force-change-pass"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -210,7 +216,7 @@ class HelperMethod {
 
   Future<http.Response> changePasswordApi(prevPass, pass, confPass, String jwtToken) async {
       var res = await http.post(
-        Uri.parse("http://10.0.2.2:8000/account/change-pass"),
+        Uri.parse("http://127.0.0.1:8000/account/change-pass"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
           "Accept": "application/json",
@@ -220,4 +226,18 @@ class HelperMethod {
       );
       return res;
   }
+
+  Future<http.Response> getHistoryPresensi(int bulan, String jwtToken) async {
+    var url = "http://127.0.0.1:8000/presensi/history?bulan=$bulan";
+    var res = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json",
+        "Authorization": "Bearer $jwtToken",
+      },
+    );
+    return res;
+  }
+
 }

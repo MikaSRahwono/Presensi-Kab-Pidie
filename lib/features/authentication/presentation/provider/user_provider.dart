@@ -23,6 +23,7 @@ class UserProvider with ChangeNotifier {
   bool tokenIsValid = true;
   Presensi? presensiModel;
   User? pegawaiModel;
+  List<MonthlyPresensi?>? historyPresensi;
 
   /// -------------------------------------
   /// Setter and Getter
@@ -76,6 +77,11 @@ class UserProvider with ChangeNotifier {
     return presensiModel;
   }
 
+  Future<List<MonthlyPresensi?>?> setHistoryPresensi(List<MonthlyPresensi?>? dataHistoryPresensi) async {
+    this.historyPresensi = dataHistoryPresensi;
+    return historyPresensi;
+  }
+
   Future<String?> getAccessTokenStorage() async {
     if (jwtToken == null){
       final token = await _storage.read(key: _tokenKey);
@@ -126,6 +132,11 @@ class UserProvider with ChangeNotifier {
 
   User? getUser(){
     return pegawaiModel;
+  }
+
+  List<MonthlyPresensi?>? getHistoryPresensi(){
+    if (historyPresensi == null) historyPresensi = List<MonthlyPresensi?>.filled(6, null);
+    return historyPresensi;
   }
 
   /// ----------------------------------------
@@ -252,6 +263,12 @@ class UserProvider with ChangeNotifier {
           tokenIsValid = true;
           await getDataPresensi(helperMethod);
           await getDataUser(helperMethod);
+          // var now = new DateTime.now();
+          // var formatter = new DateFormat('MM');
+          // print(formatter.format(now));
+          // int bulanSaatIni = int.parse(formatter.format(now));
+          // print(bulanSaatIni);
+          // await getDataHistory(bulanSaatIni, helperMethod);
 
           notifyListeners();
           return res;
@@ -302,6 +319,48 @@ class UserProvider with ChangeNotifier {
       throw HttpException(e.toString());
     }
   }
+
+  Future<List<MonthlyPresensi?>?> getDataHistory(int bulan, HelperMethod helperMethod) async {
+    try {
+      var res = await helperMethod.getHistoryPresensi(bulan, jwtToken ?? '');
+      switch (res.statusCode) {
+        case 200:
+          var now = new DateTime.now();
+          var formatter = new DateFormat('MM');
+          int bulanSaatIni = int.parse(formatter.format(now));
+          int index = bulanSaatIni - bulan;
+          if (index < 0) index += 12;
+          print(index);
+          var stringRes = jsonDecode(res.body);
+          print(stringRes);
+          var data_history = getHistoryPresensi();
+          print(data_history);
+          data_history![index] = MonthlyPresensi.fromJson(stringRes);
+          notifyListeners();
+          setHistoryPresensi(data_history);
+          print(data_history.toString());
+          return data_history;
+        case 403:
+          await refreshTokenUser(helperMethod);
+          if (tokenIsValid){
+            return getDataHistory(bulan, helperMethod);
+          }
+          else{
+            return null;
+          }
+        case 500:
+          throw HttpException("Server Error");
+        default:
+          print(res.body);
+          var stringRes = jsonDecode(res.body);
+          throw HttpException(stringRes['message']);
+      }
+    }
+    catch(e) {
+      throw HttpException(e.toString());
+    }
+  }
+
 
   Future<http.Response?> forceChangePass(pass, confPass, BuildContext context, HelperMethod helperMethod, UserProvider dataUser) async {
     try{

@@ -27,7 +27,7 @@ class _CheckAuthState extends State<CheckAuth> {
             }
           } else{
             // Future hasn't completed yet
-            child = SplashScreen();
+            child = ProfilePage();
           }
 
           return Scaffold(
