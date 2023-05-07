@@ -148,6 +148,11 @@ class UserProvider with ChangeNotifier {
       var res = await helperMethod.absenMasukApi(encodeBody, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
+          var now = DateTime.now();
+          var dateMonth = DateTime(now.year, now.month, now.day);
+          var formatter2 = DateFormat('MM');
+          int bulanSaatIni = int.parse(formatter2.format(dateMonth));
+          getDataHistory(bulanSaatIni, helperMethod);
           return res;
         case 403:
           await refreshTokenUser(helperMethod);
@@ -179,6 +184,11 @@ class UserProvider with ChangeNotifier {
       var res = await helperMethod.absenKeluarApi(encodeBody, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
+          var now = DateTime.now();
+          var dateMonth = DateTime(now.year, now.month, now.day);
+          var formatter2 = DateFormat('MM');
+          int bulanSaatIni = int.parse(formatter2.format(dateMonth));
+          getDataHistory(bulanSaatIni, helperMethod);
           return res;
         case 403:
           await refreshTokenUser(helperMethod);
