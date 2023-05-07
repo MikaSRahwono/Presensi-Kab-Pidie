@@ -19,6 +19,7 @@ import 'dart:async';
 
 import '../../../../widgets/_widgets.dart';
 import '../../../authentication/presentation/provider/_provider.dart';
+import '../../../presensi/data/model/_model.dart';
 import '../../data/model/_model.dart';
 
 part 'history_page.dart';

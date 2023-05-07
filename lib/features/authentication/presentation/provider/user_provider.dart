@@ -49,16 +49,16 @@ class UserProvider with ChangeNotifier {
     return flagAbsensi;
   }
 
-  Future<String?> setClockIn(String? clock_in) async {
-    await _storage.write(key: _clockIn, value: clock_in.toString());
-    clockIn = clock_in;
-    return clock_in;
+  Future<String?> setClockIn(String? clockIn) async {
+    await _storage.write(key: _clockIn, value: clockIn.toString());
+    clockIn = clockIn;
+    return clockIn;
   }
 
-  Future<String?> setClockOut(String? clock_out) async {
-    await _storage.write(key: _clockOut, value: clock_out.toString());
-    clockOut = clock_out;
-    return clock_out;
+  Future<String?> setClockOut(String? clockOut) async {
+    await _storage.write(key: _clockOut, value: clockOut.toString());
+    clockOut = clockOut;
+    return clockOut;
   }
 
   Future<String?> setFlagDinas(String? dinas) async {
@@ -67,8 +67,8 @@ class UserProvider with ChangeNotifier {
     return dinas;
   }
 
-  bool setLockedDinas(bool Locked) {
-    this.isLockedDinas = Locked;
+  bool setLockedDinas(bool locked) {
+    isLockedDinas = locked;
     return isLockedDinas;
   }
 
@@ -78,7 +78,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<List<MonthlyPresensi?>?> setHistoryPresensi(List<MonthlyPresensi?>? dataHistoryPresensi) async {
-    this.historyPresensi = dataHistoryPresensi;
+    historyPresensi = dataHistoryPresensi;
     return historyPresensi;
   }
 
@@ -135,7 +135,7 @@ class UserProvider with ChangeNotifier {
   }
 
   List<MonthlyPresensi?>? getHistoryPresensi(){
-    if (historyPresensi == null) historyPresensi = List<MonthlyPresensi?>.filled(6, null);
+    historyPresensi ??= List<MonthlyPresensi?>.filled(6, null);
     return historyPresensi;
   }
 
@@ -226,7 +226,7 @@ class UserProvider with ChangeNotifier {
       switch (res.statusCode) {
         case 200:
           pegawaiModel = User.fromJson(jsonDecode(res.body));
-          notifyListeners();
+          // notifyListeners();
           return pegawaiModel;
         case 403:
           await refreshTokenUser(helperMethod);
@@ -263,14 +263,6 @@ class UserProvider with ChangeNotifier {
           tokenIsValid = true;
           await getDataPresensi(helperMethod);
           await getDataUser(helperMethod);
-          // var now = new DateTime.now();
-          // var formatter = new DateFormat('MM');
-          // print(formatter.format(now));
-          // int bulanSaatIni = int.parse(formatter.format(now));
-          // print(bulanSaatIni);
-          // await getDataHistory(bulanSaatIni, helperMethod);
-
-          notifyListeners();
           return res;
         case 500:
           throw HttpException("Server Error");
@@ -298,7 +290,7 @@ class UserProvider with ChangeNotifier {
             setLockedDinas(true);
           }
           presensiModel = Presensi.fromJson(stringRes);
-          notifyListeners();
+          // notifyListeners();
           return presensiModel;
         case 403:
           await refreshTokenUser(helperMethod);
@@ -325,21 +317,18 @@ class UserProvider with ChangeNotifier {
       var res = await helperMethod.getHistoryPresensi(bulan, jwtToken ?? '');
       switch (res.statusCode) {
         case 200:
-          var now = new DateTime.now();
-          var formatter = new DateFormat('MM');
+          var now = DateTime.now();
+          var formatter = DateFormat('MM');
           int bulanSaatIni = int.parse(formatter.format(now));
           int index = bulanSaatIni - bulan;
           if (index < 0) index += 12;
-          print(index);
+
           var stringRes = jsonDecode(res.body);
-          print(stringRes);
-          var data_history = getHistoryPresensi();
-          print(data_history);
-          data_history![index] = MonthlyPresensi.fromJson(stringRes);
-          notifyListeners();
-          setHistoryPresensi(data_history);
-          print(data_history.toString());
-          return data_history;
+
+          var dataHistory = getHistoryPresensi();
+          dataHistory![index] = MonthlyPresensi.fromJson(stringRes);
+          setHistoryPresensi(dataHistory);
+          return dataHistory;
         case 403:
           await refreshTokenUser(helperMethod);
           if (tokenIsValid){
@@ -351,13 +340,22 @@ class UserProvider with ChangeNotifier {
         case 500:
           throw HttpException("Server Error");
         default:
-          print(res.body);
           var stringRes = jsonDecode(res.body);
           throw HttpException(stringRes['message']);
       }
     }
     catch(e) {
       throw HttpException(e.toString());
+    }
+  }
+
+  Future<void> getAllHistory(HelperMethod helperMethod) async {
+    var now = DateTime.now();
+    for (int i = 5; i >= 0; i--){
+      var dateMonth = DateTime(now.year, now.month - i, now.day);
+      var formatter2 = DateFormat('MM');
+      int bulanSaatIni = int.parse(formatter2.format(dateMonth));
+      getDataHistory(bulanSaatIni, helperMethod);
     }
   }
 

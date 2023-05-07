@@ -86,16 +86,15 @@ class HelperMethod {
         print(1);
         await dataUser.getDataPresensi(this);
         print(2);
-
         if (dataUser.getTokenIsValid()! == false) {
           if (context.mounted) {
             logout(dataUser);
             helperDialog.checkAuthDialog(context);
           }
         }
-        print(1);
+        print(3);
         await dataUser.getDataUser(this);
-        print(2);
+        print(4);
 
         if (dataUser.getTokenIsValid()! == false) {
           if (context.mounted) {
@@ -103,6 +102,11 @@ class HelperMethod {
             helperDialog.checkAuthDialog(context);
           }
         }
+
+        print(5);
+        await dataUser.getAllHistory(this);
+        print(6);
+
         return true;
       }
       return false;

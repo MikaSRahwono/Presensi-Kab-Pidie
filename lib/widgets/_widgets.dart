@@ -17,6 +17,7 @@ import 'package:presensi_mobileapp/features/authentication/data/model/http_excep
 import '../features/authentication/data/model/user_model.dart';
 import '../features/authentication/presentation/pages/_pages.dart';
 import '../features/authentication/presentation/provider/_provider.dart';
+import '../features/history/data/model/_model.dart';
 import '../features/presensi/data/model/_model.dart';
 
 part 'HelperBigText.dart';

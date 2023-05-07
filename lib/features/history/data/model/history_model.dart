@@ -15,10 +15,9 @@ class MonthlyPresensi {
 
   factory MonthlyPresensi.fromJson(Map<String, dynamic>? json){
     Iterable list = json!['data'];
-    print(list);
     List<Data> presensis = list == [] ? [] : list.map((e) => Data.fromJson(e)).toList();
     return MonthlyPresensi(
-        month: json!["bulan"],
+        month: json["bulan"],
         data: presensis
     );
   }
