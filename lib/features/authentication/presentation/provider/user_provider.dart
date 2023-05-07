@@ -273,6 +273,7 @@ class UserProvider with ChangeNotifier {
           tokenIsValid = true;
           await getDataPresensi(helperMethod);
           await getDataUser(helperMethod);
+          await getAllHistory(helperMethod);
           return res;
         case 500:
           throw HttpException("Server Error");
