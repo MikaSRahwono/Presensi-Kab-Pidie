@@ -19,11 +19,9 @@ class _ProfilePageState extends State<ProfilePage> {
       extendBody: true,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: true,
+        centerTitle: true,
         title: Text(
           'Profile',
-          style: GoogleFonts.poppins(
-              color: Colors.black, fontWeight: FontWeight.w700),
         ),
       ),
       backgroundColor: Color.fromRGBO(246, 242, 255, 1),

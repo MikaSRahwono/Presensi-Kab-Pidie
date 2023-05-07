@@ -18,7 +18,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
-          print(index);
           setState(() {
             currentPageIndex = index;
           });

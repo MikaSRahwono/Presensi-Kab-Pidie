@@ -119,7 +119,7 @@ class _HistoryPageState extends State<HistoryPage> {
   }
   PreferredSizeWidget appBarWithTabs() {
     return AppBar(
-      automaticallyImplyLeading: true,
+      centerTitle: true,
       title: Text("Riwayat Presensi"),
       bottom: TabBar(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
