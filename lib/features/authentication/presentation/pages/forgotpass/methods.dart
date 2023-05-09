@@ -4,7 +4,7 @@ Future<String> forgetPass(email) async {
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'http://127.0.0.1:8000/account/req-change-pass'));
+          'http://35.223.12.163/account/req-change-pass'));
   request.fields.addAll({'email': email});
   http.StreamedResponse response = await request.send();
   if (response.statusCode == 200) {
@@ -18,7 +18,7 @@ Future<String> otpCheck(String email, String kode) async {
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'http://127.0.0.1:8000/account/check-otp'));
+          'http://35.223.12.163/account/check-otp'));
   request.fields.addAll({'email': email, 'unique_code': kode});
   http.StreamedResponse response = await request.send();
   String stringResponse = await response.stream.bytesToString();
@@ -34,7 +34,7 @@ Future<String> changeForgetPassword(
   var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'http://127.0.0.1:8000/account/change-forget-pass'));
+          'http://35.223.12.163/account/change-forget-pass'));
   request.fields
       .addAll({'email': email, 'password': pass, 'confirm_password': confPass});
 

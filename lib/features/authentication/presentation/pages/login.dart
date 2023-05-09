@@ -140,6 +140,7 @@ class _LoginPageState extends State<LoginPage> {
             try {
               var response = await dataUser.attemptLogIn(
                   nipController.text, passController.text, helperMethod);
+              print(dataUser.firstLogin);
               if (dataUser.firstLogin) {
                 Navigator.push(
                     context,

@@ -263,10 +263,13 @@ class UserProvider with ChangeNotifier {
       var res = await helperMethod.attemptLogInApi(nip, password);
       switch (res.statusCode) {
         case 200:
+          print(res.body);
           JwtResponse response = jwtResponseFromJson(res.body);
+          print(response);
           jwtToken = response.tokens.access;
           refreshToken = response.tokens.refresh;
           firstLogin = response.firstLogin;
+
           await setAccessToken(jwtToken);
           await setFirstLogin(firstLogin);
           await setRefreshToken(refreshToken);
